@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Native Evolution Sessions",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "checkpoint-islands-and-resume.p",
+    "constrained-integer-basins-and-verification.p",
+    "multiple-native-local-basins.p"
+  ]
+}

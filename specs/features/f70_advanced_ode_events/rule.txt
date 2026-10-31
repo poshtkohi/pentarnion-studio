@@ -1,0 +1,24 @@
+F70: Native ODE events, backward integration and dense output
+Authorized extension,26 October2026.
+
+Native continuous event callbacks localize directed/terminal roots in all four state methods. Backward time retains positive sampling magnitude and physical-time directions. Retain native internal-step polynomials for deval; legacy sample Hermite remains explicit. Nonuniform outputs, controls/statistics/transient windows and constant nonsingular real-coordinate mass matrices are bounded. Singular DAEs/reset assumptions reject; persistence preserves dense/event/backward data.
+
+DP5 ERK retains a native quartic Hermite polynomial; ESDIRK4 retains cubic
+Hermite, matching each fixed table's q-1 degree. CVODES remains native variable
+order. Legacy/dense_output=0 sample interpolation remains cubic Hermite and
+depends on stored sample spacing. Native samples and retained polynomial
+evaluation agree without reducing the established reference accuracy.
+
+The8M state-only workspace budget remains unchanged. Separate host C++ controls
+ExecutionOptions.maxRetainedSolutionCoordinates and SolveOptions.maxRetainedCoordinates
+default to32M for states/slopes/times/sensitivities/events/polynomial coefficients.
+Native state/sensitivity sampling and dense-only coefficients retain separate8M
+bounds; combined-cap failures preserve the previous workspace. No new .p option
+is implied by these host controls. Dense RHS evaluations preserve domain,
+timeout and cancellation diagnostics.
+
+Authority: language.txt L58; specs/research_v0_2.txt.
+Acceptance example: examples/advanced-odes/main.p.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

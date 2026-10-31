@@ -1,0 +1,39 @@
+FEATURE F20: Scope and modularity guardrails
+Version: 0.2
+Status: editor/checker/interpreter scope boundaries implemented; actual
+        verification and deferred capabilities are recorded in docs/VALIDATION.md
+Implementation stage: S0-S7
+Dependencies: none
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F20-R1: Keep one language grammar/signature source, one algebra contract and
+         separate editor, project and numerical modules.
+F20-R2: Dedicated native ODE compilation/CVODE is covered by F28-F31. General
+         native .p compilation, PDE/search, optimisation, MPI/GPU and MATLAB/MEX
+         backends remain deferred. The calculation interpreter is covered by F21.
+F20-R3: Files/rules describe features precisely but do not dynamically mutate
+         the parser or supply executable plugin code.
+F20-R4: Studio interprets general checked statements and natively compiles
+         dedicated ODE models, including automatic Jacobians. Keep this terminology explicit in menus, help,
+         documentation and handoff reports.
+F20-R5: Parser grouping and typed expressions are retained so later backends can
+         be added. Do not create dummy implementations and label them complete.
+F20-R6: Public core headers expose stable responsibilities rather than Qt/UI
+         types. Add future execution/runtime APIs only when their release begins.
+F20-R7: Maintain source/licence/provenance records; do not upload private drafts
+         or establish repository licensing on the user's behalf.
+
+ACCEPTANCE
+F20-T1: Review dependency graph; core/language build without GUI dependencies.
+F20-T2: Inspect UI and source targets for out-of-scope capabilities.
+F20-T3: Every implemented feature has a reviewed rule and acceptance evidence.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.
+
+CURRENT USER EXTENSION: unified console, safe autosave, VTK vector figures/image
+export, five paper-based elementary functions and additional real-only builtins
+are authorized; see language.txt L17-L19 and F22-F24. Native ODEs are authorized by F28-F31; PDEs remain deferred.

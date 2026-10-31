@@ -1,0 +1,113 @@
+RESEARCH ARCHIVES, SOURCE-HISTORY REPLAY AND CATALOGUES (language0.2)
+
+New APIs (existing version1 experiment bundle APIs retain their behavior):
+  savearchive(path,data_record[,options]);
+  record data=loadarchive(path,typed_template[,options(allow_real_context=0)]);
+  record info=archiveinfo(path);
+  string opaque_bytes=archiveartifact(path,label);
+  migrateexperiment(version1_path,new_archive_path[,options(overwrite=0)]);
+  record catalogue=experimentcatalog(directory[,options]);
+  record entry=catalogueentry(catalogue,one_based_index);
+  record replay=replayexperiment(path,options(output_directory="replay-output"));
+
+savearchive options: name,settings,workspace,embed_artifacts,overwrite=0.
+settings/workspace are explicit typed records. embed_artifacts maps labels to
+selected project-relative files. The existing verified same-handle Windows
+artifact reader and canonical Linux containment checks capture the bytes. The
+archive never treats saved paths, native binary bytes, pointers or cache entries
+as executable authority. Opaque DLL/EXE/SO payloads are tagged for their platform;
+embedding is byte portability, not a claim that a Windows DLL executes on Linux.
+archiveartifact returns verified bytes as a string and never unpacks or loads it.
+
+Version2 PentarnionResearchArchive keeps a verified unchanged version1 compatibility
+base, plus full typed payload/settings/optional workspace, accepted source history,
+bounded scientific call metadata, plot metadata and explicitly embedded artifacts.
+New algebra descriptors/functions are retained in version2 typed payloads without
+weakening the old version1 typed scanner. Loading uses the normal bounded typed
+decoder and an explicit matching template. Pure numerical callback snapshots are
+statically rechecked, without imports, external dependencies or native compilation
+on load. Model/source history remains data until explicit replay.
+
+Migration is explicit v1->v2 wrapping: the original document remains identical in
+base. Absent historical submissions/call records cannot be invented, so migrated
+history_complete/calls_complete are false. Format migration never changes gamma,
+algebra, language, precision, scalar type or multiplication tables. Unknown future
+versions are rejected. Gamma-bound Pentarnions/callbacks cannot use the real-only
+context opt-in; generic imported elements retain their frozen table descriptors.
+This includes Pentarnion-entry tensors and sampled tensor states, together with
+the existing context-bearing N-D, surface-mesh/solution and exact-coefficient
+record tags. An ordinary real record's gamma number alone does not bind it to
+the legacy algebra context.
+
+Uniform scientific capture
+Successful scientific calls automatically retain family, invocation source hash,
+source position, gamma, input/settings snapshots, callback/model source metadata
+and result/history snapshots. Families include ODE/PDE/FE/DAE/hybrid, roots,
+optimization/fitting/inference, discovery/chaos/continuation, maps/networks,
+geometry/mechanics/sensitivity and evolutionary solves. Compilation still uses
+the existing typed AST and cached native callback generator. ODE capture records
+its typed model and complete accepted source, rather than evaluating named
+arguments a second time. This avoids changing random expressions or side effects.
+
+Capture is bounded: at most512 calls/16MiB total,2MiB per call and65536 numerical
+coordinates per individual retained snapshot. Larger arrays retain shape/count
+and an explicit omission marker; they are not silently presented as fully saved
+data. Full user-selected result data can be supplied as the archive payload.
+Source history stores up to256 accepted invocations and12MiB aggregate exact source
+plus analyzed import bytes. Overflow sets completeness flags and never stops a
+valid numerical calculation merely because automatic history is full. Failed
+console submissions are not claimed as accepted replay source; if partial runtime
+effects make the workspace unreconstructable, history_complete becomes false.
+
+Source history and replay
+Each accepted invocation retains exact source/import snapshots and starting
+mt19937_64 numeric state. Capture at savearchive uses previous accepted submissions
+plus the current program prefix before the save call. Capture is top-level only,
+so that prefix is a syntactically complete program. Prior console definitions,
+values and unseeded random state are therefore reconstructable within the bounded
+history. Root RNG restoration validates exactly312 uint64 state words plus index,
+nonzero state and32KiB input; no binary or pointer is deserialized.
+
+loadarchive never executes source. replayexperiment explicitly runs captured source
+in a fresh isolated InterpreterSession. A separate output_directory is required
+for generated files/cache. Caller workspace names remain unchanged. Imports are
+resolved only from verified captured snapshots; ambiguous basename fallbacks or
+missing sources are errors, never silent filesystem imports. Scientific native
+callbacks compile/reuse through the ordinary cache on explicit execution.
+The shared cancellation and remaining operation budget apply to all submissions.
+An explicit max_operations option caps their aggregate replay work; each later
+invocation receives only the unused portion of that selected replay allowance.
+Source diagnostics, outputs, variable summaries and figure actions are retained.
+Nested archived replay is rejected. Migrated/incomplete histories require the
+explicit allow_incomplete=1 option and carry no completeness claim. Supplied
+external data files are not automatically unpacked; a source that reads them must
+be given those explicit files in its chosen replay output directory.
+
+replay result: format,ok,invocations,operations,source_history_complete,output,
+variables,workspace_semantics. OutputFcn drawing and user source side effects run
+only because replay was explicitly requested; mere catalogue/load inspection
+does not invoke callbacks, compilers or numerical solvers.
+
+Catalogue
+experimentcatalog scans verified .json archives/version1 bundles in the selected
+directory; recursive=0 by default. Symlinks are skipped. Options maximum_files
+(1..1024,default256),name_contains,family,status,scalar_path,minimum,maximum filter
+typed payloads. family uses the payload's format string; status its status field.
+scalar_path follows typed record fields with dot-separated names. Invalid/unrelated
+files are reported in invalid_files, not loaded as data. Entries are sorted by
+path. Catalogue result retains count,invalid_files,files_scanned,bytes_read,encoded;
+catalogueentry returns path,name,version,compatible,scientific_hash,source_hash,
+family,status,has_scalar,scalar. Querying/retrieving an entry does not replay it.
+
+Integrity and bounds
+Canonical SHA-256 hashes cover version2 scientific content and the whole document;
+every embedded artifact/source independently checks byte length/hash. Runtime
+source locations are excluded from the history's scientific projection. Hashes
+detect inconsistency, not authenticity or a scientific proof. The compatibility
+base preserves the existing context and source checks. Limits:64MiB archive,
+16MiB aggregate embedded bytes,64 artifact entries,257 captured source segments,
+512 call records,256 plot actions,JSON depth64/node8million. Catalogue total reads
+are capped at256MiB. Atomic no-overwrite publication is default; explicit overwrite
+is required. Corrupt/incompatible inputs are preserved and never executed.
+
+Examples: examples/research-archives/*.p.

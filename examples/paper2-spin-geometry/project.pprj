@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Paper spin geometry, alternating form and native dynamics",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "distinguished-space-and-energy.p",
+    "fixed-gamma-spin-dynamics.p"
+  ]
+}

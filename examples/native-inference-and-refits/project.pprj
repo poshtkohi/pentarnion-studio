@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "name": "Parallel native refits, likelihood profiles and bootstrap bands",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "parallel_multistart.p",
+    "profile_known_noise.p",
+    "bootstrap_fitted_mean_bands.p",
+    "moving_block_refits.p",
+    "unidentifiable_profile.p",
+    "checkpoint_bootstrap.p",
+    "resume_bootstrap.p",
+    "live-parallel-refit-models.p"
+  ]
+}

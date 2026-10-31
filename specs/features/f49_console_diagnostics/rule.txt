@@ -1,0 +1,13 @@
+F49: Clickable Command Window diagnostics
+Authorized extension, 26 October 2026
+
+Display diagnostic severity, code, filename, one-based line and Unicode-scalar
+column in the unified Command Window. Clicking the diagnostic or keyboard
+activation navigates to its source span, selecting/opening the correct source.
+Retain source identity and freshness checks: changed buffers/disk sources must
+not be overwritten or navigated using stale offsets. Normalize UTF-8 byte spans
+to Qt UTF-16 editor positions, including Unicode and CRLF input. Bound retained
+links; transcript trimming and clc discard obsolete link metadata. Diagnostics
+remain normal copyable text. Never execute link text or external URLs.
+Acceptance: tests/gui/gui_tests.cpp checks locations, actual clicks, Unicode/CRLF,
+runtime diagnostics and stale-buffer protection. Preserve Problems navigation.

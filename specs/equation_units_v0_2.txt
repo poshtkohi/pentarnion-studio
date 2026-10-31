@@ -1,0 +1,44 @@
+EQUATION-LEVEL SI DIMENSIONS (LANGUAGE0.2)
+Canonical rule F116; language summary L104.
+
+unitcheck(function_or_ode,options(parameterName="unit",...)) checks the saved,
+typed source AST and returns a dimensions report. Every declared parameter,
+including time/state/fixed parameters, needs an annotation; extra names fail.
+Annotations use coherent SI scales exactly1; convert cm,ms or other scaled
+inputs explicitly at a boundary. Whole algebra elements and array parameters
+mean all their coefficients/entries carry the same dimensions.
+
+The checker propagates the seven integer SI exponents in order
+[metre,kilogram,second,ampere,kelvin,mole,candela] through signs, ordered products,
+left/right equation division, entrywise/matrix arithmetic, transpose, literal
+indexing, construction, reductions, conditions, local assignment and returns.
+Addition/comparison requires matching dimensions. Numerical zero literals are
+polymorphic zeros; a zero RHS can satisfy a physical derivative unit. Nonzero
+numeric literals are dimensionless. Integer powers multiply dimensions;
+sqrt requires even exponents in this integer-dimension contract.
+
+scalar,pure,conj,coeff,norm and absolute value preserve dimensions; norm2 squares
+them; commutator multiplies the operand dimensions; associator multiplies all
+three operand dimensions without reassociating their algebra products.
+sin/cos/exp/hyperbolic/log/inverse-trigonometric/rounding functions require
+dimensionless arguments. atan2/hypot require compatible input dimensions;
+atan2 returns dimensionless, hypot preserves the input dimensions.
+
+For an ODE, every generated RHS dimension must equal its state dimension divided
+by its time dimension. odesolve(...,units=options(...)) invokes this validation
+before native solving. mechanics(...,options(units=...)) and mechanicsdae's
+units/constraint_units validate their corresponding source functions. These
+annotations are optional and never change legacy numeric values, source ABI,
+solver trajectories or callback fingerprints. They check dimensional consistency,
+not physical correctness or automatic conversion of bare numeric quantities.
+
+The report contains valid,name,dimension_order,result_dimensions,
+parameter_dimensions,jacobian_dimensions,derivative_order,status,contract.
+Jacobian units are output/input dimension differences, in parameter-major then
+result order, one group per declared array/element parameter. This is the same
+dimension for all coefficients in that declared homogeneous input group.
+
+Unsupported AST operations fail with R2521 rather than guessing physical units.
+This bounded checker does not cover heterogeneous-unit matrix entries, affine
+temperature units, fractional dimension exponents, dynamic user-defined unit
+algebra or implicit propagation across arbitrary user-function calls.

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Moving constraints, nonlinear masses and physical units",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "moving-mass-and-constraint.p",
+    "velocity-constraint-and-work.p",
+    "check-physical-dimensions.p"
+  ]
+}

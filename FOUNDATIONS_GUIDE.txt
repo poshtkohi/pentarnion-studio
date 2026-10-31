@@ -1,0 +1,109 @@
+PENTARNION STUDIO — CATEGORIES 1 TO 4
+26 October 2026
+
+OPEN AND RUN THE EXAMPLES
+In Studio choose File > Open Project and open the project.pprj in one of:
+  examples/language-foundations  Language: callbacks, named/default options, multiple
+                      outputs, imports, complex values and native functions.
+  examples/array-shapes  Arrays: reshape, diagonal/grid construction, masks,
+                      find, dot and norms; two simple plots.
+  examples/numerical-calculus  Calculus: interpolation, integration, finite differences,
+                      spatial operators, ODE Hermite evaluation and four plots.
+  examples/parallel-vectors  Parallel: real_vectors.p and pentarnion_vectors.p,
+                      timing, AXPY, reductions and actual worker reports.
+Select a .p source and Run File. Studio saves it before execution. Category 4
+has two scripts: run each separately. Every category has README.txt with
+expected results and mathematical conventions. Examples 2/3 need Studio for
+their figures; penta-run intentionally disables figures. Example 1 imports
+helpers.p, so keep that file beside main.p when copying the project.
+
+These paths are relative to the code directory:
+  the repository root
+The updated runnable executable is build/windows-release/bin/pentarnion-studio.exe.
+The existing Desktop/windows-release runtime copy is updated too.
+The CLI can run language-foundations/main.p and both parallel-vectors scripts. Relative imports
+resolve beside the importing source. Project console imports use project root.
+Imports read saved sources; save dependency editors before running. Stale or
+dirty imported dependencies cause Studio to discard the older run's results.
+
+1. LANGUAGE INFRASTRUCTURE
+  callback f=@(real x)=>x*x;
+  real area=integral(f,0,1);
+  options cfg=options(abs_tol=1e-10,rel_tol=1e-9);
+  function [real lo,real hi] bounds(real center,real radius=1.0){
+      return center-radius,center+radius;
+  }
+  [real lo,real hi]=bounds(radius=2.0,center=10.0);
+  import "helpers.p" as science;
+  complex z=complex(0,1);
+  native function real cube(real x){return x*x*x;}
+  display(cube(3.0));
+
+Callbacks capture immutable snapshots; named functions have declared scopes.
+Records have typed stable fields; with_options validates replacements. Tuples
+allow multiple returned values. Complex scalars are explicit and distinct from
+the Pentarnion basis i; complex arrays are future work. Whole-Pentarnion math
+retains the published one-element calculus. Additional real functions include
+expm1, log1p, erf, erfc, hypot and sign.
+Native functions currently accept/return real or Pentarnion scalar values and
+allow locals, assignment, if/else and return. Unsupported constructs produce a
+diagnostic; they do not fall back to interpretation. Structural changes rebuild;
+changing runtime arguments reuses the cache. tic/toc excludes compilation.
+
+2. ARRAY, SHAPE AND GRID UTILITIES
+  matrix A=reshape(1:6,2,3);
+  matrix D=diag([1,2,3]);
+  [matrix X,matrix Y]=meshgrid([-1,0,1],[0,1,2]);
+  matrix positive=A(A>3);
+  matrix locations=find(A>3);
+  display(dot([1,2,3],[4,5,6]));
+  display(norm([3,4]));
+Storage remains bounded and two-dimensional. Linear traversal/indexing is
+one-based and column-major. Logical masks are distinct from numeric index lists.
+dot and vector 1/2/infinity norms are real-only; a real matrix accepts "fro".
+No whole-Pentarnion inner product is inferred.
+
+3. NUMERICAL CALCULUS AND SPATIAL OPERATORS
+interp1 is piecewise linear sampled interpolation. Extrapolation must be explicit.
+trapz/cumtrapz integrate samples; integral uses bounded adaptive Simpson callback
+quadrature with tolerance/convergence diagnostics. diff gives forward differences.
+gradient/divergence/laplacian use local three-point coordinate-polynomial stencils,
+including one-sided endpoints and nonuniform monotone coordinate vectors.
+For 2D fields x runs across columns and y down rows. Laplacian is the unscaled
+sum of second spatial derivatives. Pentarnion linear calculus acts on the five
+coefficients; original algebra products remain ordered inside the integrand.
+These are sampled spatial derivatives, distinct from future objective gradients.
+
+deval(solution,query[,"stateName"]) uses cubic Hermite interpolation from saved
+values and compiled-RHS endpoint slopes. It is not CVODE/ARKODE's internal dense
+polynomial. Accuracy depends on sample_step; refine that spacing independently
+of solver tolerances. Queries must lie in the stored time interval. Old saved
+solutions lacking endpoint slopes load normally but cannot use deval.
+
+4. PARALLEL VECTOR OPERATIONS
+threads(0) selects logical CPUs automatically, capped at64. threads(n) selects a
+maximum from1..64; small work remains serial. parallel_info() reports actual use.
+Real/Pentarnion vector arithmetic, AXPY, supported entrywise functions, reductions,
+real dot/norms and independent calculus lines use the shared numerical module.
+Fixed256-entry reduction blocks and fixed merging give repeatable one/four-thread
+results within the tested build/platform; cross-platform bit identity is not
+promised. Norms use scaled sums of squares. Native kernel timings in validation
+are machine-specific observations, not end-to-end Studio speed guarantees.
+
+MODULES, BUILD AND LIMITS
+Numerical kernels live in modules/penta_numerics.dll on Windows and
+modules/libpenta_numerics.so on Linux. The Qt-free host loads a controlled absolute
+path on first use, validates C ABI version/capabilities, shares one persistent
+bounded CPU pool, and retains the module until process exit. Missing/incompatible
+modules report an error without disabling unrelated scalar arithmetic. Worker
+callbacks do not touch interpreter values; cancellation and budgets apply.
+Keep modules/ beside the executable when packaging. CMake and the generated
+Code::Blocks projects use the same graph and deploy module dependencies.
+C:\msys64 is reused; no second MSYS2 installation was created.
+
+Exact rules and domains: specs/foundations_v0_2.txt, language.txt L39 onward,
+and feature rules F50-F58. Use help("foundations") in the Command Window.
+Higher-dimensional storage, parallel matrix products/BLAS, decompositions, roots,
+optimization, chaos metrics and PDE solvers remain future roadmap categories.
+Windows tests and Code::Blocks validation are recorded in the validation folder.
+Native Linux execution/graphics validation remains to be performed.

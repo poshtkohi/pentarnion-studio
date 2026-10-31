@@ -1,0 +1,202 @@
+DYNAMICAL ANALYSIS AND NATIVE ENSEMBLES - LANGUAGE 0.2
+26 October 2026
+
+This document specifies the bounded first implementation of roadmap13/14.
+It does not mark unimplemented shooting, Floquet, continuation, general parfor,
+ODE ensembles, checkpoint/resume or basin-classification subcases complete.
+
+1. lyapunov(model, initial [, options]) -> record
+
+The model is a declared native ODE. Initial values are a complete typed state
+tuple, one scalar/Pentarnion state, or a flat real vector. Each Pentarnion state
+occupies five real coordinates. Current dimension is1..32 real coordinates.
+Every trailing ODE parameter is bound once in options(parameters=options(...)).
+
+Options: t0=0,t1=100,transient=0,qr_step=0.5,rtol=1e-8,atol=1e-10,
+method="bdf" (or "adams"),max_steps=1000000,max_intervals=4096,
+max_seconds=60. Unknown options reject. Time must increase; transient is a
+nonnegative duration smaller than t1-t0, and qr_step/tolerances/budgets positive.
+The total retained history obeys the normal matrix and coordinate limits.
+
+The native generated RHS and full analytic real-coordinate Jacobian are reused.
+CVODES integrates the state and n initial-only tangent sensitivity directions:
+    dY/dt = J_x(t,x)Y.
+At each qr_step interval Eigen Householder QR replaces Y by an orthonormal Q.
+The absolute R diagonal gives each logarithmic stretch. QR runs during the
+transient too, aligning the tangent frame, but its stretches are not accumulated.
+One interval ends exactly at the transient boundary. All post-transient interval
+stretches are summed and divided by their actual physical duration. An irregular
+last interval uses its actual duration. The driver restarts CVODES each interval;
+it does not interpolate sensitivities from saved coarse samples.
+QR target times derive from a long-double grid anchored at t0, with adjacent
+roundoff endpoints merged, so decimal intervals do not create a spurious tiny
+final CVODES integration. Actual interval counts enforce max_intervals.
+
+The tangent kernels stay native. Native code compilation is excluded by existing
+tic/toc accounting; the wall budget begins after initial compile/preflight.
+The analysis has an aggregate accepted-step and QR-interval bound. One analysis
+consumes one ODE-analysis request slot and returns only bounded records, not all
+temporary segment solutions. Each CVODES solve retains just its two endpoints.
+ERK/ESDIRK tangent integration is explicitly rejected in this release.
+
+Results: exponents (descending final estimates), largest, t, history (one column
+per final exponent order), local_growth, state (flat final real coordinates),
+orthogonality_error (maximum Frobenius norm of Q'Q-I), duration, transient,
+qr_step, intervals (including transient), steps, rhs_evaluations, dimension,
+cache_hit/cache_key, method, jacobian="analytic", status="finite_time_estimate",
+message. window_difference is the final estimate minus an earlier approximately
+halfway retained running estimate; it is a descriptive duration diagnostic, not
+an error bar or convergence certificate. Collapsed/nonfinite tangent directions
+diagnose numerical failure with a recommendation to reduce the QR interval.
+
+No time-series estimator is silently substituted. Positive finite-time growth
+does not by itself certify chaos, asymptotic convergence or global boundedness.
+Independent repeated-duration/transient/QR/tolerance checks remain essential.
+
+The same command accepts a typed native map function in place of an ODE model.
+Its distinct options are parameters=options(...),iterations=1000,transient=0,
+qr_stride=1,max_seconds=60. iterations is1..1000000; transient is an integer in
+0..iterations-1; qr_stride is1..iterations. ODE time/tolerance options do not apply.
+The compiler-generated Jacobian is evaluated at each preceding map state, tangent
+frames propagate as Y_next=J_F(x)*Y, and QR runs every qr_stride iterations plus
+exact transient/final boundaries. Native callback parameters and initial states
+retain complete real/Pentarnion coordinate ordering. Output schema is identical;
+t stores iteration indices, duration stores post-transient iterations, qr_step
+stores the requested integer stride as a real value, method="map", and
+rhs_evaluations counts native value/AD-direction entry evaluations. Exponents and
+local growth rates are per iteration. Histories retain final exponent ordering.
+Exactly singular tangent maps diagnose a collapsed direction rather than silently
+substituting a finite exponent for a mathematically possible minus-infinite one.
+The serial map-analysis driver owns one shared CPU reservation; generated native
+callbacks never invoke interpreted per-evaluation code.
+
+2. stability(model_or_function, point [, options]) -> record
+
+Options: parameters=options(...),time=0 for ODEs,kind="flow" for ODEs or "map"
+for functions, tolerance=1e-8,residual_tolerance=1e-7,method="analytic" (native AD)
+or "finite_difference". Functions may explicitly choose kind="flow" for an
+autonomous vector RHS. Function time is supplied through an ordinary declared
+fixed parameter; the separate time option applies only to ODEs.
+
+The existing generated callback differentiation produces the state-coordinate
+Jacobian, and the existing lazy linear-algebra module computes eigenvalues.
+Flow residual is f(x); map residual is F(x)-x. Unless its Euclidean norm is below
+residual_tolerance the status is "not_equilibrium" and no stable/unstable claim
+is made. For equilibria, flow eigenvalues with positive real part beyond
+tolerance imply "unstable"; all real parts below -tolerance imply "stable".
+For maps the analogous test uses abs(lambda)-1. Marginal cases are "inconclusive".
+
+Results: jacobian,values_real,values_imag,measure (real part for flows or modulus
+minus1 for maps),residual_norm,equilibrium,stable,unstable,inconclusive,kind,status.
+The command reports local linear stability, not a global attraction basin.
+
+3. poincare(solution [, options(event=1,transient=0)]) -> record
+
+This extracts one one-based event index from a solution already integrated with
+native events and event_direction. It uses exact retained solver-localized event
+times/states, never coarse-sample straight-line crossings. transient excludes
+crossings within this duration of the solution's starting time. Return t,states
+(all flattened real coordinates),intervals (positive travel-time differences),
+direction (physical-time direction),crossings,event,status="crossings" or
+"no_crossings". A solution without crossings returns an explicit empty result.
+For backward integration retained crossing order remains the integration order.
+
+4. recurrence(samples [, options(radius=1e-3,lag=1,theiler=0)]) -> record
+
+Input has2..256 sample rows with1..128 flattened real coordinates per row.
+A real/Pentarnion row vector is treated as successive scalar/Pentarnion samples.
+Whole Pentarnion samples use the ordinary Euclidean norm of their five real
+coefficients, not an unstated algebra norm. Data are finite and radius positive.
+
+The symmetric binary matrix is1 if distance<=radius outside abs(i-j)<=theiler;
+the excluded diagonal/band is0 and is omitted from the eligible-pair denominator.
+rate=recurrent_pairs/eligible_pairs, or0 with status="no_eligible_pairs" when
+the denominator is empty. Counts include both symmetric ordered pairs.
+distance and returned describe sample-to-sample lag separation, independent of
+the Theiler plot exclusion; index retains the one-based source sample identity.
+lag must be1..samples-1. Outputs: matrix,distance,returned,index,rate,radius,lag,
+theiler,eligible_pairs,recurrent_pairs,status="sampled" or "no_eligible_pairs".
+These observations are recurrence/period candidates, not proofs of periodicity,
+dimension, entropy or chaos. n-squared sample storage/work is explicitly bounded.
+
+5. ensemble(function, initial_rows [, options]) -> record
+
+Each real matrix row is one independent run of a pure native-compatible map.
+Flattened columns form complete declared state arguments; each Pentarnion state
+occupies five adjacent columns. Function outputs must match that coordinate count.
+Trailing fixed arguments bind through parameters=options(...). A parameter scan
+can explicitly carry a parameter as an unchanged state coordinate in the map.
+
+Options: iterations=1 (positive),threads=session default (0 automatic,1..64 a
+maximum),escape_radius=0 (disabled),max_seconds=60. At most4096 runs,128 state
+coordinates and one million total map steps are allowed. Unknown settings reject.
+The function body compiles once before worker dispatch. Parameter/initial/count/
+thread changes reuse its structural DLL/SO; no interpreter callback executes in
+workers. Compilation callbacks and interpreter-owned counters stay on the owner
+thread. Worker callback operation charges accumulate atomically under the same
+request budget, then commit to the interpreter on the owner. Exhausting that
+aggregate budget or cancellation aborts the enclosing analysis transaction.
+
+Work uses ThreadBudget's persistent shared CPU pool and existing task ownership.
+Nested native numerical calls get one worker slot; unrestricted nested pools are
+not introduced. Actual participating workers may be fewer than the requested cap.
+Results preserve input row identities independently of worker scheduling.
+
+A callback-domain failure affects only its row, storing its last valid finite
+state and message. Escape detection marks a separate escaped row after a valid
+iterate exceeds the supplied Euclidean real-coordinate radius. Neither case is
+misreported as convergence. The result is states,success,escaped,iterations,
+evaluations,messages (failure text with explicit one-based run identities,
+bounded to65536 bytes),messages_truncated,runs,failures,escapes,
+requested_threads,threads_used,cache_hit,cache_key,status="completed" or "partial".
+Successful deterministic callbacks produce identical row results across tested
+thread counts on a fixed build/platform. Cross-platform bitwise identity and
+random callback streams are not promised. General parfor, random-stream splitting,
+parallel ODE solves, incremental progress/checkpoint-resume and automatic basin
+labels are future extensions requiring their own contracts and acceptance.
+
+NATIVE MODULE CONTRACT
+The optional penta_chaos DLL/SO is Qt-free with versioned C ABI v1 and capability
+bits for Householder tangent QR and recurrence. Borrowed checked-size real buffers
+remain host owned; candidates commit only after validation. C++ exceptions never
+cross the module ABI. Absolute controlled module resolution, synchronized first
+use and resident library lifetime follow existing scientific modules. Missing
+libraries/dependencies or an incompatible ABI receive explicit diagnostics.
+CVODES and generated callback modules retain their existing native contracts.
+
+VALIDATION
+tests/runtime/chaos_tests.cpp checks exact diagonal spectra, Pentarnion fivefold
+contraction, QR log-volume/orthogonality, method/interval refinement, local
+flow/map stability, oscillator event return times, independently counted recurrence
+pairs, parameter/cache reuse, serial/parallel identity, isolated failed/escaped
+rows, aggregate operation budgets and runnable chaos-analysis/14 examples.
+Native kernel tests can build with PENTA_CHAOS_KERNEL_ONLY. Actual build/platform
+results belong in HANDOFF; source and planned tests do not establish execution.
+
+Algorithm references (consulted26 October2026):
+https://juliadynamics.github.io/DynamicalSystemsDocs.jl/chaostools/stable/lyapunovs/
+https://sundials.readthedocs.io/en/latest/cvodes/Mathematics_link.html
+https://libeigen.gitlab.io/eigen/docs-nightly/classEigen_1_1HouseholderQR.html
+CHECKPOINTED STOCHASTIC MAP ENSEMBLES (27 October2026)
+ensemble(map,initial_rows,options(...)) retains its existing signature/results.
+Additional options: checkpoint, resume, overwrite_checkpoint, retry_failed,
+batch_size(1..256), seed, random_parameter, distribution and ProgressFcn.
+Completed runs are saved atomically after each completion batch. Interrupted
+runs restart from their original initial and deterministic task-specific stream.
+Changing worker count or batch size is allowed on resume; source/model/fixed
+parameters/initials/iterations/seed/RNG/escape changes reject old ledgers. Corrupt
+ledgers reject without replacement. checkpoint_ok/message expose write failure.
+random_parameter names one trailing REAL map input not bound by parameters.
+Every iteration receives a fresh uniform[0,1) or standard normal variate. The map
+body remains a pure compiler-generated DLL/SO callback. Stream protocol is
+mt19937_64_splitmix_task_box_muller_v1: seed and stable one-based run identity
+determine independent streams, never worker scheduling or execution order.
+ProgressFcn is a pure native real function(real completed,real total) returning0
+continue or1 clean pause. It runs on the initiating thread after a durable batch,
+under the shared CPU budget. It reports task progress, not optimizer iterations.
+Returned task_status is0 pending,1 completed,2 escaped,3 native failure; completed,
+restored, request_hash, checkpoint_ok, progress_calls, user_stopped, seed,
+random_parameter/distribution/rng_protocol and elapsed_seconds are also exposed.
+Native limits remain4096 runs,128 coordinates and1,000,000 total iterations.
+Checkpoint size is bounded to32MiB. See checkpointed-independent-noise-streams.p.
+

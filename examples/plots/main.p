@@ -1,0 +1,12 @@
+use_algebra("A_gamma", gamma=1);
+clc;
+clear;
+pentarnion p = 1 + 2*i - j + ell;
+pentarnion q = cos(p);
+display("p =", p);
+display("exp(p) =", exp(p));
+display("real functions:", log(2), tan(0.5), atan2(1,1));
+figure(1);
+plot2("i", "j", p, q);
+figure(2);
+plot3("i", "j", "ell", p, q, p+q);

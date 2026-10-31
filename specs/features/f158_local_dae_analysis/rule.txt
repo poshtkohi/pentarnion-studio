@@ -1,0 +1,6 @@
+F158 Local native residual analysis
+daeanalyze evaluates compiler-generated residual Jy/Jyp, conditioned nullspace
+constraint ranks and an exact binary64 derivative-rank guard. Reports local ODE or
+index1 only under a fixed-rank contract, otherwise explicit unsupported status.
+A pointwise rank result is not a general nonlinear/high-index index proof.
+See specs/higher_index_linear_dae_v0_2.txt.

@@ -1,0 +1,9 @@
+FEATURE F26: Native LaTeX mathematical figure annotations
+Authority: language.txt L20-L22 and the user's current explicit request.
+Status: implementation with actual final results recorded in docs/VALIDATION.md.
+
+Native math labels use bounded JKQTMathText+bundled XITS, no external TeX/Python.
+Titles/axis labels/captions persist with figure state and appear in real VTK image
+exports. Validate text before committing changes, report unsupported/malformed
+LaTeX, preserve prior valid annotations, and bound nesting/dimensions/complexity.
+Tests include actual rendered/exported math after docking/tiling and text limits.

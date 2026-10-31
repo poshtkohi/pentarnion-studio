@@ -1,0 +1,9 @@
+F117: Batched multidimensional matrix products
+ndmatmul accepts real/complex/Pentarnion records of rank2..8. Axes1,2 are matrix
+row,column; matching axes3..8 are batch axes with explicit singleton expansion.
+Retain ordered cell multiplication, scalar domain, full coefficients and
+physical-axis/coordinate/transform-domain checks. CPU work uses the shared pool
+and native resource/cancellation accounting. Preserve rank2 behavior.
+Authority: language.txt L105; specs/batched_nd_products_v0_2.txt.
+Acceptance: independent real rank3 and complex rank4 batch oracles in
+tests/runtime/nd_tests.cpp plus existing ND regression suite.

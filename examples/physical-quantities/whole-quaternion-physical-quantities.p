@@ -1,0 +1,16 @@
+clc;
+algebra H = builtin_algebra("quaternion");
+element<H> p = H.one + 2*H.i - .5*H.k;
+record distance = quantity(p,"cm");
+record interval = quantity(H.j,"s");
+element<H> metres = unitvalues(unitconvert(distance,"m"));
+record ordered_product = unitmul(distance,interval);
+element<H> product = unitvalues(ordered_product);
+element<H> recovered = unitvalues(unitdiv(ordered_product,interval));
+display("Original quaternion, centimetres: ",p);
+display("All coefficients scaled to metres: ",metres);
+display("Ordered product, metre seconds: ",product);
+display("Right equation division recovers metres: ",recovered);
+assert(algebra_norm(recovered-metres)<1e-12);
+record square = unitpow(distance,2);
+display("Ordered square, square metres: ",unitvalues(square));

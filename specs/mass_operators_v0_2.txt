@@ -1,0 +1,52 @@
+NATIVE TIME/STATE-DEPENDENT MASS OPERATORS (LANGUAGE0.2)
+Canonical rule F114; language summary L102.
+
+masssolve(rhs,mass,y0,yp0,options(...)) solves
+    M(t,y,p_mass) y' = f(t,y,p_rhs)
+with IDAS BDF through the existing residual-module ABI. rhs and mass are typed,
+native-compatible source functions; both are compiled to cached DLL/SO modules.
+Their callback body, complete shape and immutable algebra descriptors determine
+cache identity. Initial values, parameters and integrator settings are runtime
+inputs and do not force recompilation.
+
+Both callbacks begin (real time,complete_state_group[,parameters...]). The state
+groups must have identical checked types, shapes and entry algebras. A state
+may be a fixed real/Pentarnion/native-algebra array, scalar algebra element,
+complex scalar or a sequence of real/Pentarnion scalar coordinate groups.
+There are1..32 complete real state coordinates. rhs returns every force
+coordinate; mass returns one explicitly shaped real matrix<n,n>. An arbitrary
+algebra-valued mass operator must be converted to an explicitly ordered real
+coordinate matrix so its left/right action is unambiguous.
+
+The adapter builds F=M*y'-f without inverting M. Its compiler-generated native
+derivatives give F_y=(dM/dy)*y'-df/dy and F_y'=M, retaining the mass-derivative
+term for state-dependent operators. jacobian="analytic" is the default;
+"finite_difference" selects IDAS numerical residual Jacobians explicitly.
+
+Options: parameters and mass_parameters bind trailing callback arguments;
+algebraic accepts an explicit0/1 mask or "auto" (default); initialization is
+"check" or "consistent"; t0,t1,sample_step,rtol,atol,
+initial_residual_tolerance,index_tolerance,max_wall_seconds,initial_step,
+maximum_step,max_steps,max_evaluations,max_native_operations set bounded controls.
+
+Automatic classification marks exactly zero columns of the initial mass
+operator algebraic and the remaining columns differential. IDAS first checks
+the equilibrated local initialization matrix made from differential F_y'
+columns and algebraic F_y columns. Every later mass evaluation verifies that
+classified algebraic columns remain exactly zero; a changing partition fails
+explicitly. Rank-deficient/ambiguous partitions and higher-index residuals fail.
+This is a numerical local index-one contract, not a global structural index
+proof or a general higher-index reduction algorithm.
+
+Returns a record with t,values,derivatives,consistent_initial,
+consistent_derivative,algebraic,steps,residual_evaluations,jacobian_evaluations,
+initial_residual_norm,initial_correction_norm,maximum_sample_residual,
+elapsed_seconds,native_operations,cache_hit,cache_key,mass_cache_key,
+classification,index_contract,jacobian,method,status,threads_used.
+values and derivatives are samples-by-complete-real-coordinates matrices.
+classification is "initial_exact_zero_columns" or "explicit_mask";
+index_contract is "local_index_one_checked_at_initialization".
+
+The current masssolve adapter does not add event/reset options, moving-terminal
+adjoints or derivatives through consistent-initial corrections. Existing
+daesolve/hybridsolve APIs retain their separately documented capabilities.

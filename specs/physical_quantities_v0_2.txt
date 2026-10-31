@@ -1,0 +1,123 @@
+EXPLICIT SI QUANTITIES - LANGUAGE0.2
+
+API
+  quantity(magnitude,"unit")
+  unitconvert(q,"target")
+  unitadd(a,b), unitsub(a,b), unitmul(a,b), unitdiv(a,b)
+  unitpow(q,integer_exponent)
+  unitpow(q,integer_numerator,positive_integer_denominator)
+  unitvalues(q), unitcompatible(q_or_unit,q_or_unit), unitinfo(q_or_unit)
+
+Units remain opt-in, explicit quantity records. Ordinary arithmetic/functions and
+native AD do not implicitly strip records. unitvalues deliberately extracts the
+numerical magnitude. Equation-level unitcheck and odesolve units options are
+separate coherent-SI checks documented in equation_units_v0_2.txt.
+
+COMPATIBILITY AND RECORDS
+Ordinary real scalar/array quantities with integer dimensions retain the original
+six-field PentarnionSIQuantity-v1 representation and existing native v1 ABI.
+Scalar real magnitudes remain1-by-1 matrices; arrays retain row/column shapes.
+Existing v1 native callers and their linear-only parser remain unchanged.
+
+Rational dimensions, absolute temperatures, logarithmic levels and whole algebra
+magnitudes use PentarnionSIQuantity-v2. Fields: format,kind,unit,scale,offset,
+log_base,log_factor,mode,numerators,denominators,dimensions,data. The seven rational
+exponents are exact reduced integer numerator/denominator pairs, in order
+m,kg,s,A,K,mol,cd. dimensions contains their binary64 ratios for display.
+Magnitude<=32 and reduced denominator<=32 are required; intermediate numerator
+magnitude<=1024. The parsed unit label must agree with every stored conversion
+and dimension field before use. Untrusted/modified metadata fails validation.
+V1 records promote only when an extended operation needs them. Persistence uses
+the ordinary data-only workspace record format and retains typed algebra data.
+
+REAL ARITHMETIC AND RATIONAL POWERS
+Operations are elementwise, with equal shapes or scalar expansion; no implicit
+matrix/outer product or general broadcast. Empty shapes remain empty.
+Addition/subtraction of linear units converts the right magnitude to left display
+units. Products/division/powers produce canonical SI magnitudes and scale1.
+unitpow(q,n,d) represents exact rational n/d, reduced before evaluation. An odd
+denominator selects the real branch for negative real magnitudes; an even
+denominator requires nonnegative values. Negative powers of zero reject. Integer
+power zero still validates its inputs before returning the identity.
+
+Examples: quantity(2,"m^(1/2)"), unitpow(quantity(4,"cm^2"),1,2) yields0.02m,
+unitpow(quantity(-8,"m^3"),1,3) yields-2m. Rational string powers require
+parenthesized syntax ^(n/d); arbitrary decimal/irrational dimensions are rejected.
+Legacy unitpow(q,n) keeps the old integer bounds for v1 real quantities. Extended
+powers accept numerator[-1024,1024], denominator1..32, subject to reduced exponent
+and resulting dimension bounds. No branch of a whole algebra root is inferred.
+
+ABSOLUTE AND DELTA TEMPERATURES
+Absolute labels: degC/Celsius,degF/Fahrenheit,K_abs. Linear deltas:
+delta_degC,delta_degF,delta_K. K remains the original linear Kelvin dimension.
+Absolute conversions require an explicit absolute target, for example
+unitconvert(quantity(20,"degC"),"K_abs"). Convert deltas using delta labels or K.
+Adding absolute+delta or delta+absolute yields an absolute temperature in the
+absolute operand's display unit. Subtracting absolute-absolute yields a delta in
+the left display scale; absolute-delta stays absolute. Absolute+absolute and
+delta-absolute reject. Absolute temperatures cannot enter products or powers.
+Values below zero Kelvin reject; an8-binary64-epsilon cancellation tolerance at
+the physical zero boundary absorbs representation roundoff and clips to0K.
+
+LOGARITHMIC LEVELS
+Explicit labels:
+  dB: 10*log10(dimensionless ratio), reference1
+  dB20: 20*log10(dimensionless amplitude ratio), reference1
+  dBm: 10*log10(power/0.001W)
+  dBW: 10*log10(power/1W)
+  dBV: 20*log10(voltage/1V)
+unitconvert converts compatible linear/logarithmic quantities through those
+explicit references. Linear inputs must be strictly positive when converting to
+logarithmic display. Logarithmic addition/subtraction/products/powers reject;
+convert to a linear quantity first. No implicit choice between power and
+amplitude conventions, complex logarithms or arbitrary reference level is made.
+
+WHOLE ALGEBRA MAGNITUDES
+quantity accepts complete Pentarnion, complex and generic element magnitudes,
+and Pentarnion/generic element matrices. Every coefficient carries the same
+linear SI dimension and display scale. Immutable algebra definitions, fixed
+shapes and all coordinates remain attached to data; unitvalues returns that
+checked magnitude type. Absolute/logarithmic units require real magnitudes.
+Conversions scale all coefficients. Ordered unitmul/unitdiv use existing algebra
+multiplication/equation-division semantics; they never invent a physical energy
+interpretation or reassociate products. For matrices these operations are
+entrywise, with existing scalar expansion/shape checks. Integer powers use the
+existing explicit left-power convention on each element. Fractional whole-element
+powers reject until a user-selected algebra branch contract exists. Distinct
+immutable algebras cannot mix; scalar generic/complex quantities must embed real
+magnitudes explicitly in their own algebra before mixed quantity arithmetic.
+
+METADATA AND UNIT GRAMMAR
+unitcompatible compares dimensions only; it does not certify that adding two
+absolute temperatures or logarithmic levels is meaningful. unitinfo returns
+unit,canonical,scale,offset,mode,log_base,log_factor,dimensions,numerators,
+denominators,dimension_order and affine_supported=1. mode0=linear,1=absolute,
+2=logarithmic. Canonical linear expressions specify dimension only; scale is
+reported separately. Ordinary v1 records retain their original six fields.
+
+Case-sensitive ASCII expressions accept *,/,whitespace products,parentheses,
+signed integer powers and parenthesized rational powers. Products/quotients
+associate left-to-right. Strings:1..512bytes,128factors,depth16. Base units:
+m,kg,s,A,K,mol,cd; g=0.001kg. Common derived units:Hz,N,Pa,J,W,C,V,Ohm,S,F,T,H,Wb.
+Linear min=60s,h=3600s,rad=1,deg=pi/180,%=0.01. Prefixes:y,z,a,f,p,n,u,m,c,d,da,h,
+k,M,G,T,P,E,Z,Y; use u for micro. Exact names match first. Prefixes apply to g,
+not kg; min,h,deg,1,% and nonlinear labels are not generically prefixed.
+Symbol C means coulomb. Unknown symbols and malformed/trailing content reject.
+
+NATIVE EXECUTION AND LIMITS
+Parsing, metadata derivation and real array arithmetic live in the lazy
+penta_units DLL/SO. penta_units_query_v2 is additive; v1 layouts/entry points
+remain binary-compatible. Array workers share Studio's ThreadBudget, cancellation
+and native-work accounting; no private pool. Whole-element arithmetic uses the
+existing compiled algebra/array kernels and their work/shape checks. No user
+expression is interpreted inside a numerical callback loop.
+Eight million real output values,100000 columns and current workspace limits
+apply. Every output must remain finite; nonzero underflow, overflow and zero
+division reject. Native output/input aliasing rejects. E2520/R2520 are source
+errors; R1006 cancellation and R1005 work/resource limits remain unchanged.
+
+Validation: tests/runtime/quantity_tests.cpp has independent rational-dimension,
+affine-temperature and logarithmic references, negative real root branches,
+whole Pentarnion/quaternion arithmetic, invalid domains, legacy compatibility,
+native parallelism/concurrency/cancellation. Actual integrated results must be
+recorded in docs/VALIDATION.md; implementation alone is not platform acceptance.

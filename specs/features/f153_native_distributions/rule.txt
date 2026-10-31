@@ -1,0 +1,6 @@
+F153 Native probability distributions
+distpdf/distcdf/distinv use17 explicit real Boost.Math distribution families with
+documented parameters/support/finite-result contracts and exact discrete quantile
+ordering. distrand uses a reported explicit seed or draws it from Studio's shared
+session RNG. Opaque hidden per-session native RNG state is not introduced.
+See specs/signal_statistics_extensions_v0_2.txt.

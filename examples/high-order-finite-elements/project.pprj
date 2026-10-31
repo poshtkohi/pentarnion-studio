@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "Native High-Order Finite Elements",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "manufactured-quartic-solution.p",
+    "mesh-refinement-convergence.p",
+    "variable-coefficients-and-boundaries.p",
+    "local-adaptive-h1.p",
+    "mixed-p1-p3-coupled-fields.p",
+    "native-curved-surface.p",
+    "native-nonlinear-p4.p",
+    "native-quasilinear-algebra-flux.p",
+    "pentarnion-nonlinear-h1.p",
+    "transient-curved-surface.p",
+    "transient-stiff-cubic.p"
+  ]
+}

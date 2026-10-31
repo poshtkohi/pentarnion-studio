@@ -1,0 +1,44 @@
+F141 / L131: TYPED MULTIFIELD RESEARCH EXPLORER
+
+The Model tab accepts up to8 named builtin algebra presets, typed numerical
+parameters and1..16 states, within32 full real coordinates. Types include real,
+complex, pentarnion, element<A>, matrix<R,C>, pentarnionmatrix<R,C> and
+matrix<A,R,C>. All entry coefficients remain in generated plots and data exports.
+An algebra type must name a preset explicitly declared in the panel. Plain
+numeric controls accept one checked pure expression, never extra statements,
+imports, file reads or execution while editing. Generate and Check only generate
+and check source; Run explicitly submits that exact source to the existing worker.
+
+Discovery has a simultaneous-parameter table:1..16 distinct declared real
+parameters,1..64 values per range, at most4096 Cartesian combinations and the
+separate maximum-run cap. The former single-range controls remain compatible.
+Fitting imports explicit CSV/XLSX numeric snapshots (first column x, remaining y).
+Invalid/missing/nonrectangular/oversized data leave previous controls intact.
+Importing does not evaluate source or submit a computation.
+
+PDE integrator="implicit" generates pdeimplicit with native initial/reaction
+callbacks, full1..64-coordinate value types, FD1/2, adaptive time and real constant
+diffusion. Constant Dirichlet/conormal-flux/Robin/periodic controls map to the
+solver's documented conditions; Robin alpha is explicit. Native source permits
+the richer varying/ordered coefficients and tagged mixed conditions separately.
+Legacy RK4/IMEX/1D-P1FE controls retain their existing meaning. This panel does
+not reinterpret a legacy integrator as an implicit solver.
+
+Mechanics has1..8 real coordinates, with fixed column arrays above one dimension.
+Newton/Lagrange/Hamilton modes retain their force/L/H conventions. Constrained
+Lagrangian mode generates native mechanicsdae with position g(t,q)=0 or velocity
+g(t,q,v)=0,1..n constraints, compiler-generated AD2/AD3 and explicit IDAS settings.
+Consistent initials/local regularity are checked by the numerical adapter.
+
+Live scientific display is opt-in for ODE, chaos, discovery and implicit PDE.
+It copies bounded retained samples on the numerical worker, throttles figure
+updates, and never invokes an extra RHS or changes solver/cache/workspace state.
+Options live_plot=0/1 or options(figure=...,coordinate=...,max_points=...,
+interval=...) select a one-based full real coordinate,8..4096 display points and
+0.05..10 seconds. Observations are approximate display samples; complete numerical
+solutions are retained independently. Cancellation uses the shared execution path.
+
+Examples: examples/research-explorer/project.pprj.
+Acceptance: research_explorer_workflow and research_spatial_workflow, including
+native quaternion/sedenion/array ODEs, implicit algebra fields and constrained
+two-coordinate mechanics. Platform results are recorded in docs/VALIDATION.md.

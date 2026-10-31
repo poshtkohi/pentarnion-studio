@@ -1,0 +1,26 @@
+F143 / L133: NATIVE ORDERED ALGEBRA NETWORK COUPLING
+
+networksolve's native RK4/BDF adapters accept legacy Pentarnion, builtin/imported
+immutable algebra and fixed-array node states, with every real coordinate retained.
+The graph's real edge weights and coordinate diffusion scaling remain explicit.
+
+Options edge_left and edge_right take one element shared by all physical edges,
+or one complete element per physical edge. A two-sided operator requires
+edge_grouping="(left*delta)*right" or "left*(delta*right)". One-sided forms are
+recorded explicitly. Scalar unit promotion uses the algebra's actual unit vector.
+Typed initial arrays must match the node state definition hash; implicit mixing
+of descriptors/bases is rejected. Full-array groups repeat the entry operator.
+
+An algebra edge operator requires coupling="general"; it does not imply positive
+diffusion, dissipation or a norm-composition law. The order/grouping is compiled
+into a full real operator block, preserving noncommutativity/nonassociativity.
+Native RK4 accumulation, matrix-free BDF Jacobian-vector products and block-Jacobi
+preconditioning all use the same operator. Shared CPU grants, deterministic arc
+accumulation, resource/cancellation checks and body-based native cache reuse apply.
+Existing real-weight/diagonal paths and the original V1 module interface remain.
+
+Results record edge grouping and complete state widths. networkcoeff selects a
+one-based local real coordinate; projection does not discard unplotted coordinates.
+Examples: examples/ordered-algebra-networks/project.pprj.
+Acceptance includes independent exact left/right quaternion rotations, BDF native
+Jv/factor execution, bitwise serial/parallel agreement and distinct octonion groups.

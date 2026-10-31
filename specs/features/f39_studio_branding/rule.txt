@@ -1,0 +1,16 @@
+FEATURE F39: Quaternion- and Pentarnion-inspired Studio identity
+Version: GUI 0.2 extension
+Authority: user requests, 26 October 2026
+Status: implemented; validation recorded in docs/VALIDATION.md
+
+F39-R1: Use original scalable artwork with a four-part quaternion motif and
+five-part Pentarnion framework, plus a recognizable P at application-icon sizes.
+F39-R2: Show the artwork in About without removing author names, affiliations,
+contact details, capabilities or the 2026 copyright notice.
+F39-R3: Bundle Qt resources for the running application/window icon on both
+source platforms. Embed a multi-resolution Windows ICO in the Studio executable.
+F39-R4: Keep SVG and generated PNG/ICO assets in the source tree; preserve
+dependency notices and make no new project-wide license selection.
+Acceptance: GUI About/logo/resource checks, Windows executable icon extraction,
+native screenshots and inspection of small icon sizes. Linux execution is not
+claimed without a Linux build/run.

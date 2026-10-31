@@ -1,0 +1,430 @@
+PENTARNION STUDIO LANGUAGE 0.2 — ADVANCED NUMERICAL CONTRACT
+Authorized extension: 26 October 2026. Feature rules F59-F67; language.txt L47-L55.
+
+STATUS AND AUTHORITY
+Roadmap categories 5-8, direct native ODE RHS derivatives, and the session-default/
+per-call thread revision are implemented with the bounded semantics below. The
+Windows staged build passed all 37 registered suites. Final installed Release,
+Code::Blocks and native GUI acceptance is recorded by the parent in docs/VALIDATION.md;
+do not infer an unperformed platform check from a source path. Native Linux
+execution and graphics validation remain unverified.
+
+This extension supersedes earlier exclusions for parallel full matrix products,
+OpenBLAS, real determinant/inverse/decompositions, sparse operators, native
+derivative callbacks, roots and equilibria. Prior rules remain in force for
+unrelated features. General native .p scripts, complex dense arrays, time-
+integrated ODE sensitivities, fitting, chaos/PDE solvers and geometry packages
+are not added by this milestone. Existing A_gamma_v1 conventions, five-real
+coefficient order, explicit parentheses, source safety and 0.1 identifier
+compatibility remain unchanged. New numerical APIs require language 0.2.
+
+1. THREAD DEFAULTS AND PER-CALL LIMITS (F66)
+  threads(4);                         % session default, not a forced global count
+  vector y=sin(x,options(threads=1));   % only this call
+  matrix C=matmul(A,B,options(threads=2));
+  record info=parallel_info();
+
+threads() returns the requested Integer session setting. threads(0) selects
+automatic logical CPUs, bounded to64; threads(n) sets an explicit maximum1..64.
+Settings persist across console submissions and clear; Reset Workspace restores
+automatic0. A final options(threads=n) overrides a supported call without changing
+that session default. Missing settings inherit the default. Scoped settings are
+restored after normal completion, failure and cancellation. Requested counts are
+maxima: short work and serial algorithms may use fewer workers.
+
+The shared pure-numeric wrapper accepts only one final typed record containing
+threads. It covers scalar/entrywise elementary functions and conjugate/scalar/
+pure/norm2; sum/mean/min/max, dot/norm/axpy/transpose; reshape/diag/meshgrid/ndgrid/
+find/logical; interp1/deval/trapz/cumtrapz/diff; sampled gradient/divergence/laplacian.
+It strips settings and delegates the established signature/type/shape contract.
+Unknown fields, duplicate records and noninteger limits are errors. atan2/hypot
+are not claimed as parallel array maps. Random/stateful operations and interpreted
+quadrature callbacks are excluded. Callback/model gradient, derivatives, roots and
+linear algebra have their own richer option records. Scalar and host-only calls
+remain serial. expm1/log1p/erf/erfc/sign real arrays now use native entrywise kernels
+even without an override, preserving domains and finite-result checks.
+
+parallel_info fields requested/effective retain session meanings. last_requested/
+last_effective describe the last native dispatch; threads_used/peak_active measure
+actual host participation. Other fields remain parallel_calls,serial_calls,
+last_elements,threshold,module_loaded; linalg_module_loaded/roots_module_loaded
+are added. Introspection does not load unused modules; a host-only operation does
+not invent a dispatch merely to update counters. The cost-weighted numerical
+threshold remains32768. Native C++ clients can pass independent ParallelSettings
+for each call without mutating the Studio session.
+
+One process-wide host CPU reservation coordinates numerical modules. Acquire it
+before a backend BLAS-configuration lock. Nested numerical calls already inside
+a worker receive one slot and execute inline without reacquiring the outer
+reservation or creating pools. Inner workers do not race shared parent statistics.
+Borrowed buffers/context remain valid until dispatched work joins. Raw plain-C
+embedders must honor this same grant and candidate-buffer ownership contract.
+
+2. PARALLEL DENSE MATRIX OPERATIONS (F59)
+  matrix C=A*B;
+  matrix D=matmul(A,B,options(threads=4));
+  tuple batch=batchmul((A,A),(B,B),options(threads=2));
+  matrix totals=sum(C,2,options(threads=1));
+
+Dense real/Pentarnion matrix-matrix, matrix-vector, row-vector and tuple-batched
+products retain existing shape rules: columns(A)==rows(B). Native batched tuples
+contain1..16 pairs and preserve order/type. Uniform shape/width batches use one
+packed request and independent tiles; heterogeneous or large-input tuples use
+individually bounded native pairs. Storage remains bounded 2D, with established
+one-based column-major language indexing. It is not N-dimensional array storage.
+
+Real GEMM uses OpenBLAS CBLAS within independent32x32 host tiles, one BLAS thread
+per tile. Pentarnion products use the published binary multiplication and increasing
+inner-index accumulation, retaining operand order and explicit grouping of matrix
+chains. Entrywise maps, transforms and independent sum/mean/min/max output lines
+also use native workers when worthwhile. The reduction order for each output is
+independent of which worker owns it. Small work remains serial.
+
+No implementation claims that A*(B*C)==(A*B)*C for Pentarnion arrays. Bilinearity
+permits a future blocked binary coefficient expansion
+  (A*B)_r=sum_{a,b} T[r,a,b;gamma]*(A_a*B_b)
+using real coefficient matrices and the published table, but the current ordered
+kernel does not advertise that future optimization or reassociate triple products.
+Benchmarks report measured shapes/types/threads and numerical agreement; no
+universal speedup or cross-BLAS/compiler/platform bit identity is promised.
+
+3. REAL DENSE LINEAR ALGEBRA (F60)
+  matrix X=linsolve(A,B[,options]);
+  record report=solve_report(A,B[,options]);
+  real determinant=det(A[,options]);
+  matrix inverse=inv(A[,options]);
+  integer numerical_rank=rank(A[,options]);
+  real reciprocal_condition=rcond(A[,options]);
+  real condition=cond(A[,options]);
+  record factors=lu(A[,options]);       % L,U,P,rank,rcond,backend_threads
+  record factors=qr(A[,options]);       % Q,R,P,rank,rcond,backend_threads
+  matrix L=chol(A[,options]);
+  record factors=svd(A[,options]);      % U,S,V,singular_values,diagnostics
+  record spectrum=eig(A[,options]);
+  record form=schur(A[,options]);
+
+OpenBLAS0.3.34 CBLAS/LAPACKE supplies real dense kernels and factorizations. Default
+solve method lu requires square full-rank A above rcond_min(default1e-12). Other
+solve methods: cholesky/chol for symmetric positive definite matrices, qr and svd.
+Explicit QR/SVD may yield a least-squares/minimum-norm candidate. A positive
+least-squares minimum is not an equation solution: solve_report.converged is
+false when the equation residual fails, and plain linsolve rejects that candidate.
+A passing residual does not establish uniqueness.
+
+Solve report fields: solution,residual_norm,relative_residual,rank,rank_available,
+rcond,rcond_available,iterations,error_estimate,converged,backend_threads,method.
+Relative residual is ||A*X-B||F/(||A||F*||X||F+||B||F), including an explicit zero-
+denominator case. residual_tolerance defaults1e-10. Singular-value rank threshold
+is relative rank_tolerance, default64*eps*max(m,n); setting0 selects that default.
+rcond is reciprocal2-norm condition from singular values, differing from MATLAB's
+1-norm estimate. cond is2-norm; nonfinite/unbounded output is diagnosed.
+
+LU factors satisfy P*A=L*U. Thin column-pivoted QR satisfies A*P=Q*R. Cholesky
+returns lower L with A=L*L-transpose. Thin SVD satisfies A=U*S*V-transpose. Real
+Schur returns Q,T with A=Q*T*Q-transpose, T real quasi-triangular. Eig returns
+vectors_real,vectors_imag,values_real,values_imag plus rank,rcond,backend_threads.
+Split complex eigendata does not reinterpret Pentarnion i or introduce complex
+dense arrays. Eigenvalue order and factor signs/phases are not universal promises.
+
+det uses real LU and extended intermediate accumulation; det(0x0)=1. Overflow
+is an error; ordinary binary64 underflow can yield0, so det alone is not an
+invertibility test. inv verifies square/rank/conditioning and a backward residual.
+Prefer solving equations to forming an inverse. Existing scalar Pentarnion inv
+retains its published algebraic reciprocal definition.
+
+Dense settings use applicable fields threads,rank_tolerance,rcond_min,
+residual_tolerance and method(for solves). LAPACKE factorizations reserve the CPU
+budget, configure OpenBLAS within its grant and restore prior backend settings.
+backend_threads is a configured maximum, not a measurement of actual participation.
+LAPACKE cannot be preempted inside one call: cancellation is checked before/after
+a bounded factorization and candidates are discarded before workspace commit.
+
+4. EXPLICIT PENTARNION LEFT/RIGHT OPERATORS (F62)
+  matrix L=leftop(A[,options]);
+  matrix R=rightop(A[,options]);
+  matrix X=solveleft(A,B[,options]);    % A*X=B
+  matrix Y=solveright(A,B[,options]);   % Y*A=B
+  real left_det=det(leftop(A));
+  matrix right_inverse=inv(rightop(A));
+
+For A m-by-n, leftop(A) is the real5m-by5n column action x -> A*x; rightop(A)
+is the real5n-by5m row action x -> x*A. Each entry contributes consecutive
+coordinates(1,i,j,k,ell), using established scalar leftMatrix/rightMatrix maps.
+Multiple RHS packing/unpacking is explicit. Default LU enforces unique and
+sufficiently conditioned coordinate operators; explicit QR/SVD may select a
+consistent least-norm representative without claiming uniqueness.
+
+Direct det/inv/decompositions on Pentarnion arrays are rejected. The explicit
+coordinate-operator quantities above are real determinants/inverse maps, not
+associative whole-Pentarnion matrix determinants/inverses. No inverse reversal,
+det(A*B)=det(A)*det(B), or reassociation of Pentarnion chains is inferred.
+Ordinary real matrix identities remain properties of the real operators only;
+they do not establish leftop(A*B)=leftop(A)*leftop(B).
+
+5. CANONICAL SPARSE OPERATORS (F61)
+  record S=sparse(A);
+  record S=sparse(row_indices,column_indices,values,rows,columns);
+  matrix A=full(S);
+  integer count=nnz(S);
+  record T=sparsetranspose(S[,options]);
+  matrix Y=sparsemul(S,X[,options]);
+  record C=sparsemul(S,T[,options]);
+  matrix X=sparsesolve(S,B[,options]);
+  record report=sparse_solve_report(S,B[,options]);
+
+Immutable CSC records have fields format="csc",rows,columns,row_indices,
+column_pointers,values. Public indices/pointers are one-based. Triplet duplicate
+entries add in input order; exact zeros are removed; row indices are sorted and
+unique within columns. Every operation validates the complete record, including
+records edited using with_options. Arbitrary record multiplication is not an
+overload of *. Real/Pentarnion storage and ordered binary products are supported.
+
+Sparse solves require real square A and at least one RHS. Eigen SparseLU uses
+COLAMD; method="sparselu" is default. method="bicgstab" selects preconditioned
+BiCGSTAB. Options: threads,residual_tolerance,tolerance(default1e-10),
+max_iterations(default1000,1..1000000),preconditioner("ilut" default,"diagonal",
+"identity"),drop_tolerance(default1e-4),fill_factor(default10,1..100).
+rank_tolerance/rcond_min are rejected for sparse operations because this backend
+does not compute those estimates/guards. Sparse reports mark unavailable rank/
+condition quantities explicitly; placeholder0 is not a measurement. Successful
+SparseLU reports full-rank factorization; iterative rank is unavailable.
+Sparse Pentarnion equations need explicit real coordinate assembly; no implicit
+reciprocal-based sparse solve or automatic whole-Pentarnion inverse is introduced.
+
+Each sparse factorization is serial; independent RHS use bounded host lanes.
+A conservative estimate64*n*n+128*nnz bytes per factor is compared with a512MiB
+aggregate allowance. Lanes are bounded by allowance/estimate, RHS and granted CPU
+count. An overlarge single estimate is rejected. This guards fill/concurrency;
+it is not a universal hard limit on Eigen allocator memory or total process RSS.
+
+6. SHARED NATIVE CALLBACK COMPILER (F65)
+  native function [real f1,real f2] F(real x,real y,real a){
+      return x*x+y-a, x-y*y;
+  }
+
+Solver/derivative callbacks compile to cached shared libraries before evaluation.
+There is no interpreted callback inside roots or differentiation, including finite-
+difference mode. The hidden compiler uses immutable ordered AST, structural/source/
+compiler identities, ABI/dimension checks and process-resident callback ownership.
+Points, fixed runtime arguments, selected coordinates, directions, time and solver/
+derivative settings do not recompile unchanged structure. Native compilation is
+excluded from tic/toc, including first-use attempts and cancellation/failure.
+
+Supported callbacks:1..64 Real/Pentarnion scalar parameters,1..128 flattened input
+coordinates,1..16 numeric scalar outputs (<=128 flattened output coordinates).
+Pure scalar expressions, typed Real/Pent locals, assignment, if/else and return
+are supported. Multiple outputs return numeric expressions directly. Loops, IO,
+arrays, records, helper calls and implicit captured data are rejected; no hidden
+interpreter fallback occurs. Pure anonymous functions/builtin mathematical handles
+can be adapted; supply fixed numerical values as explicit trailing parameters.
+General native script compilation is not implied.
+
+Whole-element sin/cos/exp/sinh/cosh retain published one-element calculus. AD
+propagates through ordered products, reciprocal powers, conjugation/norm2,
+commutators/associators and supported real scalar math. Algebra gamma is fixed
+during differentiation; a model-parameter partial is not an algebra-context partial.
+Buffers/error/cancellation callbacks are synchronous; C++ exceptions do not cross
+native entry points, and original host budget exceptions retain their identity.
+Each native callback resident cache remains capped at128 loaded models. Least-recently-used modules with no external callback/evaluation references may be unloaded to admit another model; referenced models stay pinned. Admission fails when all128 models remain live. Disk artifacts are preserved, so an evicted model reloads a validated artifact without recompilation. This applies to native callback, AD3 and direct-function resident caches.
+
+7. GENERATED DERIVATIVES, HESSIANS AND PRODUCTS (F63)
+  matrix J=jacobian(f,point[,options]);
+  matrix g=gradient(f,point[,options]);
+  matrix H=hessian(f,point[,options]);
+  matrix a=jvp(f,point,direction[,options]);
+  matrix b=vjp(f,point,weights[,options]);
+  matrix c=hvp(f,point,direction[,options]);
+  record checked=derivative_check(f,point[,options]);
+
+point is a scalar/Pentarnion, a tuple matching declared parameter types, or a
+real vector packing complete declared coordinates. Trailing fixed arguments come
+from options(parameters=options(name=value,...)) or validated constant defaults.
+Default differentiation selects supplied point coordinates. wrt="parameterName"
+selects that complete parameter; wrt=[2,1] selects unique one-based real input
+coordinates in written order. All results are real-coordinate arrays: J has
+outputCoordinates-by-selectedInputCoordinates; g,VJP,HVP are columns; H square;
+JVP an output-coordinate column. Public gradient/Hessian/HVP require one real
+scalar objective. Individual Pentarnion component Hessians can use an explicit
+scalar coeff(...) callback; a vector-valued Hessian tensor is not a public API.
+
+method="analytic"/"ad"/"automatic" means compiler-generated second-order hyperdual
+automatic differentiation, not symbolic algebra. J seeds selected coordinates;
+HVP seeds a direction and obtains mixed directional partials without constructing
+a dense Hessian. Dense second-derivative storage is bounded to1000000 real entries;
+the interpreter's stricter array/workspace/work budgets also apply.
+
+method="finite_difference" explicitly uses central differences of compiled native
+values. Default relative spacing: eps^(1/3) first derivatives,eps^(1/4) second;
+step>=0 overrides it,0 automatic. Nonfinite domains, unrepresentable steps and
+directional perturbation overflow are diagnosed. Finite differences do not certify
+smoothness at discontinuities. Nonsmooth/uncertified abs/sign/sqrt and floor/ceil/
+round boundaries, atan2 cuts, active comparison/branch boundaries and unsupported
+operations produce explicit native diagnostics; no numerical fallback is selected.
+Dependency flags stay conservative even when a local tangent cancels to zero.
+
+Derivative options: parameters,wrt,method,step,threads and derivative_check-only
+order/tolerance. Current native scalar AD runs serially; requested threads is a
+per-call maximum and derivative_check honestly reports threads_used=1.
+derivative_check compares native AD with independent central native differences;
+order1(default) or2 selects Jacobian/Hessian verification. Fields:
+max_abs_error,relative_error=max_abs_error/(1+maximum compared magnitude),passed,
+tolerance,order,native_evaluations,cache_hit,cache_key,threads_requested,threads_used.
+Default tolerances1e-5(first) and2e-3(second). This is a numerical diagnostic,
+not proof of differentiability or a rigorous error bound. Initial-value partials
+can differentiate a user-defined explicit flow mapping's initial-value argument;
+they do not differentiate an opaque integrated ODE trajectory automatically.
+
+8. DIRECT ODE RHS STATE/PARAMETER/TIME PARTIALS (F67)
+  ode model(t,pentarnion p;pentarnion A){p'=A*p;}
+  matrix Jp=jacobian(model,p,options(parameters=options(A=A),time=0.5));
+  matrix JA=jacobian(model,p,options(parameters=options(A=A),time=0.5,wrt="A"));
+  matrix Jt=jacobian(model,p,options(parameters=options(A=A),time=0.5,wrt="t"));
+
+Derivative builtins accept an OdeModel directly. The adapter constructs a typed
+native callback from the original ordered RHS expressions, states leading,
+model parameters following and original time-name appended as the final Real
+input. It reuses the same native compiler/cache/AD/finite-difference/verification
+pipeline. The point supplies exactly all states: scalar/Pent for one state,
+typed tuple for mixed states, or a flat real state vector. Parameter/time values
+cannot be slipped into that point. Supply every model parameter by name in
+options.parameters; state/unknown/time keys there are errors. options.time(default0)
+sets the clock. Default columns are states; wrt can select a named state/parameter/
+time or real coordinate index. A Pentarnion parameter gives five real columns.
+All native limits include the appended time argument.
+
+J/JVP/VJP/verification work for real/Pent/multiple RHS outputs. Gradient/Hessian/
+HVP require one scalar-real RHS. Changing states, parameters or clock reuses the
+structural cache. These are partials of F(t,state,parameters), not sensitivities
+of the integrated state(t). CVODES forward/adjoint trajectory sensitivities and
+their propagation remain roadmap advanced-odes.
+
+9. SCALAR ROOTS, SYSTEMS, EQUILIBRIA AND MAP FIXED POINTS (F64)
+  record r=root(f,[a,b][,options]);
+  record s=rootsolve(F,initial[,options]);
+  record e=equilibrium(autonomous_model,initial[,options]);
+  record p=fixedpoint(G,initial[,options]);
+
+root uses Boost.Math TOMS748. Require a finite increasing real bracket with finite
+representable width, finite endpoint residuals and opposite signs, or an exact
+endpoint zero. Continuity on the interval is an assumption, not proved by sampling.
+A small bracket alone does not declare a root: scaled residual must also satisfy
+ftol. No finite run discovers every root or proves global uniqueness.
+
+rootsolve uses SUNDIALS KINSOL with serial real dense linear solves; method
+"line_search" default or "newton". Every Pentarnion unknown/equation contributes
+five real coordinates, retaining all source order/grouping. The square residual
+coordinate count must match unknown count,1..128. Unknown arguments lead the
+declared signature; trailing fixed values come from options.parameters or valid
+constant defaults. A scalar/Pent initial supplies one parameter, a real vector
+packs complete leading coordinates, a typed tuple supplies mixed values. x
+preserves a real vector/tuple shape or the declared first scalar/Pent type.
+
+jacobian="analytic"/"ad"/"automatic" uses generated derivatives of unknown
+coordinates. jacobian="finite_difference" requests KINSOL differences of the
+same compiled callback; every evaluation remains native. fixedpoint solves
+G(x)-x=0 with DG-I. equilibrium compiles an autonomous OdeDefinition RHS directly;
+any explicit time reference is rejected. Neither operation integrates an orbit.
+
+Root settings: parameters,method,jacobian,xtol(default1e-12),ftol(default1e-10),
+max_iterations(default200,1..100000),max_evaluations(default10000,3..1000000),
+max_wall_seconds(default60,positive<=3600),threads(0..64,current solver uses1),
+residual_scale(positive coordinate vector),variable_scale(KINSOL positive vector),
+max_newton_step(default0 automatic). Scalar rtol(default1e-12,nonnegative) applies
+to brackets only; KINSOL uses xtol as a scaled-step tolerance, not absolute state
+error. Its automatic step maximum is1000*max(1,scaled initial L2 norm), guarded
+against overflow. Scales are finite/positive; scaled_residual_norm is the infinity
+norm of residual*residual_scale, raw residual_norm is reported separately.
+
+Reports: x,residuals(real-coordinate column),residual_norm,scaled_residual_norm,
+converged,status,message,flag,iterations,evaluations,jacobian_evaluations,
+backend_evaluations,native_evaluations,step_norm,bracket,method,jacobian,
+cache_hit,cache_key,requested_threads,threads_used. Scalar bracket has two entries;
+system bracket is empty. TOMS748 iterations is Boost's iteration/evaluation counter;
+KINSOL iterations counts Newton steps. evaluations counts host F/J requests,
+native_evaluations actual generated DLL entries (AD J can need multiple passes),
+backend_evaluations the solver's own count. A cached residual at exactly identical
+final coordinates can verify a pure result without another native evaluation.
+
+Ordinary KINSOL failure returns converged=0, status/flag/bounded backend message.
+Small steps, stagnation, iteration limits and nonzero least-squares minima do not
+establish roots. Invalid inputs, domain failures, cancellation and exhausted hard
+evaluation/wall/work budgets raise diagnostics. Root callback code, values, scales,
+brackets and solver metadata remain separate so parameter edits reuse compilation.
+
+10. MODULES, BOUNDS, DEPENDENCIES AND EXAMPLES
+penta_numerics,penta_linalg,penta_roots DLL/SO modules are Qt-free and load from
+controlled absolute application modules/ paths (or explicit host configuration).
+The executables do not eagerly link optional backend modules. Validate versioned
+C ABI/function-table sizes/capabilities, borrowed buffer layouts/capacities and
+bounded error text; no C++ objects/exceptions cross. Synchronize first use and
+retain successful code pointers until shutdown. Native failure may partially fill
+a candidate buffer; commit only on success after workers join and BLAS state
+restores. Missing/bad modules leave unrelated scalar arithmetic available.
+Deploy module dependencies explicitly; an executable import scan alone misses
+lazy DLL dependencies. CMake and Code::Blocks share the graph and package layout.
+
+Interpreter arrays retain maxMatrixElements(default100000) and retained-coordinate/
+workspace budgets. Native dense factor dimensions<=2048; capacities bound all
+temporary outputs. Arithmetic work has a1e9 cap, charged in256-unit blocks plus
+packing/unpacking. Sparse nonzeros/candidates<=100000; sparse products<=100million
+binary products. Repeated factor/RHS work and sparse pointer arrays are bounded.
+Cooperative cancellation applies to tiles/lines/packing and between bounded
+factorizations; it does not imply preemption inside LAPACKE. No universal total
+RSS or latency guarantee is asserted.
+
+Pinned project-local additions: OpenBLAS0.3.34-1(BSD-3-Clause), Boost.Math headers
+1.92.0-4(BSL-1.0), SUNDIALS7.9.0 KINSOL(BSD-3-Clause); existing Eigen supplies
+sparse kernels. See third-party/numerical-dependencies.lock.json,sundials.lock.json,
+README.txt and local SDK notices. Reuse C:/msys64; do not install a second MSYS2
+or mutate global settings. Windows is validated; native Linux remains pending.
+
+Runnable projects and expected-value READMEs:
+  examples/parallel-vectors/per_call_threads.p: default versus independent call settings
+  examples/parallel-matrices/project.pprj: parallel GEMM, batches, reductions, grouped chains
+  examples/linear-algebra/project.pprj: real factors/inverse/det,sparse,left/right operators
+  examples/native-derivatives/project.pprj: gradients,Hessians/products,parameter/ODE RHS partials
+  examples/root-finding/project.pprj: scalar/system/Pent roots,fixed point,equilibrium
+native-derivatives ode_partials and root-finding main include plots; use Studio for full
+figures because penta-run deliberately disables figures. Stage acceptance:37/37
+suites passed. docs/VALIDATION.md supplies final installed build and native GUI evidence.
+
+
+RESEARCH EXTENSION SUPERSESSION — 26 OCTOBER2026
+specs/research_v0_2.txt and language.txt L56-L63/F68-F75 supersede earlier future
+claims for native Ceres/NLopt fitting/optimization, CVODES integrated sensitivity/
+terminal adjoints, ODE events/dense output/backward time, native maps, parallel
+callback preparation and Studio run/help/interrupt/find. Instantaneous RHS partials
+remain distinct from integrated sensitivities. The existing callback subset/cache
+rules continue; arbitrary native scripts, chaos/PDE/geometry and Map Explorer are
+not added. HANDOFF records actual acceptance/deployment/platform status.
+
+LINEAR ALGEBRA PERFORMANCE AND ABI COMPATIBILITY — 26 OCTOBER2026
+SVD decomposition derives rank/rcond from the singular values it already computed;
+SVD least-squares solves likewise reuse DGELSD values. Other legacy dense opcodes
+retain SVD-based2-norm rank/rcond metadata and all inverse/solve default guards.
+There is no silent switch to a1-norm condition estimate or skipped reliability test.
+
+The unchanged ABI-v1 struct layouts/original enum values gain additive capability
+PENTA_LINALG_CAP_VALUE_ONLY(0x80) and opcodes22(DETERMINANT_VALUE),23(CHOLESKY_FACTOR).
+They provide only the scalar/factor requested; rank/rcond result fields are0 and
+UNAVAILABLE, not evidence of rank0/singularity. Original det/Cholesky opcodes keep
+full diagnostics. Language det/chol use value-only requests because they return no
+rank/rcond metadata; older modules lacking the capability fall back to old opcodes.
+Scalar determinant conventions and Cholesky SPD rejection remain unchanged.
+
+OpenBLAS setters can resize global buffers. Managed calls share a refcounted,
+immutable single-thread configuration epoch; setters/restoration run only with no
+active calls. Independent inner BLAS1 calls can overlap under the existing host
+CPU reservation. Different settings and internally threaded calls remain exclusive;
+unknown sequential vendor builds retain an exclusive fallback. No public ABI,
+ThreadBudget locking or nested CPU grants are weakened. Pentarnion-only products
+avoid BLAS configuration because their ordered algebra kernels do not call BLAS.
+The pinned OpenBLAS0.3.34 openblas_set_num_threads_local symbol is NOT assumed to
+be TLS: its source calls the global setter and updates a global variable.
+
+Measured before/after warm-kernel CSVs and concurrency tests belong to validation
+records; there is no universal speedup or claim that a configured backend limit
+measures actual internal BLAS worker participation. Primary implementation sources:
+https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.34/driver/others/openblas_set_num_threads.c
+https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.34/driver/others/blas_server_omp.c
+https://www.openmathlib.org/OpenBLAS/docs/build_system/

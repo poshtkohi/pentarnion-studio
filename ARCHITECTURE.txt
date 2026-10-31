@@ -1,0 +1,95 @@
+PENTARNION STUDIO0.2 ARCHITECTURE - 26 OCTOBER2026
+
+LAYERING AND MATHEMATICAL SEMANTICS
+penta_language owns the lexer, grouping-preserving typed AST, imported source
+snapshots and diagnostics. Analysis never executes scientific code.
+penta_algebra owns immutable A_gamma_v1 contexts and all five coefficients in
+(1,i,j,k,ell) order. Products retain operand order and parentheses. Scalar/array
+syntax does not grant associativity. One-element functions use the paper's
+quadratic slice; left/right equation operators remain explicit.
+penta_runtime analyzes a complete request before bounded AST evaluation. Ordinary
+scripts orchestrate native kernels through one language/runtime. N-D/complex and
+quantity records add explicit bounded interfaces. General native compilation of
+every possible script is not implied.
+
+NATIVE EQUATIONS, DERIVATIVES AND CACHES
+penta_ode generates native RHS/Jacobian shared libraries. Native callback code
+provides values/AD1/AD2 for supported pure typed bodies. Bodies, signatures,
+grouping and transitive native dependencies determine structural cache identity.
+Parameters, initials, gamma and supported solver controls are runtime data.
+Independent required translation units compile in bounded parallel GCC jobs.
+Unsupported numerical callback bodies fail; numerical loops have no interpreted
+fallback. PreparedModel is immutable/shared; each integration owns its state,
+SUNDIALS workspace, parameters, events and limits. CVODES provides BDF/Adams,
+trajectory sensitivities and terminal adjoints; ARKODE provides supported explicit/
+ESDIRK methods. The generated kernel ABI remains independent of SUNDIALS.
+
+SCIENTIFIC MODULES
+Versioned C structs, struct_size/capability checks and bounded caller-owned
+buffers define numerical interfaces. DLL/SO modules load on first use and remain
+resident while callbacks can reference them. Hosts translate errors with source
+spans. Runtime/CLI/core kernels remain Qt-free. Module families cover calculus,
+linear algebra, roots, fitting/optimization/evolution, maps/dynamics, PDEs,
+orbits, geometry/forms, sensitivity/inference, DAEs, mechanics, N-D fields,
+graph tools/networks and explicit real SI quantities. Each canonical specification
+states supported shapes, methods, assumptions and limits; loading a library does
+not provide every upstream feature automatically.
+
+Native experiments use stable IDs, private solver workspaces, deterministic
+samples, bounded collection and atomic completed-task ledgers. Resume reuses
+compatible tasks and restarts interrupted runs from recorded initials; raw
+SUNDIALS memory is not serialized. Tiered diagnostics retain full physical states
+and qualified finite-time evidence. Mixed-gamma results use context-labelled raw
+coefficients and cannot silently become workspace-labelled Pentarnions.
+PDEs separate spatial work/time integration. FD/P1 consistent FE, structured2D
+and surface FEM retain every field coefficient. IMEX diffusion is explicitly
+first order. Parallel assembly/stencil/reaction work and serial factorization
+are reported separately. R5 embeddings retain all coordinates; metrics, forms
+and energies require explicit real definitions. Regular/constrained mechanics
+use generated derivatives. Explicit-ODE hybrid sensitivities apply event-time/
+saltation operators; genuine terminal adjoints integrate epochs backward with
+covector jumps. General DAE projection derivatives remain separate scope.
+
+CPU AND RESOURCE OWNERSHIP
+One ThreadBudget coordinates shared workers, backend limits and scoped native
+callers. Zero means automatic selection; explicit limits are upper bounds. Nested
+work uses its reserved slot. New adapters do not create independent worker pools.
+Requested/granted/actually-used counts are distinct; serial kernels report one.
+Work/time/memory/output/disk bounds and cancellation are explicit. Native quotas
+are separate from VM dispatch/output work. Memory estimates are not RSS guarantees.
+An indivisible library factorization finishes its documented cancellation unit.
+Ordinary OutputFcn is an explicit observation exception: copied iteration frames
+reach the invoking owner without extra objective evaluations. Parallel refits
+queue bounded snapshots/pump outside pool locks. Return1 requests clean stop,
+distinct from failure/cancellation/convergence. Numerical bodies remain native.
+
+GUI, SOURCE SAFETY AND PLOTTING
+One execution worker accepts immutable source/context/revision/import snapshots;
+workers never read widgets or mutate UI. Stale results are rejected. Console
+submissions share bindings; file runs establish separate scope. Cancellation
+follows documented transactions; export-only exceptions are explicitly specified.
+Source spans are UTF8 byte offsets; Qt navigation converts to UTF16. Safe save/
+autosave preserves BOM/newlines and protects external changes. File Run saves
+first; opening/editing/checking never executes source. Printing/rich copy capture
+syntax formats. Highlighters detach while the complete editor still exists;
+closing tabs disconnects obsolete source callbacks before destroying them.
+The unified Command Window owns a protected transcript and one active input.
+Running/Stopping replaces the prompt and Ctrl+C requests cancellation. Qt-free
+FigureAction data reaches GUI-thread VTK/Qt rendering. Selected PNG/frame/native
+AVI exports also have native headless paths. Projections/display decimation never
+replace diagnostic samples. Drawn layouts/spans/weights/cameras are versioned.
+Map/Research Explorer generate checked inspectable scripts and use the same
+worker. Controls do not execute code merely because they change. Source hashes
+guard stale export/replay. Checked MATLAB/Python export uses the typed AST,
+source maps and explicit solver/compatibility reports.
+
+PROVENANCE, BUILDS AND ACCEPTANCE
+Scientific identities and execution paths/timing/thread metadata are separate.
+Versioned typed records/checkpoints are integrity-checked and atomic; hashes are
+not signatures. Loading source-bearing data does not execute it. Source scope,
+context compatibility and artifact policies follow each persistence contract.
+CMake defines the build; Code::Blocks delegates to the same targets. Existing
+C:/msys64 and pinned project-local dependencies are reused. Configure/build never
+silently downloads packages. docs/VALIDATION.md and WORK_TO_DO_2.txt record actual test
+counts, platform evidence, measured benchmarks, deployment and remaining scope.
+Historical handoff entries do not override current specifications.

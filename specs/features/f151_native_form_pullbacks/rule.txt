@@ -1,0 +1,7 @@
+F151: Native differential-form pullback jets
+Canonical contract: specs/form_pullback_v0_2.txt.
+Preserve explicit algebra/shape/order/domain, native callback cache identity,
+versioned lazy module boundaries and the shared CPU/resource/cancellation budgets.
+Unsupported subcases must reject explicitly; numerical evidence is not a theorem.
+Examples and acceptance are named in the canonical contract. Only actual executed
+platform checks may be reported complete; integrated results belong in docs/VALIDATION.md.

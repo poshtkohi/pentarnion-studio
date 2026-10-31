@@ -1,0 +1,21 @@
+use_algebra("A_gamma", gamma=1);
+clc;
+clear;
+close("all");
+% Real coefficient observations sampled at64 Hz; frequency is exactly8 Hz.
+real pi0=acos(-1);
+matrix samples=0:63;
+matrix signal=sin(2*pi0*8*samples/64);
+record spectrum=fft(signal);
+record recovered=ifft(spectrum);
+assert(norm(recovered.real-signal')<1e-10);
+record psd=pwelch(signal,options(fs=64,segment=64,overlap=0));
+record correlation=autocorr(signal,options(max_lag=24));
+record peaks=findpeaks(signal,options(min_height=0.8,min_distance=4));
+display("FFT/IFFT reconstruction error: ",norm(recovered.real-signal'));
+display("Detected peaks: ",peaks.count);
+figure(16,"Name","Signal analysis","NumberTitle","off");
+subplot(2,2,1);plot(samples/64,signal);title("Sampled8 Hz sinusoid");xlabel("Time(s)");
+subplot(2,2,2);plot(samples,spectrum.magnitude);title("Full FFT magnitude");xlabel("Frequency bin");
+subplot(2,2,3);plot(psd.frequency,psd.power);title("One-sided Welch PSD");xlabel("Frequency(Hz)");
+subplot(2,2,4);plot(correlation.lags,correlation.correlation);title("Normalized autocorrelation");xlabel("Lag(samples)");

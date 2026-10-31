@@ -1,0 +1,10 @@
+F104: Tagged meshes, differential forms and surface FEM
+Authorized second-roadmap extension, 26 October 2026.
+Status: staged Windows implementation; executed tests belong in docs/VALIDATION.md.
+Authority: language.txt L92; specs/research_modules_v0_2.txt.
+Mathematics, resource bounds, context and native cache contracts are mandatory.
+Mesh scalar values are optional: absent values use uniform series colour without
+a scalar colour bar/value; supplied values require one finite real per vertex.
+Display, data cursors and PNG/SVG/PDF exports preserve this distinction and the
+existing vertex/connectivity/finite-data bounds.
+Do not infer general unsupported subcases or Linux execution from this rule.

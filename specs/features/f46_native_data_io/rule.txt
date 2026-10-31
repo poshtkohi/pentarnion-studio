@@ -1,0 +1,64 @@
+F46: Native workspace, CSV and XLSX files
+Authorized extension, 26 October 2026
+
+NATIVE WORKSPACE, CSV AND XLSX FILES
+
+save("workspace.pws"); stores numerical values and strings in a versioned UTF-8
+JSON workspace. Optional quoted names select variables: save("w.pws","p","A").
+Integer, Real, Pentarnion, ranges, matrices and sampled ODE solutions retain
+their types/data. Sample-series views save as ordinary coefficient/value arrays.
+Default save excludes executable function/ODE definitions; keep those in .p
+source files. Explicitly requesting an executable definition is an error.
+
+load("workspace.pws"); restores names for following console submissions.
+Analysis finishes before execution, so a checked script must predeclare typed
+targets before load if it uses them in the same script. Optional quoted names
+select bindings to restore. Existing targets retain declared types and use the
+ordinary assignment conversions; compatible Integer-to-Real conversions may
+round values above 2^53. Loading a complete workspace into an empty scope is
+lossless. Version, algebra ID/gamma, names, schemas, finiteness, dimensions and
+retained-resource limits are validated before any loaded binding is committed.
+Fixed-array targets retain their declared rows/columns and generic algebra even
+when the saved value has the same runtime array kind. Dynamic matrix targets
+retain ordinary resizing; compatible dynamic snapshots adopt a fixed target's
+declared shape. Sampled solution targets compare each fixed-array state's full
+shape and generic algebra, rather than accepting equal coordinate widths alone.
+Malformed/over-budget loads leave the previous workspace intact. Files contain
+data and are never evaluated as code. Random-stream/timer state is not persisted.
+
+matrix A=readmatrix("data.csv");
+writematrix(A,"data.csv");
+writematrix(A,"data.xlsx","Results");
+matrix B=readmatrix("data.xlsx","Results");
+csvread/csvwrite and xlsread/xlswrite aliases use filename first:
+  matrix C=csvread("data.csv"); csvwrite("other.csv",C);
+  matrix X=xlsread("data.xlsx","Results"); xlswrite("other.xlsx",X,"Results");
+
+CSV uses a native bounded numeric parser/writer with UTF-8 paths, optional BOM,
+quoted fields, CRLF/LF and round-trip real formatting. XLSX uses native XLSXIO
+0.2.37, Expat and Minizip. No installed Excel application, COM, Python or online
+service is required by Studio. XLSXIO reads/writes .xlsx; legacy binary .xls is
+not supported. CSV is a separate native path because XLSXIO handles .xlsx only.
+Numeric tables must be rectangular and finite, without headers, blank/text cells
+or merged-cell interpretation. Formula evaluation is not provided; a stored
+numeric cached formula value can be read. Output creates a new single-sheet
+workbook; it does not append to or preserve other sheets in an existing workbook.
+Pentarnion arrays must be exported explicitly via coeff(P,k), keeping their five
+coordinates distinguishable. readmatrix returns a realmatrix; writes accept real
+scalars, matrices/vectors and sampled real series.
+
+Relative data paths in Studio use the active project's directory (the source
+directory when no project is open). The CLI uses its script's directory.
+CSV/XLSX tables are bounded to 100,000 entries; stored/archive-expanded bytes
+default to 64 MiB. Numerical/workspace/operation/cancellation limits also apply.
+Writes validate then commit an adjacent temporary file atomically; failures or
+cancellation before commit preserve the existing destination. Completed explicit
+file writes are side effects and are not undone by a later script error/cancel.
+Checking/highlighting alone never creates files, opens Excel or compiles models.
+
+Reproduce dependencies with tools/bootstrap-xlsxio.ps1 or
+tools/bootstrap-linux-xlsxio.sh. Dependencies are project-local; the existing
+C:/msys64 compiler is retained. No automatic downloads occur during configure.
+
+
+Acceptance: build CMake/Code::Blocks; run registered regression suites and native Windows GUI checks. Linux behavior must be identified as unverified until run. Preserve previous valid programs and numerical algebra/ODE results.

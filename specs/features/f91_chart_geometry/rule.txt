@@ -1,0 +1,9 @@
+F91: Parametric metrics, curvature and transport
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Cached real/R5 embedding derivatives, explicit induced or supplied metrics, codimension-aware curvature/projectors and native chart-local geodesics/parallel transport. Singular metrics fail; no algebra-derived metric is presumed.
+
+Authority: language.txt L79; specs/research_modules_v0_2.txt.
+Acceptance: examples/differential-geometry/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

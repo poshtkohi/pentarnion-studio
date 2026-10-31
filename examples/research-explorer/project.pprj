@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "name": "Research Explorer generated reproducible workflows",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "real_oscillator.p",
+    "finite_time_chaos.p",
+    "native_curve_fit.p",
+    "oscillator_parameter_sweep.p",
+    "pentarnion_bracketing_ode.p",
+    "pde_heat_explorer.p",
+    "pentarnion_pde_explorer.p",
+    "pentarnion_geometry_explorer.p",
+    "real_geometry_explorer.p",
+    "newton_mechanics_explorer.p",
+    "lagrangian_mechanics_explorer.p",
+    "hamiltonian_mechanics_explorer.p"
+  ]
+}

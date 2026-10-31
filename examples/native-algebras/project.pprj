@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "name": "Native algebras and custom multiplication tables",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "quaternion-rotations-and-products.p",
+    "complex-and-real-algebras.p",
+    "octonion-bracketing.p",
+    "sedenion-zero-divisors.p",
+    "dual-numbers-and-rigid-motion.p",
+    "clifford-and-split-algebras.p",
+    "associative-lie-and-jordan-presets.p",
+    "import-custom-multiplication-table.p",
+    "native-quaternion-jacobians-and-odes.p",
+    "import-csv-and-excel-products.p",
+    "prepare-csv-xlsx-tables.p",
+    "whole-element-calculus.p",
+    "algebra-vector-projections.p",
+    "quaternion-roots-maps-and-fitting.p"
+  ]
+}

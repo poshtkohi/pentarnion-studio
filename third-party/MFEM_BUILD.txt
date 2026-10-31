@@ -1,0 +1,56 @@
+MFEM4.10 PROJECT-LOCAL BACKEND
+
+Upstream release: https://github.com/mfem/mfem/releases/tag/v4.10
+Tag object:16b0b814a3ba15a56c7a04e02d047188800cc0bf
+Commit:d964264cdb9a13e94a201b6c236c7721e0c8765f
+Archive:https://codeload.github.com/mfem/mfem/zip/d964264cdb9a13e94a201b6c236c7721e0c8765f
+SHA256:cbc7a7c813b4aeaeab50d5825812c88322d8df234b473b1b982fb8b8de7f4625
+The official annotated tag was unsigned according to the GitHub API. The SHA256
+pins the downloaded archive, not an independently authenticated release signature.
+The small mfem-4.10-pin.json is the machine-readable provenance record.
+
+License:BSD3-Clause. Retain licenses/mfem-4.10/LICENSE and NOTICE with redistributed
+backend binaries. This serial configuration needs no Hypre/Metis/MPI dependency.
+
+Windows native GCC build used the existing C:/msys64/ucrt64/bin/g++.exe and
+project-local CMake/Ninja tools. No global MSYS2 packages were modified.
+
+Configure from the project root (substitute full tool and destination paths):
+cmake -S third-party/mfem-source-4.10 -B third-party/mfem-build -G Ninja
+  -DCMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=<project>/third-party/mfem-sdk
+  -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+  -DMFEM_USE_MPI=OFF -DMFEM_USE_METIS=OFF -DMFEM_USE_LAPACK=OFF
+  -DMFEM_USE_EXCEPTIONS=ON -DMFEM_THREAD_SAFE=ON -DMFEM_USE_MEMALLOC=OFF
+  -DMFEM_USE_OPENMP=OFF -DMFEM_USE_LEGACY_OPENMP=OFF
+  -DMFEM_ENABLE_TESTING=OFF -DMFEM_ENABLE_EXAMPLES=OFF -DMFEM_ENABLE_MINIAPPS=OFF
+cmake --build third-party/mfem-build --target install -j2
+
+The Studio DLL statically links installed mfem (MFEMConfig.cmake target mfem).
+MFEM_USE_EXCEPTIONS is mandatory and checked by the wrapper at compile time.
+The SDK has MFEM_THREAD_SAFE enabled, but all Studio MFEM invocations are also
+serialized, after taking the shared CPU reservation. No outer concurrent MFEM
+execution, private OpenMP pool or distributed solver is claimed. Actual Linux
+native FEM/Qt/PETSc probes have executed in the dedicated QA VM; the coherent
+final refreshed platform acceptance is tracked in HANDOFF/status logs, rather
+than inferred from this build recipe. High-order systems/transient/adaptive and
+mixed-order weak-flux interfaces have separate current FEM specifications.
+
+The upstream library emits a NOMINMAX redefinition warning in general/tic_toc.cpp
+with this GCC Windows configuration. Studio wrapper sources compile with warnings
+enabled and treat the upstream SDK headers as SYSTEM; no warning flags were muted
+for Studio source. Build and numerical evidence live in the task verification logs.
+
+IMPLEMENTED OPTIONAL PETSC BACKEND
+The project-local Windows PETSc3.25.1 real sequential SDK and Linux PETSc>=3.25
+adapter support petscsolve KSP GMRES/CG and petscroot SNES with cached native
+residuals/compiler-generated Jacobians. Shell CSR actions use Studio's shared
+CPU grants; AIJ/ILU and PETSc bookkeeping remain sequential. Original residuals
+are checked before success; no interpreted solver callback is substituted.
+See specs/petsc_v0_2.txt, examples/native-petsc/, third-party/petsc-sdk/README.txt
+and third-party/build-petsc-linux.sh.
+Windows and Linux native probes have executed; the latest coherent full build,
+numerical/graphics/relocation acceptance remains subject to final coordinator
+logs. PETSc is a linear/nonlinear algebra backend, not a replacement for MFEM's
+spaces/meshes/integrators. MPI/distributed PETSc or MFEM is not implemented here.
+Retain PETSc's BSD2-Clause licence and dependency notices when distributing it.

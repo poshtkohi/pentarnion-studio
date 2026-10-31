@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "name": "Real and Pentarnion PDEs and geometry",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "main.p",
+    "geometry.p",
+    "paper_pde_eta0.p",
+    "paper_pde_eta1.p",
+    "paper_pde_compute.p",
+    "paper_pde_compute_eta1.p"
+  ]
+}

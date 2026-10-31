@@ -1,0 +1,21 @@
+FEATURE F42: Stable raster Studio window and retained figure views
+Authority: user-authorized GTG GUI rebuild,31 October2026.
+Canonical current desktop contract: specs/desktop_shell_v0_2.txt.
+
+F42-R1: MainWindow and all plots use ordinary Qt raster widgets. Do not create
+a hidden readiness GL widget, QVTK widget, separate native graphics composition
+boundary or global OpenGL sharing context at startup or first plot.
+F42-R2: Figure movement/layout/resize preserves editor/document and retained
+scientific plot state. Use coalesced cancellable CPU raster tasks with detached
+scene snapshots, generation/size/DPR validation and bounded image/scene storage.
+Never call live widget/scene methods from a render worker or read GPU buffers.
+F42-R3: Empty/closed plots paint an opaque background. Late close/image callbacks
+cannot affect a replacement with the same figure number. Return retained views
+to the correct dock/tab/grid and retain camera/labels/tools/data through moves.
+F42-R4: Source checks and all native compiler processes retain their existing
+headless/no-handle-leak/cancellation contracts. No scientific engine change.
+F42-R5: Only tiny offscreen CPU tests are authorized for this rebuild. GUI test
+mains refuse the desktop platform before QApplication; obsolete native graphics
+acceptance/stress cases skip explicitly. No paper/ODE/desktop movement stress
+test may be used as a substitute. Exact results/limitations are in docs/VALIDATION.md.
+The earlier hidden-anchor/native-child/GL-preview requirements are superseded.

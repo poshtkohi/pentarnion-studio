@@ -1,0 +1,143 @@
+BOUNDED HIGHER-INDEX LINEAR DAEs AND LOCAL RESIDUAL ANALYSIS (language0.2)
+
+  record info=daeanalyze(residual,time,y,yp[,options]);
+  record s=lineardaesolve(E,A,forcing,y0,options);
+
+These APIs extend the lazy native DAE module through a separate version2 query;
+the existing version1 IDAS interfaces/semantics are unchanged. All user numerical
+callbacks and time jets are compiler-generated cached DLL/SO functions. There is
+no interpreted residual, forcing or integration loop. The constant-pencil adapter
+does not claim a general nonlinear/high-index symbolic reduction theorem.
+
+Local residual analysis
+residual starts with real time, followed by complete declared y and yp groups,
+then explicit fixed runtime parameters. Each group retains every scalar/complex/
+Pentarnion/generic/fixed-array coefficient; an algebra argument cannot be split
+between y and yp. At most32 real state coordinates. The output has one complete
+real equation coordinate per state coordinate. Parameters use options(parameters=
+options(...)); rank_tolerance default1e-12,condition_limit1e12.
+
+The native compiler emits residual and Jy/Jyp. Native SVD examines Jyp and the
+constraint block L^T*Jy*Z, where L/Z span left/right derivative nullspaces.
+Full-rank conditioned Jyp reports local_index0; a full-rank conditioned constraint
+block reports local_index1 under the explicit fixed-rank assumption. Otherwise
+supported=0/local_index=-1 with a precise status. Exact binary64 rank checks guard
+ambiguous numerical derivative ranks. A pointwise result is not proof of constant
+rank/global index, regularity along a trajectory, or higher-index classification.
+
+Result fields supported,local_index,rank_mass,algebraic_dimension,rank_constraint,
+condition_mass,condition_constraint,residual_norm,residuals,jacobian_y,jacobian_yp,
+status,index_contract,cache_hit,cache_key,native_operations. Condition values refer
+to resolved nonzero subspaces (rank0 has a placeholder1, not an invertibility claim).
+
+Constant descriptor class
+lineardaesolve solves E*y'=A*y+b(t,p) for real constant NxN E/A,1<=N<=16,
+regular resolved matrix pencils with differentiation index0..3. Inputs can be
+explicit full coefficient vectors/typed numerical groups; matrices act on their
+flattened real coordinates. No associative whole-algebra matrix inverse is assumed.
+Forcing begins (real time[,fixed parameters]) and returns N complete real equation
+coefficients. Parameters, E/A, initials, tolerances and time span are runtime data;
+changing them does not recompile an unchanged forcing function body.
+
+Options:
+  parameters=options(...),initialization="consistent" or "check"
+  maximum_index=3 (1..3),t0=0,t1=1,sample_step=0.01
+  rtol=1e-8,atol=1e-10,rank_tolerance=1e-12,condition_limit=1e12
+  residual_tolerance=1e-7,max_wall_seconds=120
+  max_steps=1000000,max_evaluations=1000000,max_native_operations
+  sensitivity_parameters=[one-based flattened fixed parameter coordinates]
+  parameter_lower/parameter_upper optional complete fixed-coordinate bounds.
+No residual/algebraic mask/Jacobian is supplied by the user.
+
+Reduction
+Differentiate the constant descriptor equation up to2 times. Eliminate the
+derivative columns of each block derivative array using conditioned SVD. This
+produces consistency C*y=d(t) and orthonormal free basis Z. The first admissible
+level must have full-column-rank E*Z, conditioned inverse, and validated closure.
+q(t)=C^+d(t), y=Z*z+q(t), and
+  z'=(E*Z)^+ [A*Z*z+A*q+b-E*q'].
+Compiler-generated time derivatives through order3 provide q/q'. Finite dynamics
+use the existing native IDAS BDF driver with automatic exact reduced Jacobian F;
+no finite difference replaces that integration Jacobian. A purely algebraic
+descriptor reconstructs every requested y/yp from time jets without a false ODE.
+
+Exact binary64 rational ranks of E and the block coefficient pencils must agree
+with the numerical ranks. In particular a tiny nonsingular mass coefficient is
+never silently discarded as an algebraic constraint. Rank disagreement,
+ill-conditioning, failed closure, singular pencils or index>maximum_index reject
+the request; source data are not changed. Exact rank guards are bounded to200000
+elimination updates per matrix and65536-bit numerator/denominator sizes. Computed
+floating matrices intended to be singular may therefore need reformulation as
+their actual binary64 coefficients, rather than an unverified rank declaration.
+Numerical nullspaces/reconstruction remain conditioned floating calculations.
+
+E/A are scaled by a common nonzero maximum coefficient to avoid avoidable overflow.
+Every retained reconstructed sample checks the original scaled equation. Reports
+include operator_scale and maximum_scaled_residual; this is not an unscaled norm
+in a different physical unit. User models should be nondimensionalized/scaled when
+their resolved subspaces cannot meet the specified numerical condition contract.
+
+Consistent initials and sensitivities
+initialization="consistent" gives the nearest Euclidean initial point on the
+resolved affine consistency manifold. It preserves free coordinates in that
+Euclidean basis, not arbitrary user-selected components after coordinate changes.
+"check" rejects a supplied point whose correction exceeds atol+rtol*scale.
+consistent_derivative is reconstructed from all hidden constraints and the reduced
+ODE, including the required native time jets; it is not guessed as zero.
+
+Optional sensitivity_parameters selects at most8 fixed forcing coordinates. Each
+bounded native parameter probe recomputes the consistency projection, y0/yp0,
+time-jet forcing and entire reduced solve. A second-order centered/one-sided native
+finite-difference stencil stays inside explicit parameter bounds. Thus derivatives
+through consistent initial values are retained. They are explicitly labelled
+bounded_native_finite_difference_of_consistent_reduction. An index3 analytic yp
+parameter derivative would require a mixed fourth derivative; AD3 is not relabelled
+as that unavailable analytic result. E/A and supplied unprojected y0 are held fixed
+during these parameter sensitivities. Time/parameter branch smoothness is the
+model's responsibility; arbitrary nonsmooth/higher-index sensitivity proofs are
+not implied. No user callback executes interpretively during probes.
+
+Native callback preparation
+AD2 and, when maximum_index=3, AD3 versions share the ordinary structural cache.
+The third-order kernel is not required when an explicit maximum_index<=2 applies.
+First compilation is excluded from Studio tic/toc through the existing compiler
+timing hook. Native body hashes retain explicit multiplication grouping and full
+immutable algebra descriptors if those occur in the forcing expression.
+
+Results
+t,values,derivatives (sample rows/full real coordinate columns),consistent_initial,
+consistent_derivative,free_basis,constraint_projector,reduced_matrix,dimension,
+index,differential_dimension,rank_mass,condition,operator_scale,closure_residual,
+initial_correction_norm,maximum_scaled_residual,steps,forcing_evaluations,
+native_evaluations,jacobian_evaluations,elapsed_seconds,native_operations,status,
+method,jacobian,initialization,index_contract,cache_hit,cache_key,forcing_cache_key,
+third_cache_key. Padded free_basis/reduced_matrix are NxN; only the first
+differential_dimension columns/rows are active. All other original coefficients
+remain in values/derivatives. Jacobian is analytic_reduced_matrix.
+
+Sensitivity fields: sensitivities,sensitivity_parameters,initial_parameter_jacobian,
+initial_derivative_parameter_jacobian,sensitivity_solves,sensitivity_steps,
+sensitivity_method. Sensitivity sample columns are direction-major then full state;
+initial Jacobians have state rows/selected-parameter columns. Empty selections
+retain typed empty arrays. Underlying solves/probes honor the shared CPU reservation,
+cancellation/wall/work/sample limits; this adapter currently executes serially and
+reports threads_used1. Events, nonlinear index reduction, arbitrary state-dependent
+singular operators and arbitrary-order analytic mixed jets remain separate APIs.
+
+Examples: examples/higher-index-descriptor-systems/*.p. Independent manufactured
+kernel acceptance covers index1/2/3 with finite dynamics, pure algebraic blocks,
+mixed integer coordinate/equation bases and full y/yp sample values.
+
+Reduction analyses are retained in a bounded64-entry immutable native cache keyed
+by exact E/A bytes and rank/condition/closure settings. Changing only forcing
+parameters reuses these decompositions; reduction_cache_hit reports this separately
+from native function compilation. Parameter probes share the call's total time,
+step and forcing-evaluation budgets. elapsed_seconds includes these probes;
+primary_elapsed_seconds records the primary solve alone.
+
+Retained derivatives evaluate the exact native reduced vector field at retained
+states plus the algebraic time jets, matching Studio's ODE sample derivative
+convention. Raw IDAS interpolation derivatives can differ at output times within
+interpolation error even when integration is accurate. That discrepancy is retained
+as maximum_reduced_interpolation_residual; the original descriptor residual guard
+is unchanged and is applied to the reconstructed consistent derivative.

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "name": "JKQTMathText",
+  "version": "5.0.0",
+  "commit": "9e9f0af8b140192e3de7ff866a0013e7da5e1e93",
+  "url": "https://codeload.github.com/jkriege2/JKQtPlotter/zip/9e9f0af8b140192e3de7ff866a0013e7da5e1e93",
+  "sha256": "11d8b59cf50a88ec4a2fdef256c292cc185350c1c15e325bda489dd3d8543399",
+  "license": "LGPL-2.1-or-later",
+  "font_license": "OFL-1.1 (bundled XITS)",
+  "components": ["JKQTCommon6", "JKQTMathText6"]
+}

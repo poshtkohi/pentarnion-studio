@@ -1,0 +1,175 @@
+PENTARNION STUDIO DESKTOP GUIDE
+GUI rebuild, 31 October 2026
+
+This guide describes the staged desktop implementation. Build, test, platform
+and deployment results belong in docs/VALIDATION.md; they are not implied by this guide.
+The scientific language, algebra conventions, solvers and cached native callback
+interfaces remain the existing Pentarnion engine. Changing the desktop layout
+does not run a script or change an equation.
+
+INTERFACE AND DOCUMENTS
+
+Choose View > Interface > Classic or Ribbon. Both presentations use the same
+commands, shortcuts and enabled states. Ribbon pages group Home, Compute, Data,
+Figures, View and Help commands. View > Default View restores the desktop
+panel arrangement without replacing source documents or scientific data.
+
+The project tree, source workspace, Command Window, figures and optional Copilot
+remain parts of one Studio desktop. Panels can be arranged and hidden through
+View. Source editing retains its existing syntax colors, find/replace, safe
+saves, Run controls and diagnostics. Scientific execution is still explicit;
+the Command Window shows execution state and accepts Ctrl+C cancellation.
+
+Ctrl+F opens a modeless, movable Find/Replace panel on screen. It stays available
+while the editor remains usable; reopening it focuses the same panel. Searches
+highlight the current match and offer navigation/replacement without a modal
+dialog. Editor vertical and horizontal scrollbars use the narrow 9-pixel style.
+
+FIGURES
+
+Each figure retains its number, name, subplots, labels and view state. Use the
+figure controls to switch between Tabs, Tile in Studio and Tile on Desktop;
+individual figures can be undocked and docked again. Tile controls offer a visual
+grid picker and drawn layouts. Tile plots arranges subplots inside a figure.
+Dividers resize tiles; saved layouts store arrangement rather than numerical
+results. Rearranging a figure does not rerun its source.
+
+Click a figure or one of its subplots to select it. Following GTG, the selected
+figure has a persistent two-pixel MATLAB-blue perimeter; its active subplot has
+a one-pixel perimeter in the same colour. Moving the mouse away retains the
+selection. Each figure remembers its active subplot. These borders are view
+decorations and do not rebuild plot data, cameras or scientific exports.
+Resize handles follow the settled grid and remain within the actual gutters,
+including around plots that span several cells.
+
+Drag a whole figure's title or document tab onto another figure. A translucent
+preview identifies the destination: the center tabs the figures together;
+the left, right, top and bottom edges split the destination cell into two
+equal halves. Release to apply the preview, or press Escape to cancel. This
+also works on figures already arranged by Tile in Studio: retained figure pages
+move into the docking host without reconstructing their scientific data.
+Dragging a tiled figure outside the figure cells floats that figure. Arrange
+and the figure title/tab context menu provide explicit split/tab commands too.
+
+Individual floating figures and the entire floating Figures pane use ordinary
+application-window frames, with minimize, maximize/restore and Close controls.
+Their Windows taskbar role is independent of tool palettes; redocking restores
+the original compact pane header. The same plot views, camera and labels remain
+attached when moving between these containers. Actual native desktop frame and
+taskbar acceptance is recorded separately in docs/VALIDATION.md.
+
+Startup restores saved dock layouts before applying panel preferences. Dock
+signals are held while Qt reconstructs the layout; floating-window frame and
+title changes are queued until that reconstruction returns. Existing settings,
+source files and recovery snapshots are retained.
+Each window restores only its own panels and toolbars. Restoring the outer
+layout leaves the inner workspace's panels with their existing owner; old outer
+placeholders cannot claim them. Default View uses the same ownership boundary.
+
+Close all in the figure toolbar or title/tab context menu closes every figure,
+including floating ones. This clears figure views only: scientific workspace
+variables, accepted results and source documents remain available. The existing
+language command close("all"); retains its meaning. Closing source documents
+uses the separate document Close All action and its unsaved-change checks.
+
+Plot tools provide zoom, pan, 3D rotation, reset/fit, stored-sample markers and
+multiple removable data tips. Export Image saves a figure; each subplot's Save
+control saves that subplot. Existing PNG/JPEG, SVG and vector PDF export remain
+available through the figure export controls.
+
+Onscreen plots use a CPU raster path. The GUI captures detached geometry,
+camera and annotation data; one rendering worker paints images. Resize requests
+are delayed/coalesced, stale frames are rejected, and a previous image remains
+visible while a replacement is prepared. The raster geometry path uses depth
+and subpixel coverage for opaque geometry, plus depth-ordered transparent
+fragments. It has explicit pixel, work and storage limits and cancellation.
+This display path does not create an OpenGL context or read a GPU framebuffer.
+SVG/PDF export retains the existing vector representation; intersecting 3D
+surfaces in that vector representation use painter ordering rather than a
+per-pixel depth buffer.
+
+LOCAL HELP AND OPTIONAL COPILOT
+
+The Help search box works without an API key or network connection. Use F1 for
+the selected word/current editor word, or Ctrl+Shift+Space to focus Help search.
+Search covers built-in topics and bounded local language specifications, guides
+and examples. Documentation indexing starts on demand and does not execute
+examples. The existing Command Window help commands remain available.
+
+Help > Language Reference opens the formatted local Help browser. Topic pages
+use readable headings, syntax-colored code examples and linked references;
+search and topic navigation remain offline. The editor's F1 and header search
+lead into that same help system. See STUDIO_HELP_AND_EDITOR.txt for details.
+
+Open Copilot through View or the Help ribbon page. It is optional and hidden
+initially. Configure an OpenAI, Azure OpenAI or Gemini connection with your own
+endpoint, model ID and key. No model ID is guessed. Keys are session-only by
+default; optional persistence uses Windows Credential Manager where available,
+with separate Pentarnion identities. Other platforms keep keys in the session.
+The ordinary preferences file does not contain plaintext API keys.
+
+An empty Copilot opens with a local welcome and example questions, even before
+connection setup. Shuffle or choose an example to fill the question box; these
+actions do not send it. New Chat returns to the welcome. Changing the connection
+starts a new conversation while preserving an unsent question. Internal reference
+IDs are hidden in assistant prose; readable source titles remain available below
+the response. Original source/code and reference provenance are retained.
+
+Choose the source-sharing mode explicitly: None, selection or current source.
+None is the default. Preview the context before Send; local reference inclusion
+and explicitly attached text files are visible there. Sending a question shares
+the chosen context and bounded conversation with the configured provider.
+Opening Studio, configuring Copilot, previewing context or searching Help does
+not itself send a provider request. Cancel stops an active response.
+
+Generated source is a proposal. Open its Review/Insert action, inspect the
+complete before/after document and choose the replacement or insertion target.
+Validate checks the existing Pentarnion syntax/type rules without evaluating
+source, invoking solvers or compiling native callbacks. Apply is a separate,
+explicit action. A changed source, selection, algebra/project identity or
+imported dependency invalidates the earlier review. Named source files use the
+host's safe-save path; a failed save rolls the editor change back. Run remains
+a separate user action after applying a proposal.
+
+WORKBOOKS AND DELIMITED DATA
+
+Choose Data > Open workbook or data (Ctrl+Shift+D), or Data > New workbook.
+Workbook pages sit beside the source workspace. XLSX, UTF-8 CSV and TSV provide
+worksheet selection, cell/formula-bar edits, rectangular copy/paste, undo/redo,
+Save and Save As. CSV/TSV export contains the active worksheet only. Workbook
+edits do not automatically import values into the scientific workspace or run
+model code.
+
+Studio stores XLSX formulas and can show their cached values; it does not
+recalculate formulas. Cached results can therefore be stale after editing input
+cells. XLSX saves request recalculation by a spreadsheet application. A changed
+formula has no newly calculated value until such an application recalculates it.
+CSV/TSV cells are data, without an Excel formula engine.
+
+XLSX editing preserves unedited package parts and existing cell style metadata;
+the table does not reproduce all Excel formatting. Shared/array/data-table
+formula ranges are protected from partial edits. Legacy XLS and digitally signed
+packages are unsupported; macros and external links are not executed. Loading,
+text, cell count and undo history are bounded. Saves check external file changes
+and use atomic replacement; failures retain the original file and pending edits.
+
+ABOUT
+
+Help > About opens on Authors, followed by Overview, Libraries, Licences and
+Build. The logo sits beside an illustrated algebra banner. Author affiliations
+and blue clickable email addresses remain available in their tab; the author
+names include Dr. Email links open the user's mail application only when
+activated. The complete five-basis illustration scales inside its banner area.
+The copyright footer uses
+the current year and Pentranion Team; the Qt 6 and third-party licence notice
+is inside Licences. The previous long capability paragraph is absent.
+The pentarnion.com link sits beside the copyright, as in GTG. The same link is
+immediately left of the parallel-worker icon in the status bar. Mouse or keyboard
+activation opens https://pentarnion.com in the default browser; Studio does not
+contact the website merely by displaying either link.
+
+Further component details:
+  GUI_COMPONENT_PROVENANCE.txt
+  STUDIO_HELP_AND_EDITOR.txt
+  ../src/ide/workbook/README.txt
+  ../src/ide/assistant/PROVENANCE.txt

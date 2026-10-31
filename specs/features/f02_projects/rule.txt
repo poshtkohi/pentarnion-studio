@@ -1,0 +1,51 @@
+FEATURE F02: Project creation and file tree
+Version: 0.2
+Status: project lifecycle and explicit interpreter-profile upgrade implemented;
+        verification and limits in docs/VALIDATION.md
+Implementation stage: S1
+Dependencies: F01
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+INPUT/OUTPUT
+Input: explicit user-selected project parent/name or .pprj manifest.
+Output: validated Project model, source-file tree and effective default algebra.
+Manifest schema example: fixtures/project/example_project.pprj.
+
+REQUIRED BEHAVIOUR
+F02-R1: One active project per window. Create a fresh directory, project.pprj
+         and main.p; refuse accidental reuse/overwrite of a nonempty directory.
+F02-R2: Manifest fields: schema_version=1, name, language_version="0.2" for new
+         projects, algebra={id:"A_gamma_v1",gamma:<finite 0..1>},
+         sources:[relative paths]. Existing 0.1 profiles remain editable and
+         checkable; script execution requires an explicit metadata-only upgrade.
+F02-R3: New/open/rename source files and create subfolders; paths are project-
+         relative and must not traverse outside the project root. Validate
+         canonical paths, junctions/symlinks and Windows reserved filenames.
+F02-R4: Renaming an open file updates its document identity and manifest only
+         after successful filesystem rename; rollback on failure. No broken tabs.
+F02-R5: Removal from the project list is nondestructive by default. File deletion
+         is a separate confirmed action; never recursive-delete the project.
+F02-R6: Unknown schema/language/algebra versions are refused for normal editing
+         with a clear diagnostic; do not silently migrate/reinterpret sources.
+F02-R7: Validate missing files, duplicate/case-colliding source entries and
+         malformed JSON. Opening a project triggers no external command.
+F02-R8: Opening/checking projects never executes or concatenates sources. File
+         runs have independent scopes after validation; completed values are
+         available to the Command Window as specified by F21.
+F02-R9: Rename Source/F2 edits the source filename in the existing tree. Select
+         the basename, preserve .p for extension-free replacements, Enter commits
+         safely and Escape cancels. Do not open a rename input dialog. Collisions,
+         invalid paths/names and late project changes reject without losing tabs
+         or edits; failure feedback is nonmodal. Folders/project roots do not use
+         this source rename editor. See specs/studio_workflow_v0_2.txt.
+
+ACCEPTANCE
+F02-T1: New project, new nested .p, rename, save, reopen; files remain identical.
+F02-T2: Name containing spaces/Unicode works; ../outside.p is rejected.
+F02-T3: Malformed manifest and schema 999 leave the current project intact.
+F02-T4: Dirty-document cancellation aborts project switch without losing data.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

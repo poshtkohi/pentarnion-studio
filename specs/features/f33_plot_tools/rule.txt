@@ -1,0 +1,16 @@
+FEATURE F33: Interactive subplot controls and anti-aliased curves
+Version: GUI 0.2 extension
+Authority: language.txt L28; user requests, 26 October 2026
+Status: implemented; actual validation recorded in docs/VALIDATION.md
+
+F33-R1: Anti-alias raster line edges while preserving original numerical samples.
+F33-R2: Provide per-subplot icon controls for zoom in/out, pan, fit/reset, 3D rotation,
+data cursor and actual sample markers, with visible tooltips/accessibility names.
+F33-R3: Zoom/pan/cursor conversions use the actual framebuffer and data viewport;
+refresh 3D clipping after camera movement. Keep view state independent per panel.
+F33-R4: Data tips snap to visible stored samples and report original coordinates,
+label and 1-based index. Invalid/offscreen clicks never fabricate a sample.
+F33-R5: Export all native plot panels without toolbar chrome; retain plot labels.
+Acceptance: figure_lifecycle, plot_interaction native input/picking/export tests,
+actual first-paper density check and gui_lifecycle native capture.
+No splines/averaging/sample thinning or new language syntax is introduced.

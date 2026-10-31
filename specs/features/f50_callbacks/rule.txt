@@ -1,0 +1,17 @@
+F50: Typed callbacks and snapshot captures
+Authorized extension, 26 October 2026. Language 0.2.
+
+Support callback f=@named_function, scalar mathematical builtin handles and
+explicitly typed @(real x)=>expression anonymous functions. Anonymous captures
+snapshot referenced outer values, retaining immutable array aliases. Named handles
+retain function resolution, not implicit numerical globals. Callback parameters
+are supported; document contextual/default real result typing for generic handles.
+Retain bounded recursion, cancellation, call-site diagnostics and session lifetime.
+Captures count toward retained-data bounds and must not create ownership cycles.
+No concurrent worker calls into interpreter callbacks.
+
+Authority: language.txt L39 and specs/foundations_v0_2.txt section 1.
+Acceptance: foundation_language_tests; examples/language-foundations/project.pprj. Verify
+capture survives changing/clearing its original value and later submissions.
+Out of scope: mutable closures, automatic native callback compilation, arbitrary
+parallel interpreter callbacks. Actual platform/test status: docs/VALIDATION.md.

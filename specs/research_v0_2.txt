@@ -1,0 +1,614 @@
+PENTARNION LANGUAGE0.2 — RESEARCH NUMERICS AND STUDIO COMMANDS
+26 October2026 | canonical additions for WORK_TO_DO categories9-12
+
+AUTHORITY AND SCOPE
+This additive specification, language.txt L56-L63 and feature rulesF68-F75
+supersede earlier deferred statements only for the functionality specified here.
+Existing0.1 identifier compatibility and0.2 checked language semantics remain.
+Preserve A_gamma_v1, immutable contexts, coefficient order(1,i,j,k,ell), original
+operand order and explicit grouping. The numerical core remains Qt/VTK-free.
+Earlier specs remain authoritative for unchanged syntax and resource rules.
+
+Implemented bounded scope: Ceres fitting, NLopt optimization, native ODE events/
+dense output/trajectory sensitivities/terminal adjoints, compiled discrete maps,
+native compiler planning and Command Window/help/find improvements. This does not
+add a symbolic CAS, arbitrary native .p JIT, proof of chaos/global optimum/parameter
+uniqueness, PDE/geometry package or no-scripting Map Explorer. Future13+ remain
+separate; mathematical geometry remains item15 and Map Explorer remains item20.
+
+VALIDATION STATUS
+This file defines source contracts, not deployment evidence. docs/VALIDATION.md and the
+release validation folder record actual staged/installed/Code::Blocks/native GUI
+acceptance and dependency packaging. Native Linux execution/graphics remain
+unverified until recorded. CMake and both Code::Blocks wrappers share the graph.
+No project licence or public repository is selected by this implementation.
+
+CATEGORY 9 - NATIVE CERES FITTING CONTRACT
+26 October 2026 - implementation contract; parent runs final installed acceptance.
+
+API
+  record r=lsqfit(residualFunction,initial[,options]);
+  record r=lsqnonlin(residualFunction,initial[,options]); % alias
+  record r=curvefit(model,initialParameters,xdata,ydata[,options]);
+  record r=odefit(model,initialStates,times,observations,options);
+
+Every user residual/model body executes in a structurally cached native DLL/SO
+through native_functions::Callback. No interpreted per-evaluation fallback.
+Declarations use the established native scalar/Pentarnion subset: real/Pentarnion
+arguments, one real/Pentarnion output or a typed tuple (at most16 declared outputs).
+Arrays, imports, IO, arbitrary helper calls and implicit mutable captures are not
+supported inside these native callback bodies. Unsupported constructs diagnose.
+Unknowns can be a scalar/Pentarnion, a typed numeric tuple, or a flat real vector
+containing complete argument coordinates. Fixed trailing values use
+options(parameters=options(name=value,...)). Five coordinates per Pentarnion;
+original binary products and grouping are retained. A scalar real initial value
+for a declared Pentarnion unknown promotes to the whole algebra element.
+
+curvefit requires a trailing real independent-variable argument after the fitted
+and fixed parameters. xdata is a real vector; observations have one sample per row
+and all output real coordinates in columns, or matching whole-Pentarnion columns.
+A scalar-output model also accepts row-vector ydata. The independent variable
+comes from xdata and may not also be supplied in fixed parameters. This adapter
+supports arbitrarily sampled data within the bounded residual/Jacobian storage;
+it does not force large datasets into the16-output native tuple limit. Data changes
+reuse the compiled model. r.fitted/r.observations are real coordinate matrices and
+r.xdata is a real column vector.
+
+odefit: bind every model parameter exactly once in options(parameters=options(...)).
+fit_parameters defaults to "all"; accepts a declared name, tuple of names, "none",
+or one-based flattened real parameter-coordinate indices. Naming a Pentarnion
+parameter selects its five coordinates. fit_initial Integer0/1 selects no/all
+initial-state coordinates; a real index vector selects individual coordinates.
+Unknown order: selected parameters in selector order, then selected initial states.
+Fit bounds/scales/starts use exactly that order. r.x is a real column vector.
+r.fit_coordinates rows are [1,param_coordinate] or [2,initial_coordinate], one-based.
+r.parameters is a typed record of all final model parameter values; r.initial
+preserves the supplied scalar/tuple/vector state representation, with real promotion.
+Observations contain every state coordinate per sample; weights can exclude a
+coordinate by zero weight. Times are strictly monotone, including backward order.
+t0 defaults to first observation time; an earlier t0 in the integration direction
+is allowed. Every observation is requested from CVODES at its exact time. Matching
+is O(number of observations), including an inserted initial t0 prefix.
+
+odefit uses CVODES bdf(default)/adams through integrator, rtol(default1e-9),
+atol(default1e-11), t0, max_steps, maximum_step, initial_step, minimum_step,
+maximum_order and optional constant nonsingular real mass matrix. Compiler-native
+J_x and J_theta drive actual forward trajectory sensitivity equations, including
+unit seeds for selected initial conditions. sensitivity_method selects CVODES
+simultaneous(default) or staggered. It is not differentiation through an opaque
+double-valued solver. jacobian="finite_difference" explicitly differences complete
+native ODE solves instead. r.sensitivity_method reports cvodes_forward or
+finite_difference_native_solves. r.fitted/times/observations retain original samples;
+r.ode_cache_hit/key are separate from the generated parameter-partial callback cache.
+Events/resets are not part of this initial ODE fitting adapter. Event-time fitting
+requires a future, explicitly defined event/sensitivity adapter.
+
+COMMON OPTIONS
+method="lm"(default)/"levenberg_marquardt" alias/"dogleg";
+jacobian="analytic"(default)/"ad"/"automatic"/"finite_difference";
+loss="none"(default)/"linear" alias/"huber"/"cauchy"/"soft_l1";
+loss_scale>0(default1); weights finite nonnegative per residual or scalar broadcast;
+lower/upper physical bounds (strict lower<upper), parameter_scale finite positive;
+max_iterations(default200,<=1000000), max_evaluations(default10000,<=10000000),
+max_wall_seconds(default60)>0, ftol/gtol/xtol(default1e-10)>0;
+covariance=0(default)/1; noise_variance=-1(default estimate) or known nonnegative;
+threads=0..64(default session), starts matrix of at most255 additional candidate
+rows, or multistart=1..256 with finite bounds and local seed=0..2^32-1(default0);
+history_limit>=0, capped by configured per-matrix budget/5 and native100000 rows.
+starts and multistart are mutually exclusive; the original initial point is included.
+Multistart is serial around Ceres; all starts share iteration/evaluation/time limits.
+Runtime parameter, data, weight, solver, bound and start changes do not change bodies.
+
+curvefit/odefit additionally accept observation_weights (per sample or scalar) and
+coefficient_weights (per output/state coordinate or scalar). They multiply weights.
+Each component must individually be nonnegative. Robust losses apply independently
+to each sqrt(weight)*residual coordinate. This is explicit coefficient-space fitting,
+not an invented whole-algebra rotationally invariant norm or associative solve.
+
+Finite differences use compiled values only and central or one-sided three-point
+stencils that remain inside supplied bounds. If two distinct representable probes
+cannot be formed, diagnose and recommend analytic derivatives/wider bounds.
+Probes can still cross a mathematical domain boundary not encoded in bounds; use
+analytic derivatives or suitable bounds for that domain. No silent clipping occurs.
+
+Ceres uses DENSE_QR/Eigen and LM or traditional Dogleg. Bound-face projection can
+stall unconstrained coordinates; a bounded active-set refinement uses Ceres exact
+SubsetManifold solves, recomputes/releases active coordinates, and shares all limits.
+Its refinement cap is a nonconverged result. All matrix/Pentarnion operand ordering
+is preserved in native models. No custom interpreted optimizer or FD fallback.
+
+REPORT SCHEMA
+x (same numeric shape/type as initial for lsqfit/curvefit; flat column for odefit);
+residuals (unweighted physical residual column), jacobian (unweighted real physical
+coordinate Jacobian, empty when unavailable), jacobian_available;
+cost=0.5*sum(rho(weight*r^2)), initial_cost, residual_norm,weighted_residual_norm;
+gradient_norm (robust weighted physical projected gradient infinity norm),rank,rcond;
+covariance,covariance_valid,covariance_assumption,noise_variance;
+iterations,evaluations,jacobian_evaluations,native_evaluations,starts_completed,best_start;
+converged,status,message,flag,elapsed_seconds,method,loss,jacobian_method,backend="ceres";
+history rows [start_number,iteration,cost,gradient_max_norm,step_norm];
+cache_hit,cache_key,threads_requested,backend_threads,threads_used,seed.
+curvefit adds xdata,fitted,observations. odefit adds parameters,initial,fitted,times,
+observations,fit_coordinates,ode_cache_hit,ode_cache_key,sensitivity_method.
+
+evaluations counts complete callback-vector requests (including derivative requests),
+native_evaluations counts actual generated body invocations. ODE fitting additionally
+counts compiled ODE RHS/Jacobian calls and native parameter-partial evaluations.
+Histories are bounded and stop retaining rows at history_limit; numerical solving
+continues within its separate budget. Zero history_limit disables retained history.
+Convergence is backend tolerance termination, never proof of unique/global optimum.
+An exhausted budget returns a finite best tested candidate with converged=0;
+cancellation/native domain errors are diagnostics, never success reports.
+
+Covariance is opt-in. It requires convergence, linear loss, full column rank,
+inactive bounds and finite native J. Known noise_variance permits a square
+full-rank problem. Estimating variance also requires positive weighted residual
+degrees of freedom: sigma^2=||sqrt(W)r||^2/(m_positive-rank). The formula is a local
+linear/Gaussian independent-error approximation after sqrt(weights) whitening;
+it does not establish statistical confidence without those assumptions or prove
+parameter uniqueness. Rank/rcond use the physical weighted real-coordinate J.
+Robust/bound-active/rank-deficient cases return empty covariance and valid=0,
+not falsely finite uncertainty. Stable scaled SVD factors avoid overflow/underflow
+from singular-value squares, including sigma_J=1e+/-200 test fixtures.
+
+THREADS AND MODULES
+Lazy Qt/VTK-free penta_fit DLL/SO uses project-local pinned Ceres2.2.0,
+Eigen backend, MINIGLOG, no CUDA/SuiteSparse/LAPACK/gflags dependency.
+Loader reserves the shared host CPU budget before invoking Ceres. Nested numerical
+workers receive one inner slot; explicit requests are maxima and do not modify
+the session. Automatic modest fits (n*m<32768) select one backend worker; other
+requests are capped by residual-block count. backend_threads is configured Ceres
+limit; threads_used is the maximum distinct residual-block worker IDs observed
+within one Ceres solve, across starts/refinements. It is not a measured BLAS count
+or a claim that all native callback bodies ran concurrently. Whole-vector native
+residual/Jacobian evaluations are memoized under a per-fit lock.
+
+LIMITS / ACCEPTANCE
+Native C ABI:1..128 unknown coordinates,1..65536 residual coordinates,<=1048576 J
+entries,<=256 starts, native history<=100000 rows. Language additionally preflights
+the returned J against ExecutionOptions.maxMatrixElements(default100000), and
+caps default history to that same output-array budget (five columns).
+Runnable project: examples/least-squares/project.pprj.
+Primary docs: https://ceres-solver.org/nnls_solving.html
+https://ceres-solver.org/nnls_covariance.html
+
+
+CATEGORY 10 - NATIVE NLOPT OPTIMIZATION CONTRACT
+26 October 2026 - implementation contract; parent runs final installed acceptance.
+
+  record r=minimize(objective,initial[,options]);
+
+The objective returns one real scalar and accepts real/Pentarnion scalar unknowns.
+Initial is a scalar/Pentarnion, typed numeric tuple, or flat real vector containing
+complete argument coordinates. r.x preserves that representation, with real/Pent
+promotion according to the native argument declaration. All user objective and
+constraint bodies compile to cached native DLL/SO code through the native-derivatives
+Callback API; gradients are compiler-generated native AD or explicit native FD.
+No interpreted per-evaluation fallback. Native bodies retain the documented
+scalar/Pentarnion subset; arrays, IO, arbitrary helper calls and captures diagnose.
+
+OPTIONS
+algorithm="lbfgs" default; also bobyqa,nelder_mead,slsqp,cobyla,direct,crs2,isres;
+jacobian="analytic" default, or ad/automatic/finite_difference;
+parameters=typed record of trailing fixed objective arguments;
+lower/upper physical real-coordinate bounds; parameter_scale positive finite;
+inequality=native function (one/multiple real outputs g<=0),
+equality=native function (one/multiple real outputs h==0),
+inequality_parameters/equality_parameters=their independent fixed-argument records;
+constraint_tolerance(default1e-8)>=0;
+ftol(default1e-10)/ftol_abs(default1e-12) for LBFGS/SLSQP, otherwise disabled0;
+xtol/xtol_abs(default1e-10/1e-12), all finite nonnegative;
+max_evaluations(default10000,1..10000000), max_wall_seconds(default60)>0;
+history_limit>=0 (native<=100000 rows, language<=configured maxMatrixElements/3),
+seed=0..2^32-1(default0), population optional positive<=1000000,
+initial_step optional nonnegative, threads0..64(default session).
+population applies only to crs2/isres; initial_step only to bobyqa,nelder_mead
+and cobyla. Unsupported algorithm-specific options diagnose rather than being ignored.
+Unknown options and invalid/broadcast-mismatched dimensions diagnose.
+
+SLSQP,COBYLA,ISRES support real nonlinear inequalities and equalities. Other
+algorithms explicitly reject nonlinear constraints. Constraint callback unknowns
+use the same flattened physical coordinate count as the objective; project
+Pentarnion results explicitly into real constraints. Objective and constraint
+values must be finite. Every global algorithm (direct,crs2,isres) requires finite
+bounds on every coordinate. BOBYQA requires at least2 unknown coordinates.
+Equal lower/upper bounds are rejected: hold a value fixed via parameters instead.
+
+Finite-difference gradients evaluate native values with bounds-aware central or
+one-sided three-point stencils, never beyond supplied bounds. Bounds do not
+automatically describe all mathematical domains; native domain errors remain
+diagnostics. Nonrepresentable finite-difference neighborhoods diagnose. Analytic
+AD is recommended for smooth models and avoids numerical step selection.
+
+Derivative-free algorithms default to parameter tolerance and evaluation/time
+budgets. Function tolerances are opt-in because simplex vertices can have equal
+function values away from a minimizer. Users can explicitly choose ftol/ftol_abs.
+No hidden analytic-gradient fallback changes a chosen derivative-free algorithm.
+
+REPORT
+x,objective,constraint_violation,feasible,converged,status,message,flag;
+evaluations,objective_evaluations,constraint_evaluations,gradient_evaluations,
+native_evaluations,history,elapsed_seconds,algorithm,jacobian_method,seed;
+backend="nlopt",cache_hit,cache_key,threads_requested,threads_used=1.
+history rows are [total_callback_request_count,objective,maximum_constraint_violation].
+Actual generated body evaluations (AD seeds/FD probes included) are separate from
+complete callback requests. max_evaluations strictly caps the latter across both
+objective and nonlinear constraints, not only NLopt's objective counter. A native
+callback can be more expensive than one request, so actual native count is reported.
+Histories stop retaining rows at history_limit; zero disables history storage.
+
+Each objective candidate receives independent native constraint evaluation before
+being considered feasible. Final r.x is the best feasible tested candidate; when
+none is feasible, return the lowest-violation tested candidate with feasible=0.
+Constraint convention is max(0,g_i,abs(h_j)); feasible requires it<=tolerance.
+converged requires a backend convergence/stop-value/function/parameter-tolerance
+flag AND independently checked feasibility. MAXEVAL/MAXTIME, roundoff limitation,
+native failure and cancellation are not convergence. A finite global-search run
+is never a certificate of the global minimum. Reports preserve budget termination
+and finite candidate information; domain/cancellation errors remain diagnostics.
+
+Cache identity is the native function structure, toolchain and ABI. Initials,
+parameters, bounds, seed, algorithm, data, budgets and derivative mode are runtime
+values and do not rebuild the body. Combined cache_key lists objective and any
+constraint keys; cache_hit is true only when all requested callback bodies hit.
+Root's common native compilation planner batches changed translation units with
+the shared compiler-job budget; this module does not implement a second compiler.
+
+Lazy Qt/VTK-free penta_opt DLL/SO links project-local pinned NLopt2.11.0.
+Current selected algorithms are serial; threads is an upper bound and leaves the
+session unchanged. The loader reserves the common host CPU budget. Native NLopt's
+global RNG seed/solver calls are protected by one module mutex so repeated identical
+seeded requests are reproducible; no competing independent worker pool is created.
+Larger sparse/PDE constrained optimizer dependencies are deliberately not installed
+without a concrete workload; that roadmap evaluation remains future.
+
+Native ABI limits:1..128 unknowns,<=128 outputs for each constraint family,
+<=100000 history rows,<=10000000 callback requests. Language output history uses
+the configured per-matrix element budget(default100000) divided by3.
+Runnable project: examples/optimization/project.pprj.
+Primary docs: https://nlopt.readthedocs.io/en/latest/NLopt_Reference/
+https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms/
+
+
+ADVANCED ODE AND SENSITIVITY CONTRACT (F70-F71)
+
+Every model/event/terminal objective/parameter-partials callback is native cached
+DLL/SO code. Event and terminal-objective signatures are
+  (real time, declared states..., declared model parameters...)
+with matching scalar real/Pentarnion types. Events return one real value or a
+real tuple of at most16 values. The event function must be continuous around a
+crossing; rootfinding detects crossings, not every grazing/tangent zero.
+Changing values, initial conditions, time interval, method, tolerances, event
+flags or sensitivity selectors reuses the unchanged structural kernel.
+
+Named odesolve options added:
+  events=callback, event_direction=-1/0/+1 or a matching vector,
+  event_terminal=0/1 or a matching vector;
+  sensitivities="none"/"parameters"/"initial"/"all",
+  sensitivity_parameters=[...] (one-based flattened parameter coordinates),
+  sensitivity_initial=S0 (n-by-ns real matrix),
+  sensitivity_method="simultaneous"/"staggered",
+  sensitivity_error_control=0/1;
+  initial_step,max_step,min_step,max_order;
+  output_times=[...] (strictly ordered within t0,t1),
+  dense_output=0/1,max_dense_coordinates=1..8000000;
+  mass=M (constant nonsingular real n-by-n coordinate matrix).
+
+sample_step is always a positive magnitude; t1<t0 requests backward integration.
+Event directions use increasing physical time even when integrating backward.
+Terminal roots append the accurately localized root time/state to the solution;
+nonterminal roots are returned separately through odeevents(solution).
+Event callbacks are not reset/jump handlers. Discontinuous resets require a
+separate hybrid-system API rather than pretending ordinary sensitivity equations
+include event-time or jump derivatives. Forward sensitivities at events refer to
+fixed-time smooth trajectories; they are not derivatives of crossing times.
+
+odesens(s) returns a real matrix with one sample per row. Columns contain n state
+coordinates for each selected direction. Parameters precede initial directions
+for sensitivities="all". odesens(s,k) selects one direction. A Pentarnion state or
+parameter has five explicit real coordinates in(1,i,j,k,ell) order.
+CVODES BDF/Adams integrates S'=J_x*S+J_theta, with declared seeds and optional
+sensitivity error control. ERK/ESDIRK sensitivity integration is currently rejected.
+No derivative passes through an opaque double-valued solve by optimizer AD.
+
+odeadjoint(model,initial,options(parameters=...,objective=callback,t0=...,t1=...))
+uses actual CVODES checkpoint/replay and backward adjoint quadrature for one real
+terminal objective. It returns objective,parameter_gradient,initial_gradient,
+backward_steps,checkpoints,solution,cache_hit,cache_key. It supports BDF/Adams and
+constant nonsingular masses. The fixed terminal-time objective can depend directly
+on parameters. Running/integral objectives, event-time adjoints and jump maps are
+not silently approximated by this API.
+
+deval(s,times[,state_name]) now evaluates retained native internal-step
+interpolants. CVODES retains its native variable-order Taylor polynomial. DP5
+ERK retains a quartic Hermite polynomial; ESDIRK4 retains a cubic Hermite
+polynomial, matching the fixed tables' ARKODE q-1 interpolation degrees.
+These degrees are independent of the user output sample spacing.
+Dense segments retain the native coefficients after the integrator is freed.
+Legacy saved solutions without these coefficients retain the documented sample
+cubic Hermite path. dense_output=0 uses that path when endpoint slopes are available;
+this sample-based fallback is distinct from retained native interpolation.
+Native dense output is interpolation, with accuracy governed by method, tolerance
+and step size; it is not exact symbolic evaluation or a uniform global error bound.
+
+odewindow(s,start[,stop]) selects stored output samples in the requested absolute
+interval, following forward/backward integration order. The first sample can be
+after the start boundary. It retains matching sensitivities, event data and dense
+segments; it does not rerun the model or alter the original numerical solution.
+odestats(s) exposes actual steps/RHS/Jacobian/event/sensitivity counts, error-test
+failures, nonlinear iterations, last-step/order, timing, cache key/hit, terminal
+status, dense-segment count and sensitivity selection.
+
+Solution persistence preserves native dense coefficients, sensitivity matrices,
+event metadata and descending time order. Retained values, endpoint slopes,
+sensitivities, event data and dense coefficients share a combined32M-coordinate
+budget including time samples. The legacy ExecutionOptions.maxSolutionCoordinates
+retains its8M STATES-ONLY workspace meaning, counting solution aliases once.
+ExecutionOptions.maxRetainedSolutionCoordinates(default32M) separately bounds all
+unique retained solution buffers; SolveOptions.maxRetainedCoordinates(default32M,
+allowed1..32M) bounds the same buffers for one native solve. These include state
+values, endpoint slopes, times, sensitivity values, event times/states/indices/
+directions and native polynomial coefficients. State/sensitivity sampling retains
+its separate8M native bound; max_dense_coordinates additionally caps dense
+coefficients at8M. The new combined cap does not halve the old state capacity.
+These combined budget fields are host C++ controls, not new named .p options. Samples,
+steps, event counts, wall time and cancellation remain bounded. A mass matrix
+must be explicit, real, constant and numerically nonsingular; DAEs are rejected.
+
+
+discrete-maps IMPLEMENTATION CONTRACT — NATIVE DISCRETE DYNAMICS
+
+Source units: modules/maps_api.h,modules/maps_module.cpp; maps/map_module.hpp/.cpp;
+runtime/maps_helpers.inc; language/maps_frontend.inc; tests/runtime/map_tests.cpp.
+CMake integration: penta_maps MODULE, no Qt/VTK or algebra dependency, same module
+output/install/RPATH convention as penta_roots. Host loader linked to runtime.
+
+API:
+  record m=mapiterate(function,initial[,options]);
+  record d=mapdiagram(function,initial,"parameter",values[,options]);
+  record r=returnmap(m_or_numeric_samples[,options(component=1,lag=1)]);
+Native functions are the map definitions; no extra declaration grammar is needed.
+Real/Pentarnion scalar and tuple return signatures use generated Callback DLL/SO
+values and first derivatives. Every state update executes compiled code. Arbitrary
+interpreted callback bodies never become a fallback. Unsupported native bodies or
+nondifferentiable final Jacobians produce diagnostics. jacobian="none" explicitly
+selects values-only iteration; finite_difference explicitly differences native
+values. Bodies, ordered operands and Group nodes retain original semantics.
+
+The first supplied parameter(s) are map states, using existing native point rules:
+scalar real/Pentarnion, real-coordinate vector or typed tuple. Trailing parameters
+are provided through options(parameters=options(...)) or declared defaults. The
+real output coordinate count must equal the variable state coordinate count.
+Each Pentarnion contributes five coefficients in (1,i,j,k,ell) order. Structurally
+unchanged callbacks reuse caches when parameters, initial states and analysis or
+plot options change. Parent compiler batching handles multiple native source units.
+
+Options: iterations100,transient0,stride1,jacobian"analytic",escape_radius0 (off),
+max_evaluations1004096,max_wall_seconds60,threads=session default. jacobian may
+be analytic/ad/automatic, finite_difference or none. It is the final real D-by-D
+map derivative, not a derivative of the complete iterate with respect to x0.
+Iteration0 is the initial state. Transients count within iterations and are actually
+computed. Retain indices transient,transient+stride,... and the requested final
+index when off-stride. An escape endpoint after the transient is retained even
+off-stride. Escape before transient may return zero retained rows. No terminal
+Jacobian is evaluated after escape. Nonfinite native values remain an error.
+
+Map result fields: x (same shape/type as initial, upgraded to declared state type),
+states (N-by-D real coordinates), orbit (N-by-1 Pentarnions for one scalar
+Pentarnion; otherwise aliases states), n (N-by-1 zero-based iteration indices),
+jacobian (D-by-D or0-by-0), iterations,evaluations,jacobian_evaluations,
+native_evaluations,samples,escaped,escape_iteration,status,message,cache_hit,
+cache_key,jacobian_method,requested_threads,threads_used. Escape is a finite
+radius observation; completed samples imply no boundedness/chaos certification.
+
+mapdiagram requires a declared trailing real runtime parameter name and nonempty
+real scan values. Each scan starts at the same initial state, without continuation.
+It adds parameter (per-sample),scan_index (one-based),scan_values,final_states,
+escaped_flags,escape_iterations,parameter_name. Common states/orbit/n concatenate
+scan results in supplied parameter order. x/jacobian are for the last scan.
+escaped counts escaped scans. The cache is shared across all parameter values.
+The wall/evaluation/transition/retained-coordinate budgets apply to the full scan.
+
+returnmap pairs one selected real coordinate across a positive lag in retained
+sample order. Fields x,y,source_index,target_index,component,lag,samples. The
+indices preserve off-stride final steps. Direct row/column vectors are one series;
+real/Pentarnion matrices expose contiguous real coordinates per row. Single orbit
+records carry their actual n. Parameter diagrams are rejected to avoid pairs
+crossing independent trajectories. This is a sampled return-map tool, not an
+accurate event/Poincare crossing detector or a chaos metric.
+
+Bounds:1..128 real state coordinates; iterations0..1000000; transient0..iterations;
+stride1..1000000; at most4096 scanned real parameter values; at most1000000 aggregate
+transitions per diagram. Native ABI caps1000000 retained samples and8000000 real
+coordinates; language additionally respects configured maxMatrixElements,
+maxMatrixCoordinates,maxOperations, workspace and plot budgets before publishing.
+Cancellation and wall/host work/evaluation checks occur between native map calls.
+One native callback must also honor compiler-generated host charges/cancellation.
+Orbit/parameter scan kernels are serial and use no new worker pool. threads is a
+per-call maximum (0automatic,1..64 explicit), leaves the session default unchanged,
+and reports actual threads_used1. No parallel-speed claim is made.
+
+Examples: discrete-maps/project.pprj and main.p produce four subplots. Their numerical
+sample counts and native Pentarnion endpoint have independent expected values.
+No-code Map Explorer remains future item20, chaos metrics remain item13.
+
+
+NATIVE COMPILATION PLAN AND CACHE (F73)
+Objectives, residuals, constraints, events, terminal objectives, maps and generated
+ODE partials execute compiled native code. The established restricted typed
+numeric callback body applies. No interpreted solver fallback or general native
+.p JIT is introduced. Fixed arguments, values, solver options and data are runtime
+inputs. Ordered operands and Group nodes remain structural. Cache identity covers
+body/signature/support, toolchain and ABI. Unrelated source/data/parameter/initial/
+tolerance edits do not rebuild unchanged bodies. Body/signature/ABI/toolchain
+changes invalidate the relevant entry. Cache source/binary hashes, per-entry
+locking, atomic publication, cancellation/timeouts and load diagnostics remain.
+
+Before evaluation, NativeBuildPlan discovers statically resolvable uses, including
+scoped imported full function bodies and visible typed workspace functions. It
+deduplicates jobs and prepares independent units through bounded GCC processes.
+An ODE kernel and its generic parameter-AD adapter can be distinct units; users do
+not write their Jacobians. Identity uses full generated structure, not pointers or
+bodyless prototypes. Unsupported/unresolvable speculative preparation retains its
+ordinary call-site diagnosis and on-demand compilation if reached. Preparation
+does not execute callbacks or cause editing/opening to run scripts.
+
+At most256 candidate jobs prepare. Two or more units may use the compiler pool;
+one uses the established on-demand path. ExecutionOptions.nativeCompileJobs is a
+host execution setting:0 automatic up to4 logical-CPU/job-limited jobs;1..64 an
+explicit maximum, hard-capped at8 simultaneous compiler processes and job count.
+It is separate from threads(n). No new language setter changes compiler jobs.
+Cache hits start no compiler. Windows compiler processes remain hidden and reuse
+the existing compiler/runtime; no additional MSYS2 installation is created.
+
+compile_info() returns requested_jobs,effective_jobs,translation_units,
+compiler_attempts,cache_hits,failed_preparations,peak_preparations,
+peak_compiler_jobs,compilation_seconds. translation_units is deduplicated static
+plan candidates; cache_hits counts prepared hits, not every solver-loop reuse.
+Actual batch and later on-demand compiler attempts are counted. Peak preparation
+work includes cache/loader activity; peak_compiler_jobs measures actual compiler
+interval overlap, not a requested worker count. Unsupported preparation does not
+replace ordinary execution diagnostics. Print compile_info after numerical calls
+to include any on-demand attempts performed so far in the current request.
+
+tic/toc excludes native compilation on cold/cached runs. Concurrent compilation
+subtracts the union of wall intervals, not their sum. First actual use still
+reports cold when this request produced the binary in preparation; later unchanged
+uses report hits. No guarantee is made that every dynamic callback can be prebuilt.
+
+
+COMMAND WINDOW RUN, INTERRUPT, HELP AND OUTPUT (F74)
+One scrollable Command Window contains prompts, results, warnings and diagnostics.
+Studio run forms, with optional final semicolon:
+  run main.p
+  run "folder/my script.p"
+  run("main.p")
+These use the saved-script/F5/right-click Run path. Relative paths resolve using
+the project/current source execution location; absolute paths are supported.
+Quoted forms use normal string escapes; forward slashes avoid Windows backslash
+escaping. Dirty open scripts must save successfully first. SaveAs/conflict/external
+change failures prevent execution. File runs replace file scope and leave results
+available to direct commands. This is Studio host command syntax, not arbitrary
+filesystem/process access inside native callbacks. A system terminal uses
+penta-run path.p instead.
+
+While idle, Ctrl+C with selected console text copies. Otherwise unfinished input
+is abandoned and a fresh prompt appears. During work, Ctrl+C takes priority over
+Copy anywhere inside Studio, including selected editor/console text, and requests
+cooperative cancellation. Running/Stopping replace the ready prompt until the
+worker has returned. Context-menu Copy remains available during work. New commands
+never append to abandoned input. Native library cancellation units remain;
+interruption is not forced preemption. See studio_workflow_v0_2.txt.
+
+help or help topics lists guidance. help plot, help if, help odesolve,
+help("odefit") and lookfor "sensitivity" find command/keyword/function information.
+Command-style topics are literal names, not evaluated values. Workspace function
+names print typed signatures. lookfor searches aliases/descriptions; no matches
+give guidance. The catalogue covers current builtins/keywords across grouped topics;
+language.txt and this specification define exact options, limits and native subsets.
+
+Ordinary output/prompts are black. Explicit warnings/source diagnostics are red.
+Warning metadata, rather than guessed string prefixes, selects warning presentation:
+ordinary text beginning Warning: remains black. Errors show clickable file/line/
+column navigation with existing diagnostic source matching protections.
+
+parallel_info additionally exposes fitting_module_loaded,optimization_module_loaded
+and maps_module_loaded without loading unused modules. Existing flags and actual
+host worker/configured backend distinctions remain.
+
+
+NONMODAL FIND/REPLACE — IMPLEMENTATION CONTRACT
+
+Ctrl+F opens/reuses one persistent FindReplaceBar at the bottom of the editor
+surface, alongside the existing source tabs. It is a QWidget child, not a dialog
+or new top-level window, and the source remains editable. Repeated Ctrl+F focuses
+and selects the same query without overwriting a currently active regex. A
+single-line source selection prefills a newly opened bar. Query, replacement and
+options persist while the bar is closed and between source tabs in that window.
+
+Find options: case sensitivity, Unicode whole-word boundaries, regular-expression
+mode. Match counting/highlighting updates as the source changes (75ms debounce),
+and every query/option change updates immediately. The current occurrence has an
+orange background and other matches a yellow background. These are view-only
+extra selections layered after the current-line decoration; document characters,
+syntax foreground colors, rich clipboard copy and print snapshots are untouched.
+Find next/previous wrap. Enter/F3 chooses next; Shift+Enter/Shift+F3 previous. Escape
+or the close icon hides the bar, clears search backgrounds and focuses the source.
+Switching tabs removes decorations from the former editor and applies the query
+only to the newly active document. Closing all tabs clears/hides the bar safely.
+
+Replace applies to the selected match or finds the next one before replacing.
+Replace All uses one QTextCursor edit block so one Undo restores the source.
+Regex replacements support captured groups \1..\99 and escaped backslash; optional
+unmatched captured groups become empty. Literal replacement treats slashes and
+other characters literally. Zero-width regex matches use Qt's finite globalMatch
+iteration; navigation progresses and Replace All applies every planned boundary
+once. Invalid regex patterns display an inline message, clear highlights and do
+not modify or lock the source. Read-only editors remain searchable but replacement
+buttons are disabled. No source execution or save is triggered by a search.
+
+At most10,000 matches are retained/highlighted per query. An inline notice asks the
+user to refine broader searches, and Replace All is disabled while that cap is
+exceeded rather than silently applying an incomplete replacement. Replacement
+output is limited to4Mi UTF-16 characters before mutations. Normal source encoding,
+newline preservation, save protections and autosave continue in Document.
+
+
+PROJECT-LOCAL DEPENDENCIES
+Lazy penta_fit,penta_opt,penta_maps DLL/SO modules retain versioned C ABI, borrowed
+buffers, host ownership, controlled loaders and the common CPU reservation.
+Executable import scans alone do not discover lazy Ceres/NLopt dependencies.
+Ceres2.2.0 uses pinned Eigen5/MINIGLOG, without CUDA/SuiteSparse/LAPACK/gflags.
+Reproducible bootstrap edits allow Eigen5 CMake discovery while retaining Ceres
+minimum checks and include cstdint explicitly in internal/ceres/file.cc.
+NLopt2.11.0 uses pinned UCRT64 binaries plus official corresponding source.
+SUNDIALS7.9.0 enables CVODES; the ODE host uses its CVODE-compatible superset rather
+than linking duplicate copies of common CVODE/CVODES functions. Existing ARKODE/
+KINSOL remain. Exact archive URLs/hashes/notices: third-party/fitting-dependencies.lock.json and
+sundials.lock.json, third-party/README.txt and LICENSING.txt.
+Bootstrap is explicit/project-local under third-party. C:/msys64 stays unchanged;
+the application gains no Python/MATLAB/Excel dependency. Linux native validation
+remains pending. Publication/project licensing is a separate user decision.
+
+LINEAR ALGEBRA PERFORMANCE AND ABI COMPATIBILITY — 26 OCTOBER2026
+SVD decomposition derives rank/rcond from the singular values it already computed;
+SVD least-squares solves likewise reuse DGELSD values. Other legacy dense opcodes
+retain SVD-based2-norm rank/rcond metadata and all inverse/solve default guards.
+There is no silent switch to a1-norm condition estimate or skipped reliability test.
+
+The unchanged ABI-v1 struct layouts/original enum values gain additive capability
+PENTA_LINALG_CAP_VALUE_ONLY(0x80) and opcodes22(DETERMINANT_VALUE),23(CHOLESKY_FACTOR).
+They provide only the scalar/factor requested; rank/rcond result fields are0 and
+UNAVAILABLE, not evidence of rank0/singularity. Original det/Cholesky opcodes keep
+full diagnostics. Language det/chol use value-only requests because they return no
+rank/rcond metadata; older modules lacking the capability fall back to old opcodes.
+Scalar determinant conventions and Cholesky SPD rejection remain unchanged.
+
+OpenBLAS setters can resize global buffers. Managed calls share a refcounted,
+immutable single-thread configuration epoch; setters/restoration run only with no
+active calls. Independent inner BLAS1 calls can overlap under the existing host
+CPU reservation. Different settings and internally threaded calls remain exclusive;
+unknown sequential vendor builds retain an exclusive fallback. No public ABI,
+ThreadBudget locking or nested CPU grants are weakened. Pentarnion-only products
+avoid BLAS configuration because their ordered algebra kernels do not call BLAS.
+The pinned OpenBLAS0.3.34 openblas_set_num_threads_local symbol is NOT assumed to
+be TLS: its source calls the global setter and updates a global variable.
+
+Measured before/after warm-kernel CSVs and concurrency tests belong to validation
+records; there is no universal speedup or claim that a configured backend limit
+measures actual internal BLAS worker participation. Primary implementation sources:
+https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.34/driver/others/openblas_set_num_threads.c
+https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.34/driver/others/blas_server_omp.c
+https://www.openmathlib.org/OpenBLAS/docs/build_system/
+
+
+SECOND-DERIVATIVE INSUFFICIENT-DATA CORRECTION — 26 OCTOBER 2026
+For nonempty PENTA_CALC_DERIVATIVE2 requests, the differentiated axis must
+contain at least three samples. Two samples determine a secant, not curvature.
+The unchanged C ABI returns PENTA_NUMERIC_ARGUMENT with an Insufficient data
+diagnostic before writing any output; laplacian propagates the runtime error.
+Real/Pentarnion coefficients and row/column axes follow the same rule. Empty
+arrays stay empty; the two-sample first derivative remains the secant. diff(A,2)
+is a different operation and retains its ordinary empty-difference semantics.
+Regression coverage: calculus_kernel_tests (buffer sentinels/axes/widths),
+foundation_numerics_tests (language errors and valid first/quadratic derivatives).

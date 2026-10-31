@@ -1,0 +1,120 @@
+PENTARNION STUDIO LANGUAGE 0.2 -- COMPILER PATTERNS AND CONDITIONAL DAE STRUCTURE
+
+1. jacobianpattern(function)
+
+Returns a PentarnionStructuralCSR version1 record computed from the checked,
+native-compatible AST. It performs no callback evaluation, compilation, DLL
+loading or sample-point guessing. The input layout retains every declared real
+coordinate, including explicit fixed2D arrays, fixed rank1..8 tensors and
+immutable algebra elements. Tensor entries are column major over every axis;
+existing fixed2D matrix ABI ordering remains row major.
+The output layout retains the complete declared result/tuple coordinate layout.
+The existing native limit is128 input and128 output coordinates. This structural
+pass additionally bounds each intermediate value to128 coordinates and rejects
+wider intermediates explicitly, rather than truncating an algebra-valued array.
+
+rows,columns,nnz describe the structural matrix. row_offsets has rows+1 entries;
+column_indices and row_indices have nnz entries. All language-facing indices are
+one based. An absent dependency is provably absent under this conservative pass;
+a stored dependency need not produce a nonzero numerical derivative. The pass
+does not simplify x-x, infer rank from one sample, or infer associativity.
+Unrefined algebra/matrix operations conservatively connect all operand
+coordinates. Literal constructors, coefficient access, scalar addition, fixed
+array/tensor literals, scalar indexing and indexed assignments retain coordinate
+separation where their checked descriptors resolve the mapping. Tensor
+construction may conservatively union operand dependencies; tensorvalues retains
+the complete adjacent-coefficient packing. Tensor coefficient extraction retains
+its entry selection. No sample-dependent zeros are removed.
+Both conditional paths and their control inputs are included. Block locals do
+not escape their scope. Unsupported native/dynamic shapes are explicit errors.
+pattern_key includes the native checked body, descriptor/shape identities and
+structural CSR. Whitespace and runtime numeric parameters do not change it.
+
+2. jacobiansparse(function,point[,options(parameters=options(...))])
+
+Uses the same compiler pattern and cached native analytic AD callback. Only the
+supplied point coordinates form columns; trailing parameters remain runtime
+bindings. The record adds values,has_values=1,cache_key,cache_hit and native
+evaluation count. A numerical zero at a structural entry is retained. This is a
+sparse result interface, not compressed-seed coloring or a claim that the native
+AD engine avoids all dense derivative work. No numeric threshold changes CSR.
+jacobianpattern has_values=0 and empty values/cache_key. Fixed rank1..8 native
+tensor signatures use the checked descriptors in typed_tensors_v0_2.txt. Dynamic
+native shapes/range-slice specialization and compressed derivative coloring are
+separate capabilities; runtime tensor slicing is governed by its own contract.
+
+3. daestructure(residual,t,y,yp[,options])
+
+Residual parameters begin with real time, then complete y arguments, complete
+yp arguments, then explicitly bound runtime parameters. Output has one equation
+coordinate per state,1..32 complete real coordinates. Scalar, algebra and fixed
+array/tensor groups preserve their full layouts. Options: parameters,rank_tolerance
+(default1e-12),condition_limit(default1e12).
+Typed algebra/complex scalars and qualified arrays must match the complete
+declared state argument and immutable descriptor/shape. Multiple typed arguments
+use a matching typed tuple; an explicit real coordinate vector remains the
+deliberate flattening interface. Equal coefficient counts never imply that two
+different algebra definitions are interchangeable. This validation also applies
+to daeanalyze.
+
+The compiler pattern gives signature(row,column)=1 if yp_column occurs, else0
+if y_column occurs, else-1(absent). A native Hungarian highest-value transversal
+finds a matching. Native canonical offsets satisfy d_j-c_i>=signature_ij with
+equality on the matching and c>=0. index_candidate=max(c)+(any d_j==0).
+equation_offsets,variable_offsets,matching,algebraic and signature are retained.
+No perfect matching gives structurally_regular=0,index_candidate=-1.
+
+This is a structural candidate using a conservative syntactic superset. It is
+not a proof of the nonlinear differentiation index, a check that a consistent
+point exists, or an automatic high-index reduction. Algebraic cancellation,
+conditional control flow and conservative coordinate coupling may overestimate
+incidence. A numerical zero does not remove an edge. Higher-index candidates
+retain their offsets/status and local_initialization_supported=0.
+For c=0,index_candidate<=1, algebraic=(d==0). The native module checks the local
+initialization matrix with columns F_y for algebraic y and F_yp for differential
+yp by equilibrated SVD/rank/condition bounds. Local nonsingularity is explicitly
+reported, never inferred from matching alone. All native numerical work obeys
+the shared CPU reservation/cancellation/work budget. V1/V2 DAE ABIs are unchanged.
+
+4. daeinitialize(residual,t,y,yp[,options])
+
+Requires the preceding regular structural partition, a nonsingular local
+initialization matrix and straight-line differentiable native residual. A
+piecewise/conditional residual requires an explicit hybrid event contract and is
+rejected here. Options add residual_tolerance(default1e-10),max_iterations(30,
+at most100),max_evaluations(1000,at most10000),max_wall_seconds(30) and
+max_native_operations. The function body and its time/state Jacobians are
+entirely compiled/cached; changes to runtime parameters do not recompile it.
+
+Differential y is fixed. Native damped Newton solves F=0 for algebraic y and
+differential yp. Every Newton matrix is rank/condition checked. The algebraic
+derivative columns must be structurally absent and numerically zero. After
+convergence, the same matrix solves F_t+F_y*yp+F_yp*ypp=0 for algebraic yp and
+differential ypp. This supplies a complete consistent initial derivative,
+including time-dependent nonlinear algebraic constraints. Algebraic ypp is not
+computed; differential_acceleration contains zeros at algebraic positions.
+
+Both the original residual and differentiated equation have independent guarded
+residual checks. consistent_initial,consistent_derivative,algebraic can be passed
+to daesolve with initialization="check". Its existing V1 numerical ABI now packs
+complete scalar/algebra/fixed-array/tensor residual, event and reset groups.
+Typed input descriptors and callback algebra/container contexts are validated;
+real scalar coefficient callbacks remain an explicit coordinate view. Reported
+correction norm includes all
+changed state/derivative coordinates. The operation is local and may reject a
+singular initial guess even if another consistent point exists. It does not
+perform a global search, differentiate arbitrary high-index constraints, or
+provide full initialization parameter sensitivities. lineardaesolve separately
+supports validated constant regular pencils through index3 and their bounded
+parameter consistency sensitivities; mechanicsdae supplies its stated reductions.
+
+Numerical reference for signature/canonical offsets:
+McKenzie and Pryce, Structural analysis based dummy derivative selection for
+DAEs, BIT Numerical Mathematics57(2017),433-462,
+https://doi.org/10.1007/s10543-016-0642-9 . Only the matching/offset diagnostic
+defined above is implemented here; the paper's general dummy-derivative solver
+is not claimed.
+
+Examples: examples/native-structural-derivatives/*.p .
+Tests: dependency_pattern_tests,structural_dae_kernel_tests,
+structural_dae_language_tests. Mathematical limits are intentional API results.

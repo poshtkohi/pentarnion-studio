@@ -1,0 +1,321 @@
+PENTARNION STUDIO FEATURE RULE INDEX
+
+F01: Reproducible native build -> specs/features/f01_build/rule.txt
+
+F02: Project creation and file tree -> specs/features/f02_projects/rule.txt
+
+F03: Safe document lifecycle -> specs/features/f03_documents/rule.txt
+
+F04: Editor tabs and syntax presentation -> specs/features/f04_editor/rule.txt
+
+F05: Shared source lexer -> specs/features/f05_lexer/rule.txt
+
+F06: Grouping-preserving expression parser -> specs/features/f06_parser/rule.txt
+
+F07: Declarations, promotion and grouping checks -> specs/features/f07_types/rule.txt
+
+F08: Finite range syntax and types -> specs/features/f08_ranges/rule.txt
+
+F09: Built-in algebra function signatures -> specs/features/f09_builtins/rule.txt
+
+F10: Diagnostics and Problems panel -> specs/features/f10_diagnostics/rule.txt
+
+F11: Language help, symbol types and basic completion -> specs/features/f11_help/rule.txt
+
+F12: Paper-grounded immutable algebra contexts -> specs/features/f12_algebra_context/rule.txt
+
+F13: Base arithmetic, norm and product diagnostics -> specs/features/f13_algebra_arithmetic/rule.txt
+
+F14: Canonical reciprocal and one-element powers -> specs/features/f14_reciprocal_power/rule.txt
+
+F15: Equation division with numerical status -> specs/features/f15_division/rule.txt
+
+F16: Independent mathematical and language regression tests -> specs/features/f16_testing/rule.txt
+
+F17: Responsive background static analysis -> specs/features/f17_analysis_workers/rule.txt
+
+F18: Settings, session and unsaved-text recovery -> specs/features/f18_settings_recovery/rule.txt
+
+F19: Validation-only command-line tool -> specs/features/f19_check_cli/rule.txt
+
+F20: Scope and modularity guardrails -> specs/features/f20_boundaries/rule.txt
+
+F21: Interpreter and MATLAB-style Command Window -> specs/features/f21_interpreter/rule.txt
+
+F22: Unified console and source autosave -> specs/features/f22_console_autosave/rule.txt
+
+F23: Pentarnion vector figures and image export -> specs/features/f23_vector_figures/rule.txt
+
+F24: One-element and real elementary functions -> specs/features/f24_elementary_functions/rule.txt
+
+F25: Figure naming, docked/floating windows and tiling -> specs/features/f25_figure_layout/rule.txt
+
+F26: Native LaTeX mathematical figure annotations -> specs/features/f26_math_annotations/rule.txt
+
+F27: Mandatory safe save before script execution -> specs/features/f27_save_before_run/rule.txt
+
+F28: Native ODE models and structural compilation cache -> specs/features/f28_native_odes/rule.txt
+
+F29: Automatic native coordinate Jacobians -> specs/features/f29_automatic_jacobians/rule.txt
+
+F30: Sampled ODE solutions and trajectory curves -> specs/features/f30_solution_curves/rule.txt
+
+F31: MATLAB-style subplot grids -> specs/features/f31_subplots/rule.txt
+
+F32: Monotonic tic/toc elapsed timing -> specs/features/f32_timing/rule.txt
+
+F33: Interactive subplot controls and anti-aliased curves -> specs/features/f33_plot_tools/rule.txt
+
+F34: Current About capabilities and copyright year -> specs/features/f34_about_current/rule.txt
+
+F35: Native adaptive ERK and ESDIRK ODE methods -> specs/features/f35_arkode_methods/rule.txt
+
+F36: SVG figure and individual subplot export -> specs/features/f36_svg_subplot_export/rule.txt
+
+F37: Dense real and Pentarnion matrices and vectors -> specs/features/f37_dense_arrays/rule.txt
+
+F38: Array constructors and reproducible session random values -> specs/features/f38_array_random/rule.txt
+
+F39: Quaternion and Pentarnion inspired Studio branding -> specs/features/f39_studio_branding/rule.txt
+
+F40: Copy source with syntax formatting -> specs/features/f40_rich_source_copy/rule.txt
+
+F41: Source printing with syntax colors -> specs/features/f41_syntax_printing/rule.txt
+
+F42: Stable native window on first plot and run -> specs/features/f42_native_window_stability/rule.txt
+
+F43: Ranges, slices and numeric reductions -> specs/features/f43_ranges_slices/rule.txt
+
+F44: Control flow and typed user functions -> specs/features/f44_control_functions/rule.txt
+
+F45: Validation, help and workspace inspection -> specs/features/f45_workspace_utilities/rule.txt
+
+F46: Native workspace, CSV and XLSX files -> specs/features/f46_native_data_io/rule.txt
+
+F47: Integrated print preview and collapsed folders -> specs/features/f47_preview_folders/rule.txt
+
+F48: Multiple selectable and removable data tips -> specs/features/f48_multiple_data_tips/rule.txt
+
+F49: Clickable Command Window diagnostics -> specs/features/f49_console_diagnostics/rule.txt
+
+F50: Typed callbacks and snapshot captures -> specs/features/f50_callbacks/rule.txt
+
+F51: Multiple outputs and immutable typed records -> specs/features/f51_outputs_options/rule.txt
+
+F52: Bounded source modules and namespace imports -> specs/features/f52_source_imports/rule.txt
+
+F53: Explicit complex scalars and additional real functions -> specs/features/f53_complex_real_math/rule.txt
+
+F54: Restricted native scalar functions and structural cache -> specs/features/f54_native_functions/rule.txt
+
+F55: Two-dimensional shapes, masks, grids and real vector norms -> specs/features/f55_shapes_masks_grids/rule.txt
+
+F56: Sample interpolation, quadrature and spatial calculus -> specs/features/f56_numerical_calculus/rule.txt
+
+F57: Bounded parallel vector operations and thread control -> specs/features/f57_parallel_vectors/rule.txt
+
+F58: Lazy numerical DLL/SO and host-owned worker foundation -> specs/features/f58_numeric_modules/rule.txt
+
+F59: Parallel dense matrix products and batches -> specs/features/f59_parallel_matrices/rule.txt
+
+F60: Real dense solves, determinants, inverses and decompositions -> specs/features/f60_dense_linalg/rule.txt
+
+F61: Canonical sparse storage, products and guarded solves -> specs/features/f61_sparse_operators/rule.txt
+
+F62: Explicit Pentarnion left/right matrix operators -> specs/features/f62_pentarnion_operators/rule.txt
+
+F63: Native compiler derivatives, Hessians and products -> specs/features/f63_compiler_derivatives/rule.txt
+
+F64: Native roots, equilibria and map fixed points -> specs/features/f64_native_roots/rule.txt
+
+F65: Structural native numerical callback compiler and cache -> specs/features/f65_native_callbacks/rule.txt
+
+F66: Session thread defaults and independent per-call limits -> specs/features/f66_per_call_threads/rule.txt
+
+F67: Direct native ODE RHS state, parameter and time partials -> specs/features/f67_ode_rhs_derivatives/rule.txt
+
+F68: Native Ceres nonlinear least squares and model fitting -> specs/features/f68_native_fitting/rule.txt
+
+F69: Native NLopt local and global optimization -> specs/features/f69_native_optimization/rule.txt
+
+F70: Native ODE events, backward integration and dense output -> specs/features/f70_advanced_ode_events/rule.txt
+
+F71: CVODES trajectory sensitivities and terminal adjoints -> specs/features/f71_ode_sensitivities/rule.txt
+
+F72: Native discrete maps and sampled orbit diagrams -> specs/features/f72_native_maps/rule.txt
+
+F73: Bounded parallel GCC callback preparation and cache reporting -> specs/features/f73_parallel_native_compile/rule.txt
+
+F74: Command Window run, interrupt, help and output colors -> specs/features/f74_console_help_run/rule.txt
+
+F75: Persistent nonmodal source Find and Replace bar -> specs/features/f75_find_replace/rule.txt
+
+F76: Dynamical metrics and local stability -> specs/features/f76_chaos/rule.txt
+
+F77: Native parallel map ensembles -> specs/features/f77_ensembles/rule.txt
+
+F78: Real and Pentarnion one-dimensional PDEs -> specs/features/f78_pde/rule.txt
+
+F79: Scalar fields and sampled real geometry -> specs/features/f79_geometry/rule.txt
+
+F80: Native signal analysis -> specs/features/f80_signals/rule.txt
+
+F81: Statistics and seeded uncertainty summaries -> specs/features/f81_statistics/rule.txt
+
+F82: Exact ordered formal expressions -> specs/features/f82_symbolic/rule.txt
+
+F83: Reproducible data-only analysis records -> specs/features/f83_analysis_records/rule.txt
+
+F84: No-scripting Map Explorer -> specs/features/f84_map_explorer/rule.txt
+
+F85: Genetic and evolutionary optimization -> specs/features/f85_evolution/rule.txt
+
+F86: MATLAB-style iterative output observers -> specs/features/f86_iteration_output/rule.txt
+
+F87: Native ODE experiments and discovery -> specs/features/f87_native_experiments/rule.txt
+
+F88: Selected native headless PNG exports -> specs/features/f88_selected_native_exports/rule.txt
+
+F89: Periodic shooting, Floquet and continuation -> specs/features/f89_periodic_continuation/rule.txt
+
+F90: Parallel and implicit grid PDEs -> specs/features/f90_parallel_pde_grids/rule.txt
+
+F91: Parametric metrics, curvature and transport -> specs/features/f91_chart_geometry/rule.txt
+
+F92: Native Morris and Sobol workflows -> specs/features/f92_global_sensitivity/rule.txt
+
+F93: Profiles, bootstrap and multistart refits -> specs/features/f93_native_inference/rule.txt
+
+F94: Exact basis-aware Pentarnion polynomials -> specs/features/f94_pentarnion_symbolics/rule.txt
+
+F95: Native index-one DAEs and resets -> specs/features/f95_implicit_dae/rule.txt
+
+F96: Native regular mechanics -> specs/features/f96_regular_mechanics/rule.txt
+
+F97: Bounded N-D and explicit complex fields -> specs/features/f97_nd_complex_fields/rule.txt
+
+F98: Publication plotting and field playback -> specs/features/f98_publication_animation/rule.txt
+
+F99: Drawn tile layouts, spans and dividers -> specs/features/f99_drawn_layouts/rule.txt
+
+F100: Native graphs and coupled-network examples -> specs/features/f100_native_graphs/rule.txt
+
+F101: Checked MATLAB and Python exports -> specs/features/f101_checked_exports/rule.txt
+
+F102: Automatic research provenance -> specs/features/f102_automatic_provenance/rule.txt
+
+F103: Checked Research Explorer workflows -> specs/features/f103_research_explorer/rule.txt
+
+F104: Tagged meshes, differential forms and surface FEM -> specs/features/f104_tagged_surface_geometry/rule.txt
+
+F105: Parallel native PDE experiments -> specs/features/f105_parallel_pde_experiments/rule.txt
+
+F106: Explicit real SI physical quantities -> specs/features/f106_physical_quantities/rule.txt
+
+F107: Native hybrid saltation and terminal adjoints -> specs/features/f107_hybrid_saltation/rule.txt
+
+F108: Bounded real high-order elliptic finite elements -> specs/features/f108_high_order_fem/rule.txt
+
+F109: Native fold, Hopf and period-doubling refinement -> specs/features/f109_bifurcation_refinement/rule.txt
+
+F110: Safe source-aware data-only experiment bundles -> specs/features/f110_experiment_bundles/rule.txt
+
+F111: Cached analytic trilinear third derivatives -> specs/features/f111_analytic_third_derivatives/rule.txt
+
+F112: Native finite-dimensional algebras and table imports -> specs/features/f112_native_algebras/rule.txt
+
+F113: Native fixed-shape arrays and complete coordinate AD/ODE interfaces -> specs/features/f113_native_fixed_arrays/rule.txt
+
+F114: Native time/state-dependent mass operators -> specs/features/f114_native_mass_operators/rule.txt
+
+F115: Native constrained Lagrangian mechanics and work diagnostics -> specs/features/f115_general_constrained_mechanics/rule.txt
+
+F116: Equation-level coherent SI dimensional validation -> specs/features/f116_equation_si_dimensions/rule.txt
+
+F117: Batched multidimensional matrix products -> specs/features/f117_batched_nd_products/rule.txt
+
+F118: Domain-aware native symbolic coefficients, functions and matrix equations -> specs/features/f118_domain_symbolics/rule.txt
+
+F119: Native batched real/complex LU, solve and inverse -> specs/features/f119_nd_complex_linalg/rule.txt
+
+F120: Implicit nonlinear and stiff PDE integration -> specs/features/f120_implicit_pde/rule.txt
+
+F121: Native successive-grid spatial convergence estimates -> specs/features/f121_pde_spatial_refinement/rule.txt
+
+F122: Mean-constrained parallel high-order finite elements -> specs/features/f122_fem_mean_parallel/rule.txt
+
+F123: Optional native PETSc sparse and nonlinear backends -> specs/features/f123_petsc_backends/rule.txt
+
+F124: Native mesh projection, probing, slicing and solid queries -> specs/features/f124_mesh_queries/rule.txt
+
+F125: Higher-dimensional intrinsic tensors, connections and frames -> specs/features/f125_intrinsic_geometry/rule.txt
+
+F126: Explicit native chart atlases and transition paths -> specs/features/f126_chart_atlases/rule.txt
+
+F127: Variable-metric manifold differential-form jets -> specs/features/f127_manifold_form_jets/rule.txt
+
+F128: Native nonlinear vector and algebra high-order FEM -> specs/features/f128_nonlinear_high_order_fem/rule.txt
+
+F129: Native high-order evaluation and conforming local adaptation -> specs/features/f129_adaptive_h1_fem/rule.txt
+
+F130: Native parallel ODE/PDE fitting and refit ensembles -> specs/features/f130_solver_refits/rule.txt
+
+F131: Checkpointed stochastic map ensembles and native progress observers -> specs/features/f131_map_ensemble_ledgers/rule.txt
+
+F132: Persistent completed verification tiers -> specs/features/f132_verification_tier_ledgers/rule.txt
+
+F133: Native basin/Lyapunov workflows and discovery export adapters -> specs/features/f133_native_chaos_workflows/rule.txt
+
+F134: Automatic sampled-candidate refinement and branch presentation -> specs/features/f134_continuation_refinement/rule.txt
+
+F135: Native likelihoods and parametric bootstrap -> specs/features/f135_native_noise_likelihoods/rule.txt
+
+F136: Prediction uncertainty, identifiability and coverage -> specs/features/f136_prediction_identifiability_coverage/rule.txt
+
+F137: Native dynamical metric and advanced-solver summaries -> specs/features/f137_dynamical_native_summaries/rule.txt
+
+F138: Evolution sessions and native finishing -> specs/features/f138_evolution_sessions/rule.txt
+
+F139: Research archive/catalogue/source replay -> specs/features/f139_research_archives/rule.txt
+
+F140: Checked source assistance, navigable call frames and module/reference browser -> specs/features/f140_source_assistance/rule.txt
+
+F141: Typed multifield Research Explorer controls and live display -> specs/features/f141_typed_research_explorer/rule.txt
+
+F142: Reusable plot styles, linked cameras and headless vector typography -> specs/features/f142_plot_templates_and_queries/rule.txt
+
+F143: Native ordered algebra network coupling -> specs/features/f143_ordered_network_operators/rule.txt
+
+F144: Checked data-only numerical callback snapshots -> specs/features/f144_source_callback_snapshots/rule.txt
+
+F150: Native transient high-order finite elements -> specs/features/f150_transient_high_order_fem/rule.txt
+
+F151: Native differential-form pullback jets -> specs/features/f151_native_form_pullbacks/rule.txt
+
+F152: Native signal processing -> specs/features/f152_native_signal_extensions/rule.txt
+
+F153: Native probability distributions -> specs/features/f153_native_distributions/rule.txt
+
+F154: Native custom/dependent bootstrap -> specs/features/f154_native_block_bootstrap/rule.txt
+
+F155: Native triangle-mesh intersections and coplanar overlap -> specs/features/f155_mesh_intersections/rule.txt
+
+F156: Native mixed-order H1 finite-element spaces -> specs/features/f156_mixed_order_h1/rule.txt
+
+F157: Native quasilinear state/gradient weak flux Jacobians -> specs/features/f157_quasilinear_native_flux/rule.txt
+
+F158: Local native residual analysis -> specs/features/f158_local_dae_analysis/rule.txt
+
+F159: Native index-zero through index-three descriptor systems -> specs/features/f159_higher_index_linear_dae/rule.txt
+
+F160: Shared native BLAS configuration coordination -> specs/features/f160_shared_blas_coordination/rule.txt
+
+F161: Controlled native scientific workload benchmarks -> specs/features/f161_controlled_native_benchmarks/rule.txt
+
+F162: jacobianpattern computes conservative complete real-coordinate CSR from a -> specs/features/f162_structural_jacobian_patterns/rule.txt
+
+F163: daestructure uses compiler incidence, a native highest-value transversal, -> specs/features/f163_dae_structural_candidates/rule.txt
+
+F164: daeinitialize uses cached compiled residual/time/state AD and native damped -> specs/features/f164_complete_dae_initial_derivatives/rule.txt
+
+F165: First-class fixed-shape native tensors -> specs/features/f165_native_tensors/rule.txt

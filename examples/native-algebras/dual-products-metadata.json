@@ -1,0 +1,13 @@
+{
+  "format": "StudioAlgebraDefinition",
+  "version": 1,
+  "name": "Dual numbers imported from numeric product rows",
+  "dimension": 2,
+  "basis": ["one", "eps"],
+  "coefficient_domain": "floating",
+  "unit": [1, 0],
+  "omitted_products": "zero",
+  "products": [],
+  "conjugation": [[1, 0], [0, -1]],
+  "metric": [[1, 0], [0, 1]]
+}

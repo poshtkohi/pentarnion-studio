@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "packages": [{
+    "name": "pagmo2",
+    "version": "2.19.1",
+    "url": "https://github.com/esa/pagmo2/archive/refs/tags/v2.19.1.tar.gz",
+    "filename": "pagmo2-v2.19.1.tar.gz",
+    "source_directory": "pagmo2-2.19.1",
+    "sha256": "ecc180e669fa6bbece959429ac7d92439e89e1fd1c523aa72b11b6c82e414a1d",
+    "patches": ["Eigen CMake major-version discovery", "C++20 ciso646 compatibility", "Bounded numeric-state friend declarations (see PAGMO_BOUNDED_STATE_PATCH.txt)"],
+    "upstream_algorithm_sources_modified": false,
+    "upstream_algorithm_headers_modified": "friend declarations only; layout/formulas unchanged"
+  }]
+}

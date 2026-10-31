@@ -1,0 +1,18 @@
+F51: Multiple outputs and immutable typed records
+Authorized extension, 26 October 2026. Language 0.2.
+
+Support 1..16 declared function outputs, return lists and transactional
+destructuring. Evaluate calls once; all targets validate before commit. Typed
+single assignment uses output 1; tuple retains all. Untyped output targets must
+already exist. Preserve declared types and compatible result schemas.
+options/record fields are immutable, typed and stable (64 fields/depth 32).
+Support dot/get_option reads, with_options validation and constant parameter
+defaults. Named calls reorder declared parameters; reject missing/unknown/
+duplicate keys and positional arguments after named ones. Structured pure data
+can persist; callbacks, including nested callbacks, cannot be saved as data.
+
+Authority: language.txt L39/L46 and specs/foundations_v0_2.txt section 2.
+Acceptance: foundation_language_tests and persistence suites; language-foundations example.
+Verify multioutput atomicity, record type/field checks and workspace roundtrip.
+Out of scope: mutable record fields and dynamically changing schemas.
+Actual platform/test status: docs/VALIDATION.md.

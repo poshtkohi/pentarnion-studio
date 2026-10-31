@@ -1,0 +1,13 @@
+FEATURE F29: Automatic native coordinate Jacobians
+Version: current profile0.2 extension
+Authority: language.txt L23-L26; specs/ode_v0_2.txt
+Status: implemented; actual verification recorded in docs/VALIDATION.md
+
+F29-R1: Compiler emits RHS and full real-coordinate Jacobian from the same expression tree.
+F29-R2: jacobian="analytic" selects automatic differentiation, the default; no user Jacobian.
+F29-R3: jacobian="finite_difference" selects the implicit integrator's dense DQ
+and reuses the same binary. Explicit erk does not evaluate a Jacobian and reports
+jacobian=not_used; see F35.
+F29-R4: Check AD against independent basis fixtures, central differences and paper tangent matrices.
+Acceptance: native_ode_compilation_and_solver and paper_ode_reference.
+Parameter sensitivity trajectories, general symbolic derivatives and nonsmooth extensions deferred.

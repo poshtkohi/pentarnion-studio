@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Real geometry and five-coordinate surfaces",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "primitives-and-intersections.p",
+    "parametric-surface-in-five-coordinates.p"
+  ]
+}

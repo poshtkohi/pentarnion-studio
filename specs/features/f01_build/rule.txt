@@ -1,0 +1,47 @@
+FEATURE F01: Reproducible native build
+Version: 0.2
+Status: native editor/checker/interpreter build implemented; actual platform
+        verification and remaining release limits are recorded in docs/VALIDATION.md
+Implementation stage: S0/S7
+Dependencies: none
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+PURPOSE
+Build the IDE and libraries on Windows and Linux. Reuse the user's existing
+Windows/MSYS2 UCRT64 compiler. Provide Code::Blocks projects that invoke the
+same CMake build, keeping one authoritative target/dependency definition.
+
+REQUIRED BEHAVIOUR
+F01-R1: Inspect toolchain availability and record versions before adding deps.
+         Additional dependencies may be installed locally under third-party,
+         as explicitly authorized by the user. Keep C:/msys64 unchanged.
+F01-R2: CMake+Ninja configure/build/test must work without opening Code::Blocks.
+F01-R3: Use C++20 ordinary headers; separate penta_algebra, penta_language,
+         penta_runtime, penta_ide, penta-check, penta-run and test targets.
+         No C++ modules.
+F01-R4: Qt6 Core/Gui/Widgets/Test for UI/tests. Eigen only in the division
+         adapter. F23 adds GUI-only VTK plots. No WebEngine, SUNDIALS, LLVM or external scripting
+         runtime dependency; the checked Pentarnion interpreter is native C++.
+F01-R5: No network downloads or package upgrades during configure/build.
+F01-R6: No fast-math flags by default. Provide headless core-test configuration.
+F01-R7: A clean development machine can follow TOOLCHAIN.txt; report missing
+         deps rather than pretending the build succeeded.
+
+ACCEPTANCE
+F01-T1: Configure/build and CTest from UCRT64; record commands and results.
+F01-T2: Build core/language independently of Widgets.
+F01-T3: Verify compiler/Qt/Eigen paths all use the intended UCRT64 environment.
+F01-T4: Launch Pentarnion Studio locally on Windows; distinguish from headless tests.
+F01-T5: Configure/build/CTest and GUI smoke check on Linux; record unverified
+         platforms explicitly when the current machine cannot execute them.
+F01-T6: Build the Windows/Linux .cbp via its custom CMake commands; no second
+         independent source/link graph is maintained.
+
+OUT OF SCOPE
+Native/JIT compilation of user .p code, bundled compilers, automatic installers, code signing,
+Windows file association changes and cross-platform release packages.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

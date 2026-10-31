@@ -1,0 +1,9 @@
+F133 - Native basin/Lyapunov workflows and discovery export adapters
+Implemented: basins; lyapunovscan; structured failure reason taxonomy;
+quasiperiodic_candidate after full-spectrum, method/QR and longer-tier checks;
+native derived force/associator norms, sampled return histories, Cartesian
+parameter heatmaps, supplied-unit labels and collision-safe filename templates.
+Norms/distances are coordinate Euclidean. Finite candidates are not proofs.
+Contract: specs/discovery_workflows_v0_2.txt.
+Examples: examples/native-chaos-workflows/.
+Regression: tests/runtime/discovery_workflow_tests.cpp.

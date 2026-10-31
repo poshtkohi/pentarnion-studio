@@ -1,0 +1,85 @@
+NATIVE PENTARNION ODEs — METHODS AND FIRST-PAPER EXAMPLE
+26 October 2026
+
+Use the existing Launch Pentarnion.cmd. Open examples/paper1-bracketing/project.pprj
+and press F5. Source is saved before Run. The first solve compiles the native RHS
+and its automatic full coordinate Jacobian; later solves reuse the model library.
+Windows uses the existing C:/msys64 compiler. Dependencies remain project-local.
+Linux has its own configured C++ compiler/cache; it was not tested on this host.
+
+METHODS
+  method="bdf"    CVODE backward differentiation, variable order 1-5; default.
+  method="adams"  CVODE Adams-Moulton, variable order 1-12.
+  method="erk"    ARKODE Dormand-Prince 5(4), seven-stage explicit Runge-Kutta.
+  method="esdirk" ARKODE ESDIRK4(3)6L[2]SA, six-stage implicit Runge-Kutta.
+
+All four methods adapt their internal time steps to rtol/atol. BDF and ESDIRK
+are intended for stiff systems; Adams and ERK for nonstiff systems. ERK advances
+the fifth-order solution with an embedded fourth-order estimate. ESDIRK advances
+the fourth-order solution with an embedded third-order estimate. There is no
+automatic switching between methods. sample_step controls returned samples,
+independently of the solver's internal adaptive steps.
+
+Keep the existing odesolve arguments and change only method="erk" or
+method="esdirk" to select a new mode. Method changes reuse the same compiled
+equation model, as do changed initial values, parameters and tolerances. There
+are no user-written native functions or Jacobians.
+
+FIRST-PAPER EXAMPLE
+The example is the submitted first paper's bracketing family:
+  p' = A*p + (1-eta)*(B*(p*p)) + eta*((B*p)*p)
+  A = -1/2-2*i+j/2-k-ell/2
+  B = 1+2*j-ell/2
+  p(0) = (1-i-j+k-ell)/2
+Gamma=1 reproduces the paper's canonical multiplication. The equation's exact
+parentheses matter. eta=0 gives Ap+B(pp); eta=1 gives Ap+(Bp)p. Changing eta's value
+above the ode block reuses the native kernel. Changing the equation itself
+produces a new key.
+
+Figure 1: five canonical-component time series in a 3-by-2 subplot grid.
+Figure 2: four connected trajectories in projections (1,i,j), (i,j,k), (i,j,ell)
+and (1,k,ell), in a 2-by-2 grid. 1 denotes the scalar coordinate. These are
+projections of the same five-dimensional solution. Both figures are tiled side
+by side. Export Image saves the entire figure; each subplot's Save icon saves
+just that panel. PNG, JPEG and SVG are available. See PLOT_TOOLS_GUIDE.txt.
+Every requested sample is retained; no point thinning is used.
+
+The current source uses eta=0, adaptive BDF with rtol=1e-10 and atol=1e-12,
+and records t=0..200 at sample_step=0.005 (40,001 samples). These user settings
+are preserved by this update. This shorter run does not reproduce the paper's
+1000-unit transient/5000-unit Lyapunov protocol. No chaos classification,
+Lyapunov spectrum or proof is inferred from the image. The paper reports
+numerical evidence at eta=0 and a periodic attractor at eta=1.
+
+JACOBIAN
+  jacobian="analytic"          compiler-emitted coordinate automatic differentiation
+  jacobian="finite_difference" SUNDIALS dense difference-quotient approximation
+Users never write a Jacobian. Analytic mode is the default for the implicit
+methods; BDF, Adams and ESDIRK accept both options. Explicit ERK accepts either
+option for source compatibility but does not evaluate a Jacobian, and reports
+jacobian=not_used. Both functions remain compiled in the same native kernel.
+Switching either option does not trigger recompilation. The matrix is df/dy,
+distinct from future parameter-sensitivity trajectories.
+
+LANGUAGE
+ode flow(t,pentarnion p;real a) { p'=-a*p; }
+solution s=odesolve(flow,p=p0,a=0.1,t0=0,t1=20,method="erk",
+                   jacobian="analytic",sample_step=0.01);
+plot(s.t,coeff(s.p,0));          % scalar component versus time
+plot3("i","j","k",s.p);       % connected projected trajectory
+subplot(2,2,3);                 % bottom-left panel; labels affect this panel
+
+Full syntax, defaults, native subset, resource bounds and cache rules are in
+language.txt L23-L29 and specs/ode_v0_2.txt. Dense arrays are available separately
+(MATRIX_GUIDE.txt), but cannot be native ODE states or parameters. General
+functions, PDEs, research search and parallel execution remain future work.
+
+ELAPSED TIMING
+tic; ... toc; prints wall-clock seconds. real elapsed=toc(); captures a value.
+Native compilation is automatically excluded on every run, including first runs.
+Integration and normal script execution are timed; see language.txt L27/F32.
+
+DEPENDENCIES
+CVODE and ARKODE are pinned SUNDIALS 7.9.0 components, installed under third-party.
+No global MSYS2 installation changes are required. CMake and Code::Blocks invoke
+the same Release build graph. See docs/VALIDATION.md for actual validation results.

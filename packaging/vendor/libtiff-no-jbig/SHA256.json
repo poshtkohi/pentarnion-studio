@@ -1,0 +1,41 @@
+{
+  "format": "Public LibTIFF no-JBIG recipe inventory",
+  "files": [
+    {
+      "path": "config/tif_config.h",
+      "sha256": "1bf0a85656c7a688a98c0226362775920bb6e624db8941d9bc73d08374f36689"
+    },
+    {
+      "path": "config/tiffconf.h",
+      "sha256": "450685aa14f003eb77e127389bfc5ee4d359c8f1c039eec4e9112b3367c2f5a7"
+    },
+    {
+      "path": "LICENSE.md",
+      "sha256": "0e27c2382d7b8147972bbb746e04059a1152c8d0fda9d03ef1399d1a433c4ade"
+    },
+    {
+      "path": "patches/0002-libtiff-install-headers.patch",
+      "sha256": "493742947c8667655b6b89f2d7d27e92e1438a490ed86f50811112394b432a12"
+    },
+    {
+      "path": "patches/configuration-no-jbig.diff",
+      "sha256": "8dac82e11163228d0bacea7092690d84075c4b342d3a051f8d1a7e19890de779"
+    },
+    {
+      "path": "PKGBUILD",
+      "sha256": "26770df910377429bed012ce1132500319ee7ac28846f1aa0bed2fc8271fe6db"
+    },
+    {
+      "path": "proofs/source-provenance.json",
+      "sha256": "9791d54936b22edbab2f9907bee2231afd6bfd6f405e8645bc41451b6a6f284d"
+    },
+    {
+      "path": "README.md",
+      "sha256": "c50aae4d0d2d88bac5106911995911faf1f31362cc9c8826485ecc21d0895d06"
+    },
+    {
+      "path": "rebuild_libtiff.py",
+      "sha256": "b9edcaae90df38393bd606afc80f216d2488cd5719bb3f84f5b301fcbf89444f"
+    }
+  ]
+}

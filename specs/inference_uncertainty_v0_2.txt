@@ -1,0 +1,123 @@
+NATIVE INFERENCE AND UNCERTAINTY EXTENSIONS - LANGUAGE0.2
+
+Noise likelihoods (curve,ODE,PDE multistart/profile/bootstrap)
+Existing objective=sse remains descriptive SSE; gaussian_known_variance retains
+the explicit independent additive Gaussian observation model.
+Additional objectives:
+ lognormal_known_variance: callback predicts a positive median; noise_variance
+ is known positive variance of log(observation). Residual=(log(mu)-log(y))/sigma.
+ student_t_known_scale: known positive noise_variance is scale squared, not the
+ Student-t variance; noise_degrees>0(default4). Squared residual is
+ (nu+1)*log(1+(mu-y)^2/(nu*scale^2)), with its analytic native chain-rule Jacobian.
+ poisson_deviance: callback predicts positive means; observations are nonnegative
+ integer counts. Signed square-root Poisson deviance uses its analytic derivative,
+ including stable equal-mean and zero-count limits. No noise_variance is supplied.
+Every model evaluation remains the original cached native callback or native
+ODE/PDE solve; no interpreted optimizer callback is introduced. Fits retain raw
+predictions. Objective residual transformations live in the lazy inference DLL.
+Profile deviance is2*(cost-reference_cost), with additive likelihood constants
+cancelled. A profile improving the baseline is explicitly flagged.
+
+sample_method=parametric draws independent observation noise from the selected
+known likelihood at the fitted baseline. Gaussian variance must be explicit.
+Existing pairs/residual/moving_block remain available. Lognormal residual/block
+bootstrap resamples centered log residuals; Poisson uses pairs or parametric
+count sampling, never potentially negative additive count residuals. Seed/run
+identity determines each independent mt19937_64 stream. Native Gaussian and
+Student-t draws use explicit Box-Muller/gamma transforms; Poisson sampling uses
+the compiled C++ standard distribution and module-build identity. Resuming uses
+completed tasks and the same noise metadata in the atomic ledger fingerprint.
+
+propagateprediction(native_curve,parameter_sample_rows,prediction_x[,options])
+Curve signature is the same as native curve fitting: complete leading fitted
+arguments, optional fixed parameters, trailing real independent variable; one
+real predicted observation is returned. Options parameters,threads,
+max_native_operations.2..4096 rows,1..16 fitted real coordinates,1..4096 output
+coordinates and existing retained-array limits. Native evaluations run under
+the shared CPU budget. Returns parameters,prediction_x,fitted_curves,task_status,
+cache identity/work/thread metadata. Provided samples define their own ensemble;
+Studio does not infer a prior/posterior from arbitrary sample rows.
+
+predictionbands(valid_bootstrap_or_prediction_ensemble[,options])
+Options confidence(default0.95),noise=none(default)/gaussian/lognormal/student_t/
+poisson,noise_variance,noise_degrees,draws(default2048),seed(default1).
+At least two converged full-rank sample rows are required; failed/deficient
+bootstrap rows are masked using their stored status. No samples are silently
+dropped for nonfinite predictions. Fitted fields: mean,standard_deviation,lower,
+upper,simultaneous_lower,simultaneous_upper,simultaneous_critical, each prefixed
+fitted_. Pointwise bounds are interpolated empirical percentiles. Simultaneous
+bounds calibrate the maximum absolute standardized deviation over each complete
+joint prediction row, then use its confidence quantile across the finite grid.
+Explicit noise creates future_ analogues by sampling one parameter row per
+replicate and independent observation noise at each prediction coordinate.
+future_available distinguishes missing future fields from zero uncertainty.
+At most8million retained predictive draw coordinates and the configured Studio
+array budget. These are empirical finite-grid bands, not certified coverage over
+a continuous domain; fitted means and future observations remain distinct.
+
+profileinterval(profile_report[,options(confidence=0.95,threshold=...)])
+Returns all sampled connected intervals, lower_open,upper_open,invalid_boundary,
+regions,threshold,likelihood,notice. Grid values must be distinct. Threshold
+crossings interpolate neighboring valid grid points; missing/failed grid points
+split regions and produce explicit open/invalid boundaries. An improved baseline
+rejects interval interpretation. Known likelihood profiles default to the
+asymptotic one-parameter chi-square confidence cutoff. SSE needs an explicit
+descriptive threshold. Finite-grid resolution and nonregular/boundary effects
+remain limitations; no structural identifiability proof is produced.
+
+identifiability(multistart_or_profile_report[,options])
+cost_tolerance defaults1e-8*(1+best_cost), parameter_tolerance defaults1e-4.
+Clusters distinct converged near-optimal parameter vectors using maximum
+coordinate difference normalized by1+abs(reference_coordinate). Returns cluster
+IDs,representative original run IDs,near-optimal counts,parameter ranges and a
+practical_ambiguity flag. Multiple equivalent numerical solutions are evidence
+of practical ambiguity; absence of another sampled solution is not uniqueness.
+This extends finite-design diagnostics beyond a local Jacobian rank; general
+structural identifiability/symbolic symmetry certification is not claimed.
+
+coveragefit(native_curve,truth,prediction_x,options(initial=fit_start,...))
+Options use existing curve-inference settings plus samples(default128,2..4096).
+Currently gaussian_known_variance or lognormal_known_variance with known noise;
+all generating/truth and fit coordinates are complete1..16 real coordinates.
+Each dataset is independently generated from the native curve at truth and
+refitted from the explicit guess through the native shared-budget scheduler.
+Cache identities, checkpoint/resume,iteration OutputFcn and cancellation reuse
+the existing fitting infrastructure. No fit is reused as another dataset's fit.
+The nested coverage report retains truth,per-dataset lower/upper/covered flags,
+interval_valid,conditional_coverage,unconditional_coverage,Monte Carlo standard
+error,bias,RMSE,valid_intervals,converged_fits,datasets,confidence and notice.
+Intervals are local normal/Wald approximations from one native analytic
+standardized-Jacobian SVD per completed fit. Rank-deficient or bound-active fits
+do not get intervals. Conditional coverage uses valid intervals; unconditional
+coverage counts invalid/failed intervals as uncovered. Zero valid intervals
+leave explicit zero placeholders with valid_intervals0, never a success claim.
+Monte Carlo uncertainty and local-linearization assumptions are explicit.
+
+structuralidentifiability(checked_real_curve_function)
+An exact theorem for a bounded model class, separate from numerical diagnostics.
+The function has1..16 real fitted scalar parameters, a trailing real independent
+variable and one scalar return expression. It must be affine in parameters and
+polynomial of degree<=16 in the independent variable. Supported syntax is exact
+decimal/integer literals, grouping,unary+/-,+,-,*,division by nonzero rational
+constants and literal integer powers0..16. Other functions,control flow,local or
+captured symbols,nonlinear parameter products and variable denominators produce
+supported0/status=unsupported_model, never an inferred structural classification.
+The checked typed AST is expanded with exact arbitrary-precision rationals.
+Exact reduced row echelon form of the independent polynomial coefficient matrix
+proves global injectivity in real parameters when its columns have full rank;
+otherwise exact nullspace directions exhibit unchanged curves. This assumes an
+ideal real-valued curve observed on an open independent-variable interval,
+unconstrained real parameters and the literal rational mathematical model; noisy
+finite designs and floating-point rounding do not inherit that theorem.
+Returns supported,globally_identifiable,rank,dimension,degree,parameter_names,
+independent_variable,coefficient_matrix/nullspace for display plus exact rational
+text certificates,status,reason,operations. Budgets:250000 exact polynomial/RREF
+operations,depth64,literal128 characters,rational512 characters and certificate
+64KiB. Exceeding a proof budget returns unsupported with a reason.
+
+Inference module compatibility
+All version1 C ABI structs/query layouts remain unchanged. New likelihood tags,
+parametric sampling and coverage use the separate version2 module query. The
+version1 entry point rejects those new semantics, and an older DLL cannot silently
+interpret a requested likelihood as ordinary SSE. Default legacy requests retain
+the version1 execution path.

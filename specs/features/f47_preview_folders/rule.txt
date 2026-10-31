@@ -1,0 +1,6 @@
+F47: Integrated print preview and collapsed folders
+Authorized extension, 26 October 2026
+
+Print/Ctrl+P must show real rendered pages with settings in one Qt dialog. Source snapshots, colours, undo and unsaved bytes stay safe. Project subfolders start collapsed; same-project refreshes preserve manual expansion. tests/gui/gui_tests.cpp verifies these behaviors.
+
+Acceptance: build CMake/Code::Blocks; run registered regression suites and native Windows GUI checks. Linux behavior must be identified as unverified until run. Preserve previous valid programs and numerical algebra/ODE results.

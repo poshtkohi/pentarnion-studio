@@ -1,0 +1,31 @@
+F66: Session thread defaults and independent per-call limits
+Authorized extension, 26 October 2026.
+
+threads(n) is a session default, not a forced process count. A supported pure
+numeric function accepts one final options(threads=n),0 automatic or1..64 maximum.
+Restore defaults on return/error/cancel; native C++ calls also choose independent
+ParallelSettings. Stateful/random calls and interpreted quadrature are excluded.
+Richer linalg/derivative/root options keep their own records. Serial algorithms
+remain serial. parallel_info distinguishes session requested/effective from
+last_requested/last_effective and actual threads_used/peak_active, and inspects
+numeric/linalg/roots module status without loading. Reserve the shared CPU budget
+before backend locks; nested workers receive one slot and do not race statistics.
+Acceptance: vector_threading_tests, nested/ABBA tests, parallel-vectors/per_call_threads.p.
+
+Authority: language.txt L54; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.
+
+LINEAR ALGEBRA SHARED-EPOCH PERFORMANCE CLARIFICATION — 26 OCTOBER2026
+The host top-level CPU reservation remains unchanged. Only independent calls
+already granted a serial inner BLAS slot may share one immutable OpenBLAS epoch;
+this does not make unrelated public top-level calls execute in parallel. Setters
+and global-buffer changes occur with no managed BLAS calls active. Different
+settings/internally threaded calls remain exclusive; sequential builds keep the
+safe fallback. Pentarnion-only kernels avoid unnecessary BLAS state changes.
+SVD output and SVD solves reuse their singular values. Old opcodes keep SVD-based
+2-norm diagnostics and inverse/solve guards. Additive capability0x80/value-only
+opcodes22/23 serve language det/chol without unused metadata, with old-module
+fallback; original ABI structs/enum meanings remain. Their zero rank/rcond fields
+mean unavailable, not rank0. See specs/research_v0_2.txt and F60 for exact rules.

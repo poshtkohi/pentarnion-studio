@@ -1,0 +1,17 @@
+F53: Explicit complex scalars and additional real functions
+Authorized extension, 26 October 2026. Language 0.2.
+
+complex(re,im) creates a separate two-real scalar; integer/real embedding is
+allowed, implicit Complex/Pentarnion mixing is rejected. Preserve the algebraic
+basis i. Support documented complex arithmetic/equality, realpart/imagpart/arg,
+abs/norm2/conj and scalar elementary functions with finite-result/domain checks.
+Add real expm1, log1p, erf, erfc, hypot and sign. Whole-Pentarnion elementary
+functions retain the published one-element calculus and explicit operand order;
+unsupported whole-algebra overloads diagnose instead of coefficientwise guessing.
+Pure-data complex values retain type on workspace save/load.
+
+Authority: language.txt L40/L46 and specs/foundations_v0_2.txt section 4.
+Acceptance: foundation_language_tests, existing elementary/algebra suites and
+language-foundations example. Verify complex square and no implicit Pentarnion mixing.
+Out of scope: complex dense arrays, FFT, eigen/Floquet and symbolic computation.
+Actual platform/test status: docs/VALIDATION.md.

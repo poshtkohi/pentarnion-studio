@@ -1,0 +1,105 @@
+NATIVE SOLVER SUMMARY SENSITIVITY - LANGUAGE0.2
+
+modelsensitivity(model,lower,upper,options(...)) extends the existing native
+Morris/Sobol implementation to ODE, map and1D/2D PDE summaries. It does not run
+an interpreted wrapper for each sample or native numerical evaluation.
+
+Required options: initial and every trailing model parameter in parameters.
+kind defaults to ode for a declared ODE, map for a function handle. Explicit
+choices: ode/map/pde1/pde2. parameters binds real/Pentarnion scalar values using
+the existing checked declared types. parameter_coordinates selects one-based
+flat trailing parameter coordinates; a Pentarnion contributes five consecutive
+coordinates in(1,i,j,k,ell) order. All five state coefficients remain present.
+If this option is omitted, bounds must vary every available parameter coordinate.
+Each bound is a finite increasing independent-uniform interval.1..32 varied
+coordinates, no repeats. Bounds do not imply parameter independence in nature.
+
+PDE adapters append real spatial diffusion coordinates after reaction parameters:
+PDE1: diffusion; PDE2: diffusion_x,diffusion_y. Thus a scalar reaction parameter
+a at coordinate1 is followed by diffusion at2 forPDE1. These are runtime values,
+not native body changes. parameter_layout.model and parameter_layout.solver
+record offsets/widths without colliding with user parameter names.
+
+summary="final" returns one real coefficient. coefficient is ONE-BASED throughout:
+ODE/map: flat complete state coordinate1..N; PDE: coefficient1..C at a node.
+For a Pentarnion coefficient1 is scalar,2=i,3=j,4=k,5=ell. This explicit API is
+separate from the existing pdecoeff zero-based projection command. node is a
+one-based flattened PDE node (x-fast order for structured2D); default1.
+
+summary="mean"/"rms"/"min"/"max" uses DISCRETE STORED samples after transient,
+not a continuous integral or dense-output quadrature. ODE/PDE transient has
+physical time units; map transient is an integer iteration index. Sample spacing
+therefore affects these statistics and must be refined for scientific use.
+Initial/final endpoints satisfying the cutoff are included. Zero retained samples
+is an error. PDE summary="spatial_mean" uses the solver's final spatial mean for
+the selected coefficient, with its existing FD/consistent-FE mass weights.
+PDE summary="field_rms" uses the existing solver's final whole-field Euclidean
+coefficient RMS. It does not use the algebra product u*u and is not a norm
+composition assertion. field_rms rejects coefficient/node overrides;
+spatial_mean rejects node. Returned0 is an all-field metadata sentinel where
+these indices do not apply. No requested setting is silently ignored.
+
+ODE model: declared OdeModel; initial is a complete real coefficient row or typed
+state tuple. Mixed real/Pentarnion states are preserved. Solver options:
+t0,t1,sample_step,method=bdf/adams/erk/esdirk,jacobian=analytic/finite_difference,
+rtol,atol,max_steps,max_samples,max_seconds,transient. The first model preparation
+compiles/caches the equations and generated Jacobian. Sampling changes reuse it.
+Advanced events/mass/DAE summaries are not inferred by this bounded adapter.
+
+Map model: typed native-compatible function handle. initial is a complete flat
+coefficient row. state_arguments (default1) specifies how many leading declared
+scalar inputs form the complete state; outputs must match those typed states in
+the same order. Remaining arguments are fixed/scanned parameters. Solver options:
+iterations (1..1000000), transient (0..iterations), max_seconds. Iteration is a
+native loop through the resident compiled callback; all state entries update
+simultaneously. It is the fixed-iteration map path, not a fixed-point solver.
+
+PDE model: typed native reaction(u,t,x[,y],parameters...). x[,y] axes and initial
+field appear in outer options. Existing scalar or five-coefficient fields and
+ordered products are preserved. Solver options retain existing supported PDE
+choices:1D FD/P1 consistent FE or2D structured FD, RK4/imex_euler, periodic/
+constant Dirichlet/homogeneous Neumann, explicit spatial lengths/diffusions,
+t0/t1/time_step/sample_step/transient/max_steps/max_reaction_evaluations/
+max_seconds and appropriate boundary data. Unsupported options fail explicitly.
+Every sample owns its integrator/field/reaction scratch. Inner PDE thread count
+is1 while outer sensitivity samples use the one shared CPU budget.
+
+Sensitivity settings: method=morris/sobol, samples(default16/128), seed(default1),
+levels(default6; even4..100 forMorris), bootstrap(default0), confidence(.95),
+threads(0 auto,1..64 explicit), max_evaluations(default100000),
+max_native_operations, max_wall_seconds(default120), max_bytes(default256MiB).
+Morris requires>=2 trajectories; Sobol>=16 matched sample rows. Bootstrap is
+Sobol-only and resamples matched rows. Interpret Monte Carlo estimates/intervals
+as numerical sampling evidence, not measurement-noise confidence by default.
+
+Solver/callback failure, nonfinite data, cancellation or exhausted quotas abort
+the analysis. No zero, last successful value or missing-value imputation replaces
+a failed sample. Tighten the domain or correct the numerical model and rerun.
+Native operation reservations are atomic across workers; interpreter-owned
+counters are touched only on the caller after joining. Serial/parallel task seeds
+and sample identities remain deterministic. Actual granted/used worker reports
+can be smaller than requested for small workloads; no speedup is assumed.
+
+max_bytes first reserves shared sample/bootstrap arrays, then divides the
+remaining budget among the forecast shared CPU workers. Each native adapter
+rejects output/Jacobian/assembly buffers above that per-worker share. ODE forecasts
+include dense Jacobian/LU and native vector scratch. Estimated concurrent/per-run
+bytes and budget_workers are returned as inspectable metadata. It is a conservative buffer budget, not an exact
+allocator peak for SUNDIALS/Eigen factorization internals. Reduce workers/samples/
+grid size or increase the explicit limit when the forecast rejects a request.
+
+Results retain existing Morris mu/mu_star/sigma or Sobol first_order/total_order,
+optional matched-row intervals, seed/evaluation/work/thread metadata, initial
+data, gamma, parameter values/coordinate layout, state names/widths, solver record,
+summary_grid and structural cache/scientific request hashes. The structural key
+changes for equation bodies, not parameter/initial/tolerance changes. The request
+hash includes model data, summary/solver settings and estimator/bounds/seed, with
+native backend/module identities. Saved records are data-only; they execute no
+callbacks on loading. No result certifies identifiability or uniqueness.
+
+Examples: examples/solver-summary-sensitivity. Tests:
+tests/runtime/model_sensitivity_tests.cpp. Windows isolated native29 checks passed:
+known additive ODE Sobol0.2/0.8, exact Morris ODE/map/FD/FE/PDE2 effects, ordered
+Pentarnion reference/all five PDE coefficients, parallel determinism, actual pool
+use, failure/noimputation, cancellation and memory bounds. Full runtime/UI/Linux
+acceptance is separate and must be recorded from executed checks in HANDOFF.

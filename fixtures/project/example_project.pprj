@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "FirstPentarnionProject",
+  "language_version": "0.1",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1.0
+  },
+  "sources": [
+    "main.p",
+    "examples/products.p"
+  ]
+}

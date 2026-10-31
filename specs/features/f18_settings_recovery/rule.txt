@@ -1,0 +1,28 @@
+FEATURE F18: Settings, session and unsaved-text recovery
+Version: 0.1
+Status: S1 settings/session/recovery implemented; release-level manual audit
+        remains separate from automated regression evidence
+Implementation stage: S1/S4/S7
+Dependencies: F02/F03
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F18-R1: Store font size, window geometry, dock layout, recent project paths and
+         optional session state in per-user app data using Qt facilities.
+F18-R2: Keep these out of portable .pprj files; no absolute machine paths in
+         committed manifests. Missing recent paths are handled gracefully.
+F18-R3: Recovery snapshots store unsaved text separately from originals; they
+         must never silently overwrite source. Offer restore/discard at startup.
+F18-R4: Session restore opens files only; it never evaluates or compiles them.
+F18-R5: Recovery cleanup only removes this application's acknowledged snapshots,
+         never arbitrary project files. No cloud/telemetry/backups off device.
+
+ACCEPTANCE
+F18-T1: Simulated interrupted edit offers recovery with original disk file intact.
+F18-T2: Reopening session restores sensible tabs/caret without claiming execution.
+F18-T3: A corrupt settings/recovery record reports a warning and keeps projects safe.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

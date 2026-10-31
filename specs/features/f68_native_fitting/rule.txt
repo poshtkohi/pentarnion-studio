@@ -1,0 +1,10 @@
+F68: Native Ceres nonlinear least squares and model fitting
+Authorized extension,26 October2026.
+
+Ceres residuals/models and ODE sensitivity fitting use cached native callbacks, real-coordinate weights/bounds/scales, LM/Dogleg, robust losses, bounded multistart and qualified local covariance. Unsupported native bodies diagnose. Opaque external solves are not automatically differentiated. Preserve five-coordinate Pentarnion products/grouping and distinguish candidate, backend convergence, identifiability and uncertainty assumptions.
+
+Authority: language.txt L56; specs/research_v0_2.txt.
+Acceptance example: examples/least-squares/project.pprj.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

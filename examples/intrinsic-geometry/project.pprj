@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "Intrinsic Geometry",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "explicit-chart-atlas.p",
+    "higher-dimensional-curvature.p",
+    "native-form-pullback-jets.p",
+    "tensors-moving-frames-and-transitions.p",
+    "varying-metric-differential-forms.p"
+  ]
+}

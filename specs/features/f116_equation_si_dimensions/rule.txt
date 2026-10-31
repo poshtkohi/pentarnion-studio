@@ -1,0 +1,11 @@
+F116: Equation-level coherent SI dimensional validation
+unitcheck checks a saved typed function/ODE AST with complete opt-in unit
+annotations. Propagate compatible dimensions through ordered algebra and matrix
+operations, conditions, whole elementary functions and derivative schemas.
+Whole elements/arrays have homogeneous entry dimensions; literal zero is
+polymorphic. ODE RHS dimensions equal state/time. Solver units annotations
+validate before solving and never modify values, ABI, trajectory or cache key.
+Unknown dimensional semantics fail; do not claim heterogeneous/fractional units.
+Authority: language.txt L104; specs/equation_units_v0_2.txt.
+Acceptance: compatible/incompatible function, matrix, native algebra and ODE
+unit cases in tests/runtime/native_array_language_tests.cpp.

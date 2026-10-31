@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Native Signal Analysis",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "butterworth-filtering-and-peak-properties.p",
+    "prime-fft-and-time-frequency.p"
+  ]
+}

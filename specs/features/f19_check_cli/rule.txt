@@ -1,0 +1,31 @@
+FEATURE F19: Validation-only command-line tool
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S3/S7
+Dependencies: F05/F06/F07/F10
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+SUPPORTED COMMANDS
+  penta-check path/to/main.p
+  penta-check --project path/to/project.pprj
+  penta-check --json path/to/main.p
+
+REQUIRED BEHAVIOUR
+F19-R1: Parse/type-check only, using the same library as the IDE. No evaluation,
+         generated source, object files, subprocess compiler or shell execution.
+F19-R2: Exit 0 no static errors; 1 source/semantic errors; 2 input/project/I/O
+         failure. Warnings do not change 0 to 1 unless a future explicit policy.
+F19-R3: Plain-text source diagnostics and structured JSON use stable codes and
+         source locations. Record language version and effective algebra context.
+F19-R4: File contents are never treated as commands, even in an unknown extension.
+F19-R5: Explain in --help that validation is not proof of safe numerical division.
+
+ACCEPTANCE
+F19-T1: All language fixtures agree between CLI and GUI analysis results.
+F19-T2: Running check leaves source and project contents unchanged.
+F19-T3: No executable, generated C++, or runtime result is produced from .p input.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

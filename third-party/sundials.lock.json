@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "name": "SUNDIALS CVODE, CVODES, ARKODE and KINSOL",
+  "version": "7.9.0",
+  "url": "https://github.com/LLNL/sundials/releases/download/v7.9.0/sundials-7.9.0.tar.gz",
+  "archive": "sundials-7.9.0.tar.gz",
+  "source_directory": "sundials-7.9.0",
+  "sha256": "13f898a27b48fe3449483f9e438a800ed545abf93bc2e2ceec2d1e00ae8db5ef",
+  "license": "BSD-3-Clause",
+  "components": [
+    "cvode",
+    "arkode",
+    "nvecserial",
+    "sunmatrixdense",
+    "sunlinsoldense",
+    "kinsol",
+    "cvodes"
+  ]
+}

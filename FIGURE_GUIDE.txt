@@ -1,0 +1,93 @@
+PENTARNION STUDIO — NAMED, DOCKABLE FIGURES AND MATHEMATICAL LABELS
+26 October 2026
+
+Start the usual Launch Pentarnion.cmd in the project's code directory. The only
+retained application build is build/windows-release; no version suffix is used.
+Close any other figure tabs, open examples/figure-layout/project.pprj and press F5.
+The fixed 1-by-2 demo layout needs only figures 1 and 2 open. Run saves the script first.
+Two named plots are tiled side by side inside Studio, with LaTeX math captions.
+
+LANGUAGE
+figure(1,"Name","Addition","NumberTitle","off");
+plot2("i","j",p,q,p+q);
+title("$p+q$"); xlabel("$i$"); ylabel("$j$");
+caption("$p+q=2+2j$");
+
+figure(2,"Name","Multiplication");
+plot3("i","j","k",p,q,p*q);
+title("$p\\star q$"); zlabel("$k$");
+tilefigures("studio",1,2);
+
+undock(1); moves Figure1 to its own figure-only window.
+dock(1); returns it to Studio. The number/data/context/camera/labels stay intact.
+tilefigures("studio"); or tilefigures(); automatically tiles all figures in Studio.
+tilefigures("desktop",1,2); arranges separate figure windows across this monitor.
+The grid must fit all open figures. Invalid layouts preserve the arrangement.
+The figure toolbar offers Undock, Tabs, Tile in Studio and Tile on Desktop.
+Use the arrow beside either Tile button for Automatic, a preset grid or Custom
+rows and columns. The grid must hold all open figures, up to64cells. Empty cells
+retain their space; Cancel preserves your arrangement. Desktop cells must fit
+the available monitor. The floating Tile menu offers the same layout choices.
+Each floating figure offers Dock, Tile, Export and Reset controls.
+Closing a floating window closes that figure. The Command Window remains unified.
+
+DRAG, SPLIT AND CLOSE ALL -31 OCTOBER2026
+Drag a figure title or document tab over another figure. The shaded center
+target groups them as tabs; left/right/top/bottom targets show an equal-half
+split of the destination cell. Release to apply or press Escape to cancel.
+This includes figures already tiled in Studio. Drag a tiled title outside the
+figure cells to float its retained view. Arrange and title/tab context menus
+also provide explicit splits and tab grouping.
+
+Floating individual figures and the whole Figures pane have normal minimize,
+maximize/restore and Close controls; independent frames use the Windows taskbar
+role used by GTG figures. Redocking returns the compact pane header. Retained
+plot samples, coefficients, labels, tools and camera state are not rebuilt by
+these layout operations. Native Windows desktop acceptance is separate from
+the bounded offscreen regressions and remains recorded in docs/VALIDATION.md.
+
+Close all in the figure toolbar or title/tab context menu closes all figure
+views, including floating windows. Workspace variables/results and scripts are
+retained. Source-document Close All remains a separate action with save prompts.
+The existing close("all"); language command still closes all figures.
+
+Names and NumberTitle use MATLAB-style property pairs. figure(1) without new
+properties preserves its current name. Figure names are plain text. title,
+xlabel,ylabel,zlabel,caption accept literal strings and mathematical $...$ spans.
+Use source double-backslashes for LaTeX, e.g. "$\\alpha_i$" and "$\\sqrt{2}$".
+For literal text, use title("raw text","Interpreter","none"). Default is latex.
+Plot replacement preserves annotation overrides; clf clears plot+annotations,
+retaining figure identity/name. No figure-handle or subplot type is introduced.
+
+IMAGES AND SCREENSHOTS
+Export Image captures the selected figure, including its mathematical labels,
+axes, legend and camera view, as PNG, JPEG or SVG. The Save icon in each subplot
+exports just that panel in the same formats, without its neighbors or toolbar.
+Unicode paths and atomic writes remain supported. Export works in docked, tiled
+or floating figures. SVG details are in PLOT_TOOLS_GUIDE.txt and language.txt L29.
+The delivered studio-tiled-named-figures.png shows the actual p/q source running
+inside Studio; addition.png and product.png are real exports from that run.
+These captures use native Qt/VTK rendering, not image-generation mockups.
+
+SAVE BEFORE RUN
+All script paths (F5/Run File/right-click Run/console run("file.p")) share the
+same gate. Dirty named files are safely saved first. Untitled files require Save
+As; cancel/failure/external-file conflict or changed project metadata stops the
+run before any script execution. Clean stale disk buffers are also rejected.
+Checking still accepts unsaved snapshots without forcing a save or execution.
+Autosave on mouse leave/focus/tab changes and periodic saving remain available.
+
+LATEX SCOPE
+Native JKQTMathText renders common math: Greek letters, scripts, fractions,
+roots, sums/integrals/operators and selected matrix environments. No TeX/Python
+installation is required. This is a math-label subset, not a TeX document engine;
+arbitrary packages/macros/file commands/font dimensions are unsupported. Invalid
+math retains the last valid label and reports a clear error. Text/complexity/
+image limits are documented in language.txt L21. Bundled XITS fonts are used.
+
+BUILD
+CMake/Ninja and Code::Blocks still use the same build graph. The existing
+C:/msys64 compiler is unchanged. Dependencies are project-local:99UCRT64packages
+plus pinned JKQTCommon6/JKQTMathText6 shared libraries. Windows bootstrap installs
+both; Linux has explicit VTK and mathtext bootstrap scripts. Configure/build does
+not download. Linux compilation/rendering remains unverified on this host.

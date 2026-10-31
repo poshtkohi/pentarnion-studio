@@ -1,0 +1,34 @@
+FEATURE F10: Diagnostics and Problems panel
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S2-S4
+Dependencies: F05/F06/F07
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F10-R1: Stable codes, severity, message, source span and optional help/rule ID.
+         Text and JSON CLI results and GUI Problems use the same diagnostics.
+F10-R2: Clicking a problem opens/focuses the correct file and selects the range.
+F10-R3: Source map must translate UTF-8 byte offsets to Qt UTF-16 positions,
+         including Unicode comments, CRLF and BOM handling.
+F10-R4: Validation of unsaved content uses the buffer, not stale disk text.
+F10-R5: Distinguish syntax/type errors from numerical runtime failures. A
+         successful Check reports static validation without executing source
+         or certifying division solvability. Runtime failures are reported only
+         after explicit interpreter operations, inline and in Problems.
+F10-R6: Cancelled/stale results cannot overwrite diagnostics for newer revisions.
+F10-R7: Invalid code remains saveable; errors do not silently modify text.
+
+ACCEPTANCE
+F10-T1: All cases in fixtures/language/expectations.json include expected codes.
+F10-T2: Non-ASCII comment before bad declaration maps to correct highlighted text.
+F10-T3: Background error result arriving after a fix is ignored.
+F10-T4: Clicking a project-wide problem in another tab works after file rename.
+
+CODE REGISTRY
+See diagnostics.txt. New codes must be documented before tests depend on them.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

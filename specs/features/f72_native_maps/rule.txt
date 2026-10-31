@@ -1,0 +1,10 @@
+F72: Native discrete maps and sampled orbit diagrams
+Authorized extension,26 October2026.
+
+mapiterate/mapdiagram/returnmap use compiled native updates/Jacobians, runtime parameters, transients/stride, deterministic sample indices and bounded escape/work reports. Preserve ordered nonassociative expressions, final-map derivative semantics and independent scan starts. Sampled diagrams do not implement continuation, event Poincare sections or chaos metrics. Map Explorer remains future20.
+
+Authority: language.txt L60; specs/research_v0_2.txt.
+Acceptance example: examples/discrete-maps/project.pprj.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "name": "Implicit diffusion with FD and P1 finite elements",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "implicit_diffusion.p"
+  ]
+}

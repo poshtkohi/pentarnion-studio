@@ -1,0 +1,10 @@
+F69: Native NLopt local and global optimization
+Authorized extension,26 October2026.
+
+minimize uses a native real objective, algorithm-supported native inequalities/equalities, analytic or bounds-aware native differences, explicit bounds/scales/seed and finite budgets. Preserve session thread settings/common CPU reservation. Independently report feasibility and stopping reason. Finite global search is not a proof.
+
+Authority: language.txt L57; specs/research_v0_2.txt.
+Acceptance example: examples/optimization/project.pprj.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

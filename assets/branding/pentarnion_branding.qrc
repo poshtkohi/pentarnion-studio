@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/branding">
+    <file alias="pentarnion-studio.svg">pentarnion-studio.svg</file>
+    <file alias="pentarnion-studio-16.png">pentarnion-studio-16.png</file>
+    <file alias="pentarnion-studio-24.png">pentarnion-studio-24.png</file>
+    <file alias="pentarnion-studio-32.png">pentarnion-studio-32.png</file>
+    <file alias="pentarnion-studio-48.png">pentarnion-studio-48.png</file>
+    <file alias="pentarnion-studio-64.png">pentarnion-studio-64.png</file>
+    <file alias="pentarnion-studio-128.png">pentarnion-studio-128.png</file>
+    <file alias="pentarnion-studio-256.png">pentarnion-studio-256.png</file>
+    <file alias="pentarnion-studio-512.png">pentarnion-studio-512.png</file>
+  </qresource>
+</RCC>

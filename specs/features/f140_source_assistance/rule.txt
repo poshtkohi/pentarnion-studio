@@ -1,0 +1,11 @@
+F140: Checked source assistance, navigable call frames and module/reference browser
+Implements bounded view-only completion, signature/type/source inspection and F12
+navigation from immutable checked snapshots. Stale positions are rejected.
+Function origins retain original source spans across calls/imports/submissions;
+runtime frames supplement the primary invocation diagnostic and support guarded
+Command Window navigation. Native module inspection is read-only; explicit load
+uses a fixed catalogue and existing process-resident ABI conventions. The reference
+browser shows the actual compiled language version and documentation path/hash.
+Authority:language.txt L130;specs/editor_assistance_v0_2.txt.
+Acceptance is recorded after source_assistance_and_modules and retained_source_frames
+pass in the integrated build; syntax-only checks do not establish UI acceptance.

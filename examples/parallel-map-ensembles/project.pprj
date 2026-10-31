@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Parallel native map ensembles",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "main.p",
+    "checkpointed-independent-noise-streams.p"
+  ]
+}

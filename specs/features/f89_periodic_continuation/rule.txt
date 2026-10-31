@@ -1,0 +1,9 @@
+F89: Periodic shooting, Floquet and continuation
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Native autonomous phase-condition shooting, generated tangent equations and equilibrium/periodic pseudo-arclength continuation. Sampled bifurcation flags do not imply refinement or certified fundamental periods.
+
+Authority: language.txt L77; specs/research_modules_v0_2.txt.
+Acceptance: examples/periodic-orbits/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

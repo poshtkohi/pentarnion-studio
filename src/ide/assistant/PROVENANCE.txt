@@ -1,0 +1,29 @@
+Pentarnion desktop assistant components
+
+The cloud provider client, secure settings UI, context revision ledger, chat
+presentation and Help search control are adapted from the user's GTG Cell Studio
+code/src/ide implementation. Namespaces, private preference/credential identities,
+language highlighting, mathematical rendering and all scientific references have
+been adapted to Pentarnion Studio. GTG's model parser/controller is not reused.
+
+The adapter uses Pentarnion's existing checked AST; validation does not evaluate
+source or invoke native compilation. Application remains an explicit host callback
+after review and validation of an immutable source identity. Help indexes bounded
+local language/specification/example text on demand and is independent of cloud
+configuration. Network/provider fixtures are offline and use synthetic keys.
+
+The local welcome and example-prefill presentation follow GTG's panel design.
+Internal reference markers are suppressed in assistant prose, with friendly source
+titles retaining local Help routing. Stored replies, code and provenance are kept.
+
+Third-party dependency licence terms are unchanged. The provider libraries here
+perform direct HTTPS API requests only after an explicit Send action; no API key,
+provider request or user data is included in this source package.
+
+Provider framing reference check (31 October2026; no live provider call):
+https://developers.openai.com/api/docs/guides/migrate-to-responses
+https://ai.google.dev/api/generate-content
+OpenAI uses store=false by default and re-sends instructions on every turn;
+saved previous_response_id continuation is explicit opt-in. Gemini's current
+streamGenerateContent schema also includes store for per-request logging control;
+the inherited store=false field is retained. Model IDs are supplied by the user.

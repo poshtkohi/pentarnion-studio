@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "name": "Native Uncertainty",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "consistent-dae-summary-sensitivity.p",
+    "dynamical-period-and-terminal-event-sensitivity.p",
+    "exact-affine-structural-identifiability.p",
+    "fitted-and-future-prediction-bands.p",
+    "independent-dataset-confidence-coverage.p",
+    "known-noise-likelihoods.p",
+    "native-parameter-prediction-propagation.p",
+    "profile-regions-and-practical-ambiguity.p"
+  ]
+}

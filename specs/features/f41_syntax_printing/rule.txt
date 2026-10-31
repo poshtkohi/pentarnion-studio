@@ -1,0 +1,18 @@
+FEATURE F41: Source printing with syntax colors
+Version: GUI 0.2 extension
+Authority: user request, 26 October 2026; language.txt L33
+Status: implemented; final verification recorded in docs/VALIDATION.md
+
+F41-R1: File Print/Ctrl+P, Print Preview and Page Setup act on the active source.
+F41-R2: Materialize complete current syntax colors/font styles in an independent
+formatted snapshot. Preserve source text, Unicode, indentation and tabs.
+F41-R3: Paginate and wrap long lines without losing characters; include document
+identity and page numbering. Honor paper/orientation/margins and page ranges.
+F41-R4: Default to Color while respecting an explicit grayscale/driver selection.
+F41-R5: Capture unsaved content before modal dialogs. Keep preview immutable;
+do not force-save, execute, change source/cursor/undo or alter the clipboard.
+F41-R6: No silent plain-text fallback from the rich-copy HTML budget. Preserve
+normal autosave/recovery outside the temporary print-dialog pause.
+Acceptance: independent exact-format/text/snapshot tests, multi-page PDF color
+and completeness checks, native dialog cancellation and preview snapshot tests.
+No automated physical printer job or new .p print() builtin is added.

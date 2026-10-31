@@ -1,0 +1,104 @@
+PENTARNION STUDIO 0.2 — AUTHORIZED CALCULATION PROFILE
+25 October 2026
+
+The user requests interpreted calculations plus dedicated native ODE compilation
+and CVODE integration (F28-F31); parallel scientific work remains deferred. Existing mathematical meanings
+in language.txt/A_gamma_v1 remain binding. No re-association or inverse division.
+
+LANGUAGE
+- Version 0.2 adds display(expr[,expr...]); as a top-level statement. At least
+  one argument is required. String literals may appear as display arguments for
+  labels, as well as in use_algebra; no declared string type or string arithmetic.
+- display prints arguments separated by one space, followed by a newline.
+  Scalar/element/range-descriptor values are printable; no range enumeration.
+- Preserve the original integer/real/pentarnion and integer/real range types,
+  promotions, arithmetic, builtin signatures, precedence and grouping checks.
+- Empty statements may precede use_algebra; it must remain the first nonempty
+  statement. Gamma is a finite signed literal in [0,1], immutable per run.
+- Parse and type-check the full source before evaluating any statement.
+- Unsupported loops/general functions/imports/arrays/parallel constructs are
+  diagnosed. Native ODE models are pure and compiler controlled (L23-L26). No
+  arbitrary source shell/filesystem/network/plugin/process access is introduced.
+
+VERSIONS
+- New projects use language_version="0.2". Existing 0.1 manifests remain editable
+  and statically checkable, without silent metadata changes.
+- Interpreter execution requires 0.2; provide an explicit Project action to
+  upgrade only project metadata safely. Standalone files default to 0.2.
+- display is a 0.2 builtin; checker 0.1 reports it as unsupported.
+- A_gamma_v1 is unchanged. Project schema_version remains 1.
+
+EXECUTION
+- Each explicit Run File/CLI execution creates a fresh environment and uses an
+  immutable source/context snapshot. Never execute on opening, saving or typing.
+- Execution order follows the AST exactly; explicit Group nodes survive parsing.
+- Mathematical/runtime failures stop that run with a source diagnostic. Output
+  already emitted before a runtime failure may be shown; no fabricated success.
+- Bound source size, token/AST nesting, statement/operation counts and output;
+  cancellation must stop work. One local worker is sufficient; no research
+  parallelism. Late results must be labelled/discarded when the source changes.
+- Runtime arithmetic detects zero division, integer overflow, nonfinite/domain
+  errors and rejected equation solves. No silent pseudoinverse result.
+- Integer ranges use checked scalar fields; real fields finite, step nonzero.
+  Display a descriptor; do not allocate or enumerate a range.
+- Display formatting is locale independent (15 significant digits for binary64),
+  preserving all nonzero coefficients; formatting never changes numeric values.
+
+UI / CLI
+- Check File / Check Project share the same Qt-free frontend as penta-check.
+- Run File / penta-run use the same interpreter and numerical algebra core.
+- A read-only Results dock shows display output and run status. A Problems dock
+  shows severity/code/file/line/column and navigates correctly through UTF8/UTF16.
+- Run first saves the source and captures its saved snapshot, using project default context or file
+  directive. Project files remain independent scopes. Stop cancels current work.
+- Keep original author/affiliation/contact branding and source safety features.
+
+TESTS
+Independent 75 basis-pair fixtures, reciprocal/zero-divisor/division regressions,
+parser/type/precedence/grouping/overflow/source-span fixtures, runtime calculations
+and display/error/cancellation cases, and GUI run/output/navigation/unsaved-source
+integration. Preserve all existing project/document/highlighter regression tests.
+
+LATEST USER CONSOLE REQUIREMENTS
+One docked Command Window in Studio; no separate execution windows. Scrollable
+transcript, >> prompt, history, run(quoted file) and right-click Run. clc clears
+output only; clear/clear all/clear names remove user bindings but retain context.
+These commands also work in scripts. Reset Workspace additionally resets context.
+
+NATIVE ODE / SUBPLOT EXTENSION (26 October 2026): ODE_GUIDE.txt and language.txt
+L23-L26 are current; F28-F31 supersede earlier ODE/native/curve exclusions.
+First-paper demo: examples/paper1-bracketing/project.pprj. General native scripts,
+PDEs, parameter sensitivities and parallel scientific execution remain deferred.
+
+ELAPSED TIMING: tic; ... toc; prints wall-clock seconds. real elapsed=toc();
+captures a value. language.txt L27 and F32 define persistence/reset behavior.
+The paper example times odesolve, automatically excluding native compilation on every run.
+
+CURRENT FOUNDATION CLARIFICATION (F50-F58)
+The current extensions in specs/foundations_v0_2.txt and language.txt L39-L46
+supersede earlier exclusions for imports/callbacks/records/native scalar functions,
+logical masks and sampled/numerical calculus. Array ordered comparisons and &,|
+yield logical masks; ==/!=/~= retain one scalar shape/data predicate. Storage
+remains bounded 2D. Full native scripts, parallel GEMM and PDE solves are deferred.
+
+CURRENT ADVANCED NUMERICAL EXTENSION — 26 OCTOBER 2026
+specs/advanced_numerics_v0_2.txt, language.txt L47-L55 and F59-F67 supersede earlier
+deferred claims only for current categories5-8 and revised per-call threading:
+parallel matrices/OpenBLAS, real dense/sparse linear algebra, explicit Pentarnion
+left/right operators, cached native derivatives/Hessians/products, roots and direct
+ODE RHS partials. Historical rules above remain unchanged. Whole-Pentarnion matrix
+determinants/inverses are not inferred from real operator quantities; complex
+eigendata uses split real/imaginary arrays. Native ODE trajectory sensitivities,
+complex dense arrays, general native scripts, fitting, chaos/PDE/geometry packages
+and Map Explorer(plan20) remain future. All37 staged Windows suites passed; final
+installed/Code::Blocks/native GUI evidence is in HANDOFF; Linux is unverified.
+
+
+RESEARCH EXTENSION SUPERSESSION — 26 OCTOBER2026
+specs/research_v0_2.txt and language.txt L56-L63/F68-F75 supersede earlier future
+claims for native Ceres/NLopt fitting/optimization, CVODES integrated sensitivity/
+terminal adjoints, ODE events/dense output/backward time, native maps, parallel
+callback preparation and Studio run/help/interrupt/find. Instantaneous RHS partials
+remain distinct from integrated sensitivities. The existing callback subset/cache
+rules continue; arbitrary native scripts, chaos/PDE/geometry and Map Explorer are
+not added. HANDOFF records actual acceptance/deployment/platform status.

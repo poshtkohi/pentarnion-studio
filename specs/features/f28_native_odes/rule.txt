@@ -1,0 +1,12 @@
+FEATURE F28: Native ODE models and structural compilation cache
+Version: current profile0.2 extension
+Authority: language.txt L23-L26; specs/ode_v0_2.txt
+Status: implemented; actual verification recorded in docs/VALIDATION.md
+
+F28-R1: Pure explicitly bound real/Pentarnion ODE blocks lower to full real coordinates.
+F28-R2: Only explicit execution compiles; checks never invoke compiler/SUNDIALS.
+F28-R3: Compile checked RHS/Jacobian on firstuse, reuse valid structural cache across values/settings.
+F28-R4: Preserve multiplication grouping; validate source/binary hashes and ABI under lock.
+F28-R5: Cancel/time-bound compiler and CVODE/ARKODE; reject invalid settings and incomplete results.
+Acceptance: native_ode_compilation_and_solver, parser_and_types, interpreter_and_workspace,
+paper_ode_reference and nativePaperOdeSubplotsWhenRequested. No interpreted fallback.

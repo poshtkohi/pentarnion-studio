@@ -1,0 +1,11 @@
+F115: Native constrained Lagrangian mechanics and work diagnostics
+mechanicsdae performs explicit acceleration-level local index-one reduction for
+regular moving holonomic constraints and d'Alembert velocity constraints, using
+cached native AD2/AD3 for residual values and analytic Jacobians. Nonlinear
+velocity Hessians, moving constraints, native generalized forces and coherent
+initial-data checks retain their mathematical semantics. Report constraint
+drift, reactions, energy/power/work and work-quadrature limitations explicitly.
+Existing mechanics gains work diagnostics without changing its trajectory.
+Authority: language.txt L103; specs/general_constrained_mechanics_v0_2.txt.
+Acceptance: independently solvable moving/velocity constraints and invalid
+initial/rank regressions in tests/runtime/native_array_language_tests.cpp.

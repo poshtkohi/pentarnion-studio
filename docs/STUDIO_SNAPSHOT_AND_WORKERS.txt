@@ -1,0 +1,36 @@
+SNAPSHOT, DOCUMENTS AND WORKER STATUS
+GUI refinement, 31 October 2026
+
+Snapshot is available from Edit and the Home ribbon. Ctrl+Alt+S lets you drag a
+rectangle inside a Studio window; the selected image is copied to the clipboard.
+The preview offers Copy and Save PNG. Snapshot whole window captures the active
+Studio-owned window, including an undocked figure. These commands capture Studio
+widgets rather than the desktop. Escape cancels a selection. Save All uses
+Ctrl+Alt+Shift+S so its shortcut remains distinct from Snapshot.
+
+File > Close All Documents and the document-tab context menu close source and
+workbook documents. Studio checks every unsaved source/workbook before removing
+any tabs; Cancel retains the open documents. The active project and scientific
+workspace variables remain available. Figure Close all is a separate command.
+
+Copilot occupies an independent right-hand column. The source workspace, figures
+and Command Window have a separate inner layout on its left. Resizing a figure
+does not resize Copilot, and Command Window does not extend under Copilot. The
+new layout uses separate saved-state keys; obsolete mixed layouts are migrated
+to this arrangement without replacing source documents or user preferences.
+
+The status-bar worker icon follows the GTG node symbol. While a calculation runs,
+its badge samples the shared CPU pool's active workers and records the observed
+peak. A serial calculation is displayed as one executing worker. Native BLAS
+reports thread-team reservations separately: a badge such as <=4 denotes an upper
+bound of four reserved slots, not four measured busy CPUs. The tooltip explains
+this distinction. Fast kernels may finish between status samples.
+
+Status observation never changes the language or native library's thread grants.
+An idle Studio stops the worker animation/status timer; its background sampler
+waits without polling. Reading optional BLAS status occurs off the GUI thread and
+does not load an unused scientific module. Scientific algorithms, multiplication
+order, callback compilation/cache semantics and shared CPU budgets are retained.
+
+Verification/platform results are recorded in docs/VALIDATION.md. This guide describes
+the implemented interaction and does not assert native desktop visual acceptance.

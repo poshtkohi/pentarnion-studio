@@ -1,0 +1,132 @@
+PENTARNION STUDIO DESKTOP CONTRACT -31 OCTOBER2026
+
+Scope: GUI-only adaptation of user-authorized GTG components. The existing
+scientific engine, grammar, multiplication order, native compilation/cache,
+thread budgets, solver callbacks and transactional execution remain unchanged.
+This contract supersedes the earlier hidden-readiness/OpenGL-pane and cached
+native-window-movement requirements in F42 and studio_workflow_v0_2.txt.
+
+DESKTOP
+Classic menus/toolbar and Ribbon share QAction instances, shortcuts and enabled
+states. Switching modes never runs source or replaces documents. Preferences
+use Pentarnion identities, not GTG configuration. Restore Default View resets
+the layout, retaining current files/data. Hidden panels remain hidden on startup.
+The dock host uses native Qt nesting without GTG's legacy column-repair loop.
+An embedded working QMainWindow owns source, Project, Command and Figures;
+Copilot alone occupies the outer right column, including its bottom corner.
+Separate versioned outer/working layout states replace obsolete mixed layouts.
+Initial embedding preserves existing widget identities and hidden tab groups;
+there is no continuous layout-repair timer.
+
+Snapshot captures only Studio-owned widget pixels, with a selection preview,
+clipboard Copy and atomic PNG Save. Ctrl+Alt+S selects a region; Save All uses
+Ctrl+Alt+Shift+S. Close All Documents preflights dirty source/workbooks before
+removing tabs, retaining project and scientific workspace values on success.
+The GTG worker symbol observes existing pool activity without changing grants.
+BLAS reservations are labelled as upper bounds, distinct from active pool
+workers. Its status timer stops while idle; optional module status is sampled
+off the GUI thread without loading unused scientific DLLs/SOs.
+
+FIGURES
+Each numbered figure owns its retained panels, original coefficients/samples,
+labels, camera and tool state independently of its tab/dock/window container.
+GTG-derived figure docking supports tabs, horizontal/vertical splits, floating,
+redocking and close with identity-checked queued callbacks. Studio/desktop tile
+and drawn/spanned subplot layouts retain their existing language interfaces.
+Arrange saves/loads bounded validated placement metadata, not numerical data.
+Closing/recreating a figure number cannot apply a retired close or image result
+to its replacement. Invalid arrangements are rejected before transferring views.
+
+Figure-title/tab dragging offers GTG-style center tabbing and four edge targets
+with a visible 50/50 cell preview. Escape cancels. Existing tabbed and tiled
+figure pages can enter the docking host without replacing their retained plot
+state; a tiled-title drag outside figure cells may float the same view.
+Split reconstruction clears Qt's stale tab/unplug placeholders, preserves
+neighboring cell/tab groups and rejects queued drops after source/target view
+identity changes. Window move handling is event driven, without idle polling.
+Independent figure and whole-Figures-pane frames remove custom dock headers
+while floating, retain normal min/max/restore/close controls, and use the Windows
+application-window taskbar role. Redocking restores the saved compact header.
+Close All Figures includes independent windows and discards only figure views;
+it does not clear scientific workspace values or close source documents.
+These are implementation contracts, not a claim of native desktop verification.
+
+Click/focus selection uses GTG's persistent #0072bd perimeters: two logical
+pixels around the selected figure, one around its active subplot. Each figure
+retains its active subplot. Transparent mouse-through chrome changes without
+invalidating scientific raster scenes, camera state or export content. Divider
+refresh follows actual layout requests/show/resize and is coalesced; handles
+are clipped to unoccupied grid gutters so spanning tiles remain unobstructed.
+
+Onscreen rendering uses QWidget/QImage, with no QOpenGLWidget, startup graphics
+anchor, native-child graphics boundary, Render(), makeCurrent or GPU readback.
+Only the GUI thread accesses live widgets/scenes. It snapshots CPU geometry and
+annotations for one low-priority raster worker. Work is cancellable/coalesced;
+size/DPR/generation must still match before committing an image. Window moves
+paint cached images; resizes schedule one replacement after the quiet interval.
+Hidden/deleted canvases cancel work and release their cached frame. Bounds:
+16 million pixels per image; 256 MiB each for queued scenes, completed frames,
+visible image cache and raster working storage; 250 million raster operations.
+Opaque/per-sample transparent depth and 2x2 coverage antialiasing apply onscreen.
+SVG/PDF retain existing vector painter ordering for intersecting 3D surfaces.
+Display budgets never alter the stored scientific data or solver sampling.
+
+HELP / COPILOT
+Help/F1/header search and Language Reference use formatted local references,
+with readable headings, colored source examples and linked topic navigation.
+Ctrl+F uses a modeless movable on-screen Find/Replace panel; the source editor
+remains accessible and matches stay highlighted. Editor scrollbars use the
+compact 9-pixel style. Indexing is bounded and starts only
+when requested. Construction, showing panels and configuring credentials never
+sends a provider request. Optional OpenAI/Azure/Gemini Send uses explicit model,
+endpoint and user key. Source-sharing defaults to None with an outgoing preview.
+Keys are session-only by default, optional Windows Credential Manager otherwise;
+plaintext keys and GTG credentials are not imported into ordinary preferences.
+  An empty Copilot shows the local welcome before or after provider setup. Example
+  shuffle/prefill never sends a request. New Chat restores the welcome; changing
+  connection clears the old conversation and retains an unsent question. Internal
+  reference IDs, including streaming fragments, are hidden in assistant prose.
+  Readable source-title links retain local routing and provenance. User messages,
+  code, mathematical expressions and the raw proposal are preserved.
+Generated code requires Review, syntax/type Validate and explicit Apply. Changed
+source, selection, project/algebra context or imports invalidate a review. Source
+validation does not run solvers, compile native callbacks or evaluate a script.
+Existing named-file safe saving applies; Run is a separate explicit action.
+
+WORKBOOK DOCUMENTS
+XLSX/UTF-8 CSV/TSV are independent workspace pages; source-tab registry and source
+Run/Check remain unchanged. Data-tree navigation is bounded and excludes internal
+caches and filesystem links. Only registered .p files receive source actions.
+Worksheet/formula-bar edits, rectangular clipboard operations, undo/redo and
+Save/Save As use atomic writes and external-change checks. Untouched XLSX parts,
+other sheets and style metadata are retained. Excel formula text/cached values
+can be viewed, but Studio does not recalculate formulas or execute macros/links.
+See src/ide/workbook/README.txt for package/size/formula-range restrictions.
+
+ABOUT / VERIFICATION
+During saved-layout restoration, dock-controller reaction signals are blocked
+until Qt has reconstructed its dock areas. Show and top-level notifications
+queue floating-frame/title normalization instead of mutating window flags or
+title widgets inside Qt's restoration traversal. Startup preserves user settings
+and recovery ownership; it does not reset layouts or execute source to recover.
+Outer restore excludes nested working-host dock and toolbar names from Qt's
+recursive lookup, then restores their exact names before unblocking signals.
+Unmatched saved placeholders remain data. This prevents shared/freed layout
+items in Qt's deferred maximized-window snapshot without reparenting widgets or
+changing native identities. Startup and Default View both use this boundary.
+
+About uses compact Authors/Overview/Libraries/Licences/Build tabs, with Authors
+selected first, and retains author affiliations, emails and the logo beside an
+illustrated algebra banner. The current-year footer names Pentranion Team.
+The Qt 6/third-party notice belongs inside Licences, not below that footer.
+Author names use Dr prefixes; fixed blue underlined mailto links support mouse
+and keyboard activation. Banner artwork fits complete stroked paths and all
+five basis labels inside its available area, including narrow allocations.
+The About footer and permanent status bar show pentarnion.com links targeting
+https://pentarnion.com. The status link sits immediately before the worker icon,
+matching GTG's placement. Links support keyboard/mouse activation through the
+default browser; displaying them initiates no network request.
+GUI test executables require the Qt offscreen platform before QApplication;
+historical GPU/desktop stress cases are disabled. Verification uses tiny CPU
+fixtures and preserves scientific-engine hashes. Desktop graphics stress testing
+is excluded by user instruction; actual acceptance is recorded in docs/VALIDATION.md.

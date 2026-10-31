@@ -1,0 +1,8 @@
+F81: Statistics and seeded uncertainty summaries
+Authorized extension,26October2026.
+
+Explicit sample/population variance/covariance,type7quantiles,histograms,normal functions and numeric-data bootstrap with reproducible seeds and stated sampling assumptions.
+
+Authority: language.txt L69; specs/science_data_v0_2.txt.
+Acceptance: examples/statistics/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

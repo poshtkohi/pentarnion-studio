@@ -1,0 +1,7 @@
+{
+    "upstream_archive_sha256":  "b9fcb22e124d178f30d404e5a22ccac594353d71d845035795321cd53d6c4cee",
+    "upstream_version":  "0.2.37",
+    "stylesheet_patch_sha256":  "49bc3b91b80b4de3ed10662247308debd80bd0b9046c5e57cfa7a81f9e5aea4a",
+    "windows_utf8_header_sha256":  "65b5751f3dbf2df64459f34bb2fb96b7094c214a7d8947741fcbad7c67af037c",
+    "patched_writer_sha256":  "55237568212474b278ff80d9c428125edc87f01bc37ef801c8e1261a85a98a48"
+}

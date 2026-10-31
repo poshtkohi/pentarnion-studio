@@ -1,0 +1,19 @@
+FEATURE F36: SVG figure and individual subplot export
+Version: current profile 0.2 extension
+Authority: language.txt L29; user request, 26 October 2026
+Status: implemented; actual validation recorded in docs/VALIDATION.md
+
+F36-R1: Figure Export Image supports PNG/JPEG/SVG, retaining all allocated panels.
+F36-R2: Every subplot has a Save subplot icon (plotSave/plotSaveButton), exporting
+only its own figure/panel through the same three formats.
+F36-R3: SVG contains projected vector geometry and text/math glyph paths, with
+the current camera, viewport, clipping, sample markers and annotations. Do not
+substitute an entire raster screenshot in an SVG wrapper.
+F36-R4: Preserve native framebuffer PNG/JPEG and all numerical samples/tool state.
+F36-R5: Retain atomic Unicode-safe writes and existing-file preservation on
+cancel/failure. Validate stale/empty panel targets without replacing a file.
+F36-R6: Work in docked, tiled and floating figures; omit toolbar controls and,
+for individual export, every neighboring subplot. SVG uses painter depth order.
+Acceptance: native figure/interaction export tests, SVG structure/content checks,
+native visual inspection and failure-preserves-target cases.
+No script filesystem API, SVG editor, arbitrary transparent scene or PDF is added.

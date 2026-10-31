@@ -1,0 +1,17 @@
+FEATURE F37: Dense real and Pentarnion matrices and vectors
+Version: current profile 0.2 extension
+Authority: language.txt L30-L31; user request, 26 October 2026
+Status: implemented; actual validation recorded in docs/VALIDATION.md
+
+F37-R1: Preserve explicit realmatrix/pentarnionmatrix types, inferred matrix/vector
+declarations and scalar/array separation. Validate rectangular scalar literals.
+F37-R2: Ordered matrix products support compatible matrix/matrix, matrix/vector
+and vector/matrix shapes; no reassociation of Pentarnion products.
+F37-R3: Support scalar broadcast, entrywise operators, plain/conjugate transpose,
+entrywise math and one-based row/column or column-major linear indexing/writes.
+F37-R4: Preserve aliases and enforce shape/type/finite/operation/workspace bounds.
+F37-R5: Support real vector coordinate plot/plot3; preserve canonical projection APIs.
+F37-R6: Reject determinant, matrix inverse, matrix equation solves, slicing and
+arrays/random inside ODE models. Scalar inv(p) remains unchanged.
+Acceptance: frontend/lexer, matrix runtime references, alias/bounds/cancel cases,
+legacy fixtures and native figure checks. See docs/VALIDATION.md for actual results.

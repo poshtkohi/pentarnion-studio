@@ -1,0 +1,161 @@
+{
+  "language_version": "0.1",
+  "note": "Contract fixtures; no parser has been implemented or run by this package.",
+  "cases": [
+    {
+      "path": "fixtures/language/valid/all_arithmetic.p",
+      "expect": "ok",
+      "required_codes": []
+    },
+    {
+      "path": "fixtures/language/valid/grouping_sign_power.p",
+      "expect": "ok",
+      "required_codes": []
+    },
+    {
+      "path": "fixtures/language/valid/comments_and_ranges.p",
+      "expect": "ok",
+      "required_codes": []
+    },
+    {
+      "path": "fixtures/language/invalid/undeclared.p",
+      "expect": "error",
+      "required_codes": [
+        "E1201"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/narrowing.p",
+      "expect": "error",
+      "required_codes": [
+        "E1204"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/noninteger_exponent.p",
+      "expect": "error",
+      "required_codes": [
+        "E1208"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/implicit_multiplication.p",
+      "expect": "error",
+      "required_codes": [
+        "E1001"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/bad_grouping.p",
+      "expect": "error",
+      "required_codes": [
+        "E1301"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/short_constructor.p",
+      "expect": "error",
+      "required_codes": [
+        "E1207"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/range_into_scalar.p",
+      "expect": "error",
+      "required_codes": [
+        "E1204"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/zero_step.p",
+      "expect": "error",
+      "required_codes": [
+        "E1404"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/real_step_for_integer_range.p",
+      "expect": "error",
+      "required_codes": [
+        "E1204"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/protected_basis.p",
+      "expect": "error",
+      "required_codes": [
+        "E1203"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/bad_coeff.p",
+      "expect": "error",
+      "required_codes": [
+        "E1405"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/gamma_out_of_range.p",
+      "expect": "error",
+      "required_codes": [
+        "E1503"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/late_directive.p",
+      "expect": "error",
+      "required_codes": [
+        "E1501"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/literal_zero_divide.p",
+      "expect": "error",
+      "required_codes": [
+        "E1401"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/missing_semicolon.p",
+      "expect": "error",
+      "required_codes": [
+        "E1101"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/bad_arity.p",
+      "expect": "error",
+      "required_codes": [
+        "E1205"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/no_plotting.p",
+      "expect": "error",
+      "required_codes": [
+        "E1601"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/unicode_source_map.p",
+      "expect": "error",
+      "required_codes": [
+        "E1204"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/overflow.p",
+      "expect": "error",
+      "required_codes": [
+        "E1402"
+      ]
+    },
+    {
+      "path": "fixtures/language/invalid/unterminated_block.p",
+      "expect": "error",
+      "required_codes": [
+        "E1003"
+      ]
+    }
+  ]
+}

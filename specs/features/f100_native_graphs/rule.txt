@@ -1,0 +1,9 @@
+F100: Native graphs and coupled-network examples
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Stable directed/undirected real-weight graphs, algorithms and explicit matrix conventions. New graphcomponents is unambiguous; optional components alias preserves existing array declarations. Graph costs are not ordered whole Pentarnions.
+
+Authority: language.txt L88; specs/research_modules_v0_2.txt.
+Acceptance: examples/graph-theory/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

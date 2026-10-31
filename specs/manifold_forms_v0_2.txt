@@ -1,0 +1,38 @@
+F127 / L117: DIFFERENTIAL FORMS WITH VARIABLE METRIC JETS
+
+formfield(native_coefficients,point,degree,options(metric=native_metric,
+metric_parameters=options(...),parameters=options(...))) supports Riemannian
+metric fields on intrinsic coordinate charts of dimension1..6. Coefficients
+follow lexicographically ordered increasing index tuples. Callbacks return
+real scalars or explicitly shaped real coefficient matrices; the compiler
+emits first/second field and metric derivatives in cached native DLLs/SOs.
+
+The resulting PentarnionManifoldForm-v2 record appends metric_first,
+metric_second,metric_cache_key to all original form data. The established
+PentarnionRealForm-v1 constant-metric record and ABI remain valid unchanged.
+v2 records retain the coordinate point, full metric jets, orientation and
+native callback identities through operations and workspace persistence.
+
+hodge(form) differentiates both coefficients and the metric's volume/inverse
+factors. A sampled metric is not silently frozen when it came from a native
+field. exteriord(form) consumes one known derivative order; wedge(a,b) uses
+the graded antisymmetric product and product-rule jets. Wedge operands must
+agree on sampled metric/orientation and any retained variable metric jets.
+Empty forms above the chart dimension are retained as known graded zeros.
+
+codifferential(form) implements delta=(-1)^(n*(p+1)+1) star d star for p-forms.
+It requires degree>=1 and known first jets, and consumes one derivative order.
+formlaplacian(form) implements the Hodge operator d delta+delta d using known
+second jets. It returns values with derivative_order=0, since third/fourth jets
+were not supplied. Unknown higher derivatives are never silently set to zero.
+On scalar functions this nonnegative geometric operator has the opposite sign
+to div(grad f). Example:in polar Euclidean coordinates,g=diag(1,r^2),
+star(dr)=r*dtheta,delta(dr)=-1/r,and formlaplacian(r^2)=-4.
+
+Variable metric jets are propagated through native Cholesky/inverse/minor
+calculus; symmetry, positive definiteness, conditioning and finite arithmetic
+are checked. All work/cancellation and coefficient capacities are bounded.
+Existing constant-metric forms still support their prior dimension bounds;
+new variable-metric/codifferential/Laplacian kernels are bounded to1..6.
+General pseudo-Riemannian signatures and automatic global cohomology are not
+implied by this local pointwise differential calculus.

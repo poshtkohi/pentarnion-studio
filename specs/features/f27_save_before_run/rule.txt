@@ -1,0 +1,9 @@
+FEATURE F27: Mandatory safe save before script execution
+Authority: language.txt L20-L22 and the user's current explicit request.
+Status: implementation with actual final results recorded in docs/VALIDATION.md.
+
+All explicit script Run paths save first. Cancelled/failed/unsafe saves or stale
+disk/project metadata block execution and preserve source/workspace. Untitled
+buffers require normal Save As. Capture snapshot after successful persistence.
+Checking remains a snapshot-only operation; independent autosave and recovery
+protections remain intact. Verify all routes with failure and success cases.

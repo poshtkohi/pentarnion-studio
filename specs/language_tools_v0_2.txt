@@ -1,0 +1,199 @@
+CORE LANGUAGE ADDITIONS
+
+Braces delimit control blocks, following the existing ODE body convention:
+  integer total=0;
+  for(n=1:5){total=total+n;}
+  while(total<20){total=total+1;if(total==18){break;}}
+  if(total==18){display("done");}else{display("other");}
+  if(...) {...} else if(...) {...} else {...} is supported.
+
+for(iterator=values) accepts a finite integer/real range or a real row/column
+vector. Integer-range iterators have Integer type; other iterator values are
+Real. The iterator is local to the loop; any existing same-named variable is
+restored afterwards. break exits the nearest loop; continue starts its next
+iteration. while rechecks its real scalar condition each time. Declarations in
+if/for/while blocks are local to that block; assignment to existing outer
+variables persists. Clear is reserved for top-level workspace management.
+
+Comparison operators: ==, !=, ~=, <, <=, >, >=. Results are Integer 0/1.
+true/false are Integer constants. ! and ~ perform logical not; && and ||
+short-circuit and accept real scalar conditions. Ordered comparisons require
+real scalars. Pentarnion equality compares the five coefficients exactly;
+matrix equality compares shape and every coefficient, yielding one scalar.
+String equality is supported. No ordering or truth conversion for Pentarnions
+or arrays is assumed. Use real predicates such as norm2(p)<tolerance.
+
+function real square(real x){return x*x;}
+function integer factorial(integer n){
+  if(n<=1){return 1;}return n*factorial(n-1);
+}
+Function results/parameters may be integer, real, pentarnion, string,
+matrix/realmatrix or pentarnionmatrix; void is a result type only. matrix
+parameters/results have real entries; use pentarnionmatrix explicitly for
+Pentarnion arrays. Define functions before calling them; self-recursion is
+supported. Each call has its own parameter/local variable scope and can call
+earlier declared functions. There are no implicit global captures. return
+matches the declared result type; reaching the end of a non-void function is
+a runtime error. void functions use return; or reach the end. Nested function
+definitions are rejected. Functions persist between console submissions and
+are removed by clear like other workspace bindings.
+
+string name="Susanne"; declares an immutable value with ordinary typed
+assignment support. Strings can be compared for equality and passed to
+display, user functions, diagnostics and data IO. String concatenation and
+arrays of strings are not introduced.
+
+assert(condition[,"message"]); errors on a false real scalar condition.
+error("message"); stops execution. warning("message"); writes a warning to
+the unified Command Window and continues. help; / help(); provides an
+overview; help("topic"); provides builtin/control syntax or a user-function
+signature. Unknown help topics report their absence without failing a run.
+who; / who(); lists workspace names in name order. whos; / whos(); also
+shows each type and shape, including ODE sample-series lengths. Functions
+and other scalar objects appear as 1x1.
+
+Language 0.1 identifiers that coincide with newly introduced keywords or
+builtins keep their original identifier meaning. Execution requires language
+0.2 as before. The shared lexer highlights new keywords/builtins immediately.
+
+Execution is bounded by the existing source/token/node/nesting/operation,
+output, cancellation and workspace budgets. Function call depth defaults to
+32 and has a hard ceiling of 32; callers can choose a lower value. Retained
+matrix-coordinate budgeting includes suspended caller scopes and de-duplicates
+shared immutable arrays. Infinite loops exhaust the operation budget. Cancelled
+requests restore previous session variables, functions, random stream and timer.
+Ordinary runtime failures keep completed top-level statements, as before.
+Native ODE kernels retain their restricted expression subset; general functions,
+control flow and arrays are not silently compiled into those kernels.
+
+ARRAY LANGUAGE TOOLS CONTRACT (26 October 2026)
+
+Range values retain their existing integer/real range types. Converting a range
+to matrix/vector, using it in array arithmetic or an array-aware call, and using
+it in a matrix literal expands it to a real row vector. a:b uses step 1; a:s:b
+uses explicit nonzero finite step. Oppositely directed endpoints produce a
+1-by-0 vector. Floating endpoints use a bounded roundoff allowance so 0:.1:.3
+contains four values. Expansion obeys configured matrix bounds and cancellation;
+steps too small to advance binary64 values are rejected.
+
+Matrix literals concatenate scalar, range and numeric matrix blocks. Blocks
+within each syntactic row must have equal heights, and expanded rows must have
+equal widths. Syntactic rows may contain differing numbers of blocks. Entries
+retain order; Pentarnion-valued cells widen the whole array. No implicit scalar
+replication occurs during concatenation.
+
+Indices remain one based; one selector uses column-major linear order and two
+selectors address rows/columns. A scalar index produces one scalar. Colon, a
+range, or a real row/column vector of positive integer-valued indices produces
+an array. Repeated and descending indices are supported. Bounds are checked.
+Full logical indexing and multidimensional index arrays are not introduced.
+end is the current indexed extent: numel(A) for one selector, rows/columns for
+two. Nested indexing temporarily replaces and then restores the outer extent.
+A(:) always produces a column vector. Other linear selections of vector bases
+retain the base row/column orientation; selections of general matrices retain
+the index vector's orientation. Empty selectors preserve their resulting shape.
+
+Slice assignment supports one numeric scalar broadcast or a matching array.
+Two-selector assignment requires exact selected rows/columns. Linear assignment
+allows any RHS vector/matrix shape with matching element count and traverses
+RHS entries column-major. The old array is immutable; aliases retain old data.
+Repeated targets are assigned in column-major traversal order; the last value
+wins. Assignment never resizes/deletes arrays, and real arrays reject Pentarnion
+values. Selector expressions are evaluated before the RHS expression.
+
+Real/Pentarnion ODE sampled series support the same read selectors as column
+vectors. A small selection need not materialize the entire solution. Selected
+results are scalar values or ordinary bounded arrays. Series are immutable.
+size/length/numel inspect series without copying the data.
+
+sum(A[,dim]) and mean(A[,dim]) reduce along the first nonsingleton dimension by
+default. min/max(A) use the same default; min/max(A,[],dim) specify a dimension.
+min/max(A,B) are pairwise operations on equal shapes or one scalar broadcast.
+Dimension values must be positive integers; dimensions above two are singleton
+dimensions and return the input unchanged. Numeric scalar reductions return a
+scalar; array reductions retain their reduced two-dimensional shape.
+sum/mean support real and Pentarnion values; min/max require real entries.
+sum of an empty extent yields zero; sum([]) is a 1-by-1 zero. min/max over empty
+extents retain empty results. mean of an empty extent that would produce numeric
+entries is rejected because nonfinite results are not admitted by the language.
+Real/Pentarnion ODE series are treated as column arrays by these utilities.
+Accumulation uses independent long-double coefficient sums and checks finite
+results; no Pentarnion multiplication is reassociated.
+
+Retained scope: existing elementwise .*, ./, .^ and scalar expansion, constructors,
+transpose/conjugate transpose, seeded random generation and bounded storage are
+preserved. No determinant, matrix inverse/solve, array resizing, higher-dimensional
+array, native array ODE state, parallel execution, or PDE feature is introduced.
+
+NATIVE WORKSPACE, CSV AND XLSX FILES
+
+save("workspace.pws"); stores numerical values and strings in a versioned UTF-8
+JSON workspace. Optional quoted names select variables: save("w.pws","p","A").
+Integer, Real, Pentarnion, ranges, matrices and sampled ODE solutions retain
+their types/data. Sample-series views save as ordinary coefficient/value arrays.
+Default save excludes executable function/ODE definitions; keep those in .p
+source files. Explicitly requesting an executable definition is an error.
+
+load("workspace.pws"); restores names for following console submissions.
+Analysis finishes before execution, so a checked script must predeclare typed
+targets before load if it uses them in the same script. Optional quoted names
+select bindings to restore. Existing targets retain declared types and use the
+ordinary assignment conversions; compatible Integer-to-Real conversions may
+round values above 2^53. Loading a complete workspace into an empty scope is
+lossless. Version, algebra ID/gamma, names, schemas, finiteness, dimensions and
+retained-resource limits are validated before any loaded binding is committed.
+Malformed/over-budget loads leave the previous workspace intact. Files contain
+data and are never evaluated as code. Random-stream/timer state is not persisted.
+
+matrix A=readmatrix("data.csv");
+writematrix(A,"data.csv");
+writematrix(A,"data.xlsx","Results");
+matrix B=readmatrix("data.xlsx","Results");
+csvread/csvwrite and xlsread/xlswrite aliases use filename first:
+  matrix C=csvread("data.csv"); csvwrite("other.csv",C);
+  matrix X=xlsread("data.xlsx","Results"); xlswrite("other.xlsx",X,"Results");
+
+CSV uses a native bounded numeric parser/writer with UTF-8 paths, optional BOM,
+quoted fields, CRLF/LF and round-trip real formatting. XLSX uses native XLSXIO
+0.2.37, Expat and Minizip. No installed Excel application, COM, Python or online
+service is required by Studio. XLSXIO reads/writes .xlsx; legacy binary .xls is
+not supported. CSV is a separate native path because XLSXIO handles .xlsx only.
+Numeric tables must be rectangular and finite, without headers, blank/text cells
+or merged-cell interpretation. Formula evaluation is not provided; a stored
+numeric cached formula value can be read. Output creates a new single-sheet
+workbook; it does not append to or preserve other sheets in an existing workbook.
+Pentarnion arrays must be exported explicitly via coeff(P,k), keeping their five
+coordinates distinguishable. readmatrix returns a realmatrix; writes accept real
+scalars, matrices/vectors and sampled real series.
+
+Relative data paths in Studio use the active project's directory (the source
+directory when no project is open). The CLI uses its script's directory.
+CSV/XLSX tables are bounded to 100,000 entries; stored/archive-expanded bytes
+default to 64 MiB. Numerical/workspace/operation/cancellation limits also apply.
+Writes validate then commit an adjacent temporary file atomically; failures or
+cancellation before commit preserve the existing destination. Completed explicit
+file writes are side effects and are not undone by a later script error/cancel.
+Checking/highlighting alone never creates files, opens Excel or compiles models.
+
+Reproduce dependencies with tools/bootstrap-xlsxio.ps1 or
+tools/bootstrap-linux-xlsxio.sh. Dependencies are project-local; the existing
+C:/msys64 compiler is retained. No automatic downloads occur during configure.
+
+CURRENT FOUNDATION CLARIFICATION (F50-F58)
+The current extensions in specs/foundations_v0_2.txt and language.txt L39-L46
+supersede earlier exclusions for imports/callbacks/records/native scalar functions,
+logical masks and sampled/numerical calculus. Array ordered comparisons and &,|
+yield logical masks; ==/!=/~= retain one scalar shape/data predicate. Storage
+remains bounded 2D. Full native scripts, parallel GEMM and PDE solves are deferred.
+
+CURRENT ADVANCED NUMERICAL EXTENSION — 26 OCTOBER 2026
+specs/advanced_numerics_v0_2.txt, language.txt L47-L55 and F59-F67 supersede earlier
+deferred claims only for current categories5-8 and revised per-call threading:
+parallel matrices/OpenBLAS, real dense/sparse linear algebra, explicit Pentarnion
+left/right operators, cached native derivatives/Hessians/products, roots and direct
+ODE RHS partials. Historical rules above remain unchanged. Whole-Pentarnion matrix
+determinants/inverses are not inferred from real operator quantities; complex
+eigendata uses split real/imaginary arrays. Native ODE trajectory sensitivities,
+complex dense arrays, general native scripts, fitting, chaos/PDE/geometry packages
+and Map Explorer(plan20) remain future. All37 staged Windows suites passed; final
+installed/Code::Blocks/native GUI evidence is in HANDOFF; Linux is unverified.

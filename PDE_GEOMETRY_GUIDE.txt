@@ -1,0 +1,30 @@
+PDE AND GEOMETRY QUICK START
+Open examples/pdes-and-geometry/project.pprj. Run main.p for real FD/P1FE heat tests.
+Run geometry.p for colour fields/surfaces/contours/3D sphere. Run paper_pde_eta0.p
+or paper_pde_eta1.p for the attached Pentarnion report. Choose one endpoint per run;
+changing eta reuses the same compiled reaction body. Large runs may take time.
+All five coefficients and full time samples remain in field.values; display alone
+uses fewer times. paper_pde_compute.p has no figures and works with penta-run.
+
+pdesolve(reaction,x,u0,options(method="fd",boundary="periodic",diffusion=.1,
+ t1=1,time_step=.001,parameters=options(...)))
+Reaction starts(state,real time,real space), followed by named fixed parameters.
+method="fem" means 1D linear P1 with consistent mass and nodal reaction interpolation.
+Refine space/time independently; explicit RK4 needs diffusion and reaction stability.
+Boundary choices: periodic (without a repeated endpoint), constant Dirichlet
+(left/right), homogeneous Neumann. This is a first 1D PDE package; general 2D,
+unstructured meshes, PETSc and MFEM integration remain future work.
+
+Use imagesc(x,t,realField) or surf(x,t,realField). pdecoeff(field,0..4) selects a
+coefficient. contour(x,y,Z,levels) and isosurface(x,y,z,V,level) plot sampled level
+sets. A volume uses x-fastest order: ny*nz rows by nx columns. Sampled curvegeometry
+returns arc/tangent/normal/curvature estimates. Existing figure/subplot image/SVG
+save buttons and mesh vertex data tips are available. See specs/pde_geometry_v0_2.txt.
+
+The combined paper preview uses every twentieth stored time (1.0 time unit);
+computation still retains all 2401 samples at 0.05 spacing. For a full-resolution
+individual map after the run, submit these as two Command Window requests:
+  matrix Z=pdecoeff(field,0);
+  figure(20);imagesc(field.x,field.t,Z);
+Separate requests keep interpreted conversion/display work within its normal
+budget. Choose coefficients 0..4 as needed; no new PDE solve is required.

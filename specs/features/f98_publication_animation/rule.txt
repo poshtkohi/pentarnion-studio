@@ -1,0 +1,9 @@
+F98: Publication plotting and field playback
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Sample-preserving styles/legends/hold/limits, 2D linked axes, physical export dimensions and native PDF. Saved-field playback and explicit bounded PNG-frame/native uncompressed-AVI export perform no simulation on the GUI thread.
+
+Authority: language.txt L86; specs/research_modules_v0_2.txt.
+Acceptance: examples/field-animation/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

@@ -1,0 +1,9 @@
+F99: Drawn tile layouts, spans and dividers
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Visual grid and rectangular-span selection, resizable row/column weights, explicit Studio/Desktop/subplot targets and versioned validated layout save/restore preserve stable figure/panel identities and camera/data state.
+
+Authority: language.txt L87; specs/research_modules_v0_2.txt.
+Acceptance: examples/figure-layout/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

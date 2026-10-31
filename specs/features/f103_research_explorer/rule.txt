@@ -1,0 +1,12 @@
+F103: Checked Research Explorer workflows
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+One docked panel and the existing worker support explicit ODE/chaos/fitting/discovery/PDE/geometry/mechanics runs, script review/save and fresh-result data export/replay. Opening/editing/previewing never executes source. Hashes detect stale submitted snapshots.
+
+Authority: language.txt L91; specs/research_modules_v0_2.txt.
+Acceptance: examples/research-explorer/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.
+
+Real parameter sliders edit validated finite literals only after explicit selection;
+preview never executes. Saved source hashes and cache identities guard stale results.

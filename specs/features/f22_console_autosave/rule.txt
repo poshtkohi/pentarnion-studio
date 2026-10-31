@@ -1,0 +1,16 @@
+FEATURE F22: Unified console and source autosave
+Version: current profile0.2 extension
+Authority: language.txt L17-L19 and the user's approved discussion.
+Status: implementation and regression validation recorded in docs/VALIDATION.md.
+
+REQUIRED BEHAVIOUR
+One editable console prompt within the same text surface as protected output,
+errors and history. No separate command input/status strips. Mouse-Leave (not
+just focus loss) triggers named dirty source safe-save after~500ms; periodic
+default60s, settings controls, untitled recovery and external-change guards.
+No implicit source execution or blocking autosave dialogs. Preserve encoding,
+newline, BOM, source safety, caret/selection/history and user scroll position.
+
+VALIDATION
+Record actual automated/native checks, skipped contexts and platform limits in
+docs/VALIDATION.md. Unsupported OpenGL export must fail clearly, never fake an image.

@@ -1,0 +1,18 @@
+F74: Command Window run, interrupt, help and output colors
+Authorized extension,26 October2026.
+
+Support bare/quoted/function-style run with safe save-before-execution. The ready
+prompt is replaced by Running/Stopping while work is pending. During work Ctrl+C
+requests cancellation anywhere inside Studio, taking priority over Copy; only
+after worker completion does the ready prompt return. Idle Ctrl+C copies selection
+or abandons input. help topics/help keyword/help("topic")/lookfor provides native
+guidance/signatures. Normal output black, warning/error red via explicit metadata,
+never guessed string prefixes. Source errors remain clickable file/line/column links.
+PDE reaction/JIT cancellation must return Cancelled/R1006 and restore prior state;
+genuine PDE errors retain R2100. See specs/studio_workflow_v0_2.txt.
+
+Authority: language.txt L62; specs/research_v0_2.txt.
+Acceptance example: examples/advanced-odes/project.pprj.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

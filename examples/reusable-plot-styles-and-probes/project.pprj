@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Reusable Plot Styles And Probes",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "reusable-style-and-vector-output.p",
+    "full-coefficient-field-probes.p"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-31T19:20:13.728138+00:00",
+  "upstream": [
+    {
+      "url": "https://download.osgeo.org/libtiff/tiff-4.7.2.tar.gz",
+      "name": "tiff-4.7.2.tar.gz",
+      "sha256": "672bd7d10aee4606171afb864f3570b83340f6a33e2c186dc0512f7145ffdf6a",
+      "expected_sha256": "672bd7d10aee4606171afb864f3570b83340f6a33e2c186dc0512f7145ffdf6a",
+      "bytes": 4083368
+    },
+    {
+      "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libtiff/0002-libtiff-install-headers.patch",
+      "name": "0002-libtiff-install-headers.patch",
+      "sha256": "493742947c8667655b6b89f2d7d27e92e1438a490ed86f50811112394b432a12",
+      "expected_sha256": "493742947c8667655b6b89f2d7d27e92e1438a490ed86f50811112394b432a12",
+      "bytes": 244
+    },
+    {
+      "url": "https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libtiff/PKGBUILD",
+      "name": "PKGBUILD",
+      "sha256": "26770df910377429bed012ce1132500319ee7ac28846f1aa0bed2fc8271fe6db",
+      "expected_sha256": null,
+      "bytes": 3696
+    }
+  ],
+  "baseline_package_sha256": "258e08a91e6b1703d41730ffe6080c2a40968fe90896b45716c1b41042775076",
+  "only_intended_codec_change": "JBIG_SUPPORT disabled; all other baseline codecs retained",
+  "installed_or_frozen_files_changed": false
+}

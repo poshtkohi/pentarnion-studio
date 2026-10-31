@@ -1,0 +1,83 @@
+F156 / L146: MIXED-ORDER H1 FINITE ELEMENT SPACES
+F157 / L147: NATIVE QUASILINEAR WEAK FLUXES AND GENERATED JACOBIANS
+Status: implemented candidate; executed acceptance is recorded in docs/VALIDATION.md.
+
+record field=femmixed(native_flux,tagged_R2_mesh[,options]);
+femmixedplot(field[,options(component=zero_based_coefficient)]);
+
+The physical problem is -d(Fx)/dx-d(Fy)/dy+R=f on a tagged real R2 triangular
+mesh. It is an elliptic weak problem at explicit time=0 by default; the time
+argument is a frozen runtime parameter, not a claim of transient integration.
+State coordinates may be real/complex/legacy Pentarnion/generic algebra scalars
+or explicitly shaped native arrays. Bounds:1..32 real coefficients in total,
+subject to the native callback's input/output/parameter limits.
+
+The native callback takes three complete leading groups in declaration order:
+state variables,physical x-gradients,physical y-gradients,time,x,y,parameters.
+It returns three complete corresponding groups:Fx,Fy,R. Every group's types,
+shapes and immutable algebra definitions must equal the original state groups.
+For one quaternion state: flux(q,qx,qy,t,x,y,parameters) returns Fx,Fy,R as three
+whole quaternion values. Multiple scalar states precede all x-gradients and all
+y-gradients. Native algebra multiplication brackets and left/right order are
+preserved; an ordered flux law must be written explicitly.
+
+options(order=2,orders=vector). Each H1 coefficient space has its own P1..P4
+nodal basis/connectivity and global DOFs. orders accepts one entry per complete
+declared state (repeated across its coordinates), or one explicit order per real
+coefficient. Different coefficient orders are deliberate mixed H1 approximation
+spaces; they do not imply Raviart-Thomas/Nedelec H(div)/H(curl) conformity or
+inf-sup stability of an arbitrary saddle-point formulation.
+
+options(forcing,initial,boundary_value,exact) accept complete typed constants or
+native spatial callbacks(time,x,y,parameters), with separate forcing_parameters,
+initial_parameters,boundary_parameters,exact_parameters. Default initial and
+Dirichlet data are zero. All exterior tagged edges have Dirichlet conditions in
+this initial mixed adapter; Neumann/Robin/transient/curved H1 problems already
+have the separate femsystem/femtime interfaces. This adapter does not silently
+substitute those boundary semantics or flatten an embedded surface into R2.
+
+The compiler emits derivatives of every flux/reaction coordinate with respect
+to every state,x-gradient,y-gradient coordinate. Weak assembly includes both
+state-dependence and gradient-dependence chain terms. No user Jacobian, finite
+difference or coefficient-only linearization is substituted. Example:
+Fx=(1+u^2)ux,Fy=(1+u^2)uy uses both2u*grad(u) and1+u^2 derivative terms. The
+general nonlinear law is not automatically certified elliptic/coercive; the
+solver reports independently recomputed weak residuals, not a PDE existence or
+uniqueness theorem. Invalid/singular/nonfinite laws fail explicitly.
+
+Numerics: native sparse Newton with backtracking, parallel CSR restarted GMRES,
+Jacobi preconditioning,two-pass orthogonalization and original-system linear
+residual checks. MFEM supplies fixed reference bases/connectivity; assembly,
+vector products and reductions use Studio's shared CPU budget. No private
+thread pool or global BLAS thread mutation occurs. All nonlinear callback bodies
+are compiled/cached; changing parameters,time,orders,mesh or tolerances reuses
+unchanged native bodies. Parameters are passed at runtime. Tables/body structure
+changes invalidate cache identity. Compilation is excluded from execution timing.
+
+Options:parameters,time=0,order=2,orders,visualization_refinement=4,rtol=1e-10,
+atol=1e-12,linear_tolerance=1e-10,max_newton=30,max_linear=1000,
+gmres_restart=40,threads=shared_setting,max_work=execution_allowance,
+max_bytes=512MiB,max_seconds=120. At convergence norm(residual)<=atol+
+rtol*max(1,initial_residual_norm). relative_residual uses that same reference.
+L2_error,when exact is supplied,is a Euclidean-coordinate quadrature diagnostic,
+not an algebra composition norm or a rigorous error bound.
+
+The PentarnionMixedH1-v1 result retains ragged dof_values (one column) and
+dof_coordinates (two columns). component_offsets has components+1 one-based
+entries delimiting every complete real coefficient's own H1 DOFs. It is not a
+node-by-components rectangular field and must never be inferred from width.
+orders,state_layout include exact widths/immutable algebra identities. Common
+independently sampled visualization_vertices,visualization_values(all complete
+coefficient columns),visualization_triangles are separate from authoritative
+ragged H1 data. Plotting samples each component's actual basis, not P1 vertices.
+Results retain mesh,components,dofs,converged,status,residuals,L2 error,
+Newton/linear/flux/Jacobian/field counters,native work,estimated memory,maximum
+nonzeros,cache identities/hits,requested/granted/used threads and parallel calls.
+
+Bounds:50000 physical vertices/triangles,20000 total ragged DOFs,orders1..4,
+visualization refinement1..16,explicit conservative sparse/Krylov/output memory,
+native work/wall-time/cancellation. Existing compact nodal FEM APIs/ABIs remain
+unchanged. No distributed MPI or mixed de Rham/saddle-point stability claim.
+Acceptance:tests/runtime/fem_mixed_kernel_tests.cpp and fem_mixed_language_tests.cpp.
+Examples:examples/high-order-finite-elements/mixed-p1-p3-coupled-fields.p and
+native-quasilinear-algebra-flux.p.

@@ -1,0 +1,38 @@
+CONTROLLED NATIVE WORKLOAD BENCHMARKS - F161
+
+penta-benchmark [--quick] [--threads 1..64] [--repetitions 1..10]
+                [--output report.json] [--overwrite]
+
+This Qt-free CLI executes deterministic, source-hashed numerical workloads through
+the actual checked language/runtime and lazy native modules. It uses three fixed
+seeds and serial/requested-parallel settings. Workloads include ordered real,
+Pentarnion, quaternion and sedenion matrix products, cached native BDF ODE solves,
+and implicit nonlinear real PDE solves. Runtime parameters change without changing
+the native numerical bodies. Every case verifies an independent analytic result or
+the complete-coordinate serial reference before accepting its timing.
+
+Default matrix orders are256,96,48,48; --quick uses128,24,16,16. PDE grids contain
+257 nodes, or33 with --quick. Repetitions default3. The maximum parallel reservation
+defaults to min(4,logical CPUs); one scalar ODE is not claimed to run in parallel.
+The shared thread budget remains authoritative, and actual native thread reports
+are retained. No minimum speedup or particular wall-clock threshold is asserted.
+
+PentarnionControlledBenchmarks JSON version1 reports each workload, seed, source
+SHA256, requested threads, repetition execution seconds, whole-request wall time,
+validation error and process cumulative peak resident bytes. Execution timing
+starts after one warm call and excludes native compilation via the usual tic/toc
+contract. Whole-request time includes setup, first-use module loading, native
+compilation/cache lookup, reference validation and repeated execution. Peak RSS is
+cumulative for this process: later rows include earlier modules and allocations.
+It is not an isolated per-workload memory measurement or idle Studio measurement.
+
+Output publication is atomic and refuses existing destinations unless --overwrite
+is explicit. Numerical/native work and native cache paths use a private temporary
+directory. The CLI does not modify user projects, choose thread settings for other
+applications, execute arbitrary benchmark scripts, or alter global dependencies.
+
+controlled_benchmark_smoke executes quick mode with one repetition in CTest.
+Platform reports describe the actual machine/VM and workload only. They establish
+neither platform-equivalent performance nor comparisons against another product.
+Actual execution, startup/RSS/disk measurements and remaining release decisions
+belong in docs/VALIDATION.md and the corresponding acceptance reports.

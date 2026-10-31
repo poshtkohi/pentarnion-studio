@@ -1,0 +1,6 @@
+F105: Parallel native PDE experiments
+Authorized second-roadmap extension, 26 October 2026.
+Status: staged Windows implementation; executed tests belong in docs/VALIDATION.md.
+Authority: language.txt L93; specs/research_modules_v0_2.txt.
+Mathematics, resource bounds, context and native cache contracts are mandatory.
+Do not infer general unsupported subcases or Linux execution from this rule.

@@ -1,0 +1,10 @@
+F75: Persistent nonmodal source Find and Replace bar
+Authorized extension,26 October2026.
+
+One child bar provides live current/all backgrounds, case/Unicode whole-word/regex modes, wrapping navigation, safe captured replacement and one-Undo Replace All. Invalid regex/read-only state/caps cause no destructive edits. Source remains editable; foreground syntax/rich copy/printing/tab lifecycle are preserved. Search neither executes nor saves.
+
+Authority: language.txt L63; specs/research_v0_2.txt.
+Acceptance example: Ctrl+F in any source editor.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

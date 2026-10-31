@@ -1,0 +1,53 @@
+F123 / L113: OPTIONAL NATIVE PETSC KSP AND SNES
+
+petscsolve(A,b[,options]) solves a real square dense or canonical CSC sparse
+operator, returning a report with x as a real column vector. Operators may be
+assembled by FD, FEM or any other application; no grid/mesh ordering is assumed.
+Use explicit ordered left/right real operators for algebra-valued matrices.
+This interface does not assume an associative algebra product or discard basis
+coefficients. Maximum dimension100000, CSR nonzeros4000000, positive bounded
+work/time/storage allowances. Nonfinite, unsorted or duplicate CSR entries fail.
+
+Linear method: gmres(default) or cg; use CG for symmetric positive definite
+operators. preconditioner: jacobi(default),none,ilu. none/jacobi use PETSc shell
+matrices whose CSR products execute through Studio's shared CPU pool. ilu uses
+PETSc sequential AIJ/ILU. PETSc vector/Krylov bookkeeping remains sequential.
+threads=0 is shared automatic selection,1..64 a maximum grant. No private
+OpenMP/MPI worker pool or BLAS global thread-setting mutation is introduced.
+The PETSc configuration mutex is entered after the shared CPU reservation.
+
+petscroot(residual,initial[,options]) uses SNES Newton with line search and
+GMRES inner solves. The callback is compiled entirely to a cached DLL/SO;
+the compiler supplies its analytic real-coordinate Jacobian. The user never
+writes a Jacobian. Initial values retain complete declared real/complex/algebra
+or explicitly shaped array coordinates, with1..128 unknowns and exactly the
+same number of returned real residual coordinates. Trailing named parameters
+come from options(parameters=options(...)). Changed parameters/tolerances/
+initial guesses reuse the compiled callback when its typed body is unchanged.
+No interpreted residual is invoked during solver iteration.
+
+Options shared by both: rtol=1e-10,atol=1e-10,step_tolerance=1e-12,
+max_iterations=1000,max_evaluations=10000,max_work=(execution allowance),
+max_bytes=268435456,max_seconds=60,threads=0,method,preconditioner.
+Linear-only initial=real_vector supplies an initial guess.
+OutputFcn/OutputEvery use the existing MATLAB-style init/iter/done monitor.
+No additional residual evaluation is forced for an iteration observer. Native
+callbacks remain compiled; the optional UI monitor executes on the driver.
+Current monitor snapshots are bounded to128 coordinates; larger linear solves
+work without OutputFcn. A stop retains the iterate with stopped=1,converged=0.
+
+Report: x,residuals,residual_norm,relative_residual,converged,stopped,status,
+message,backend_reason,iterations,linear_iterations,evaluations,
+jacobian_evaluations,native_evaluations,work_units,elapsed_seconds,cache_hit,
+cache_key,backend,method,preconditioner,threads_requested,threads_granted,
+threads_used,parallel_calls. Final residuals are recomputed against the original
+operator/native residual. Linear acceptance requires norm(r)<=max(atol,
+rtol*norm(b)); nonlinear acceptance requires norm(F(x))<=atol as well as a
+positive PETSc convergence reason. Backend convergence alone is not accepted.
+
+Lazy penta_petsc DLL/SO is optional at build time (PENTA_BUILD_PETSC).
+Windows pinned SDK: MSYS2 PETSc3.25.1 real sequential dso build. Linux uses a
+real PETSc>=3.25 pkg-config package. The application does not initialize PETSc
+until the feature is called. MPI/distributed assembly and full parallel MFEM
+are not implied by this interface. Studio does not finalize a host-owned PETSc
+instance. See third-party/petsc-sdk/README.txt for provenance and dependency pins.

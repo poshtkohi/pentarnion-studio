@@ -1,0 +1,15 @@
+F130: Native parallel ODE/PDE fitting and refit ensembles
+Authorized inventory-group1/8 extension,27 October2026.
+Status: implemented bounded native adapter; platform acceptance is recorded in docs/VALIDATION.md.
+
+ODE/PDE multistart, profile and bootstrap commands share the native Ceres/inference
+scheduler, cached scientific callbacks, per-point trajectory caches, shared CPU
+budget, owner-thread iteration observers and completed-task checkpoint ledgers.
+ODE Jacobians use compiler AD/CVODES sensitivities; PDE Jacobians are explicitly
+finite differences of complete native solves. Full coordinate layouts are retained.
+Profiles/rank diagnostics and fitted-mean bands do not prove identifiability or
+future-observation coverage. Bounds/unsupported model contracts are explicit.
+
+Authority: language.txt L120; specs/solver_refits_v0_2.txt.
+Acceptance: examples/parallel-solver-refits/project.pprj;
+tests/runtime/solver_refit_tests.cpp and solver_refit_language_tests.cpp.

@@ -1,0 +1,119 @@
+SIGNALS, STATISTICS, EXACT FORMAL EXPRESSIONS AND ANALYSIS RECORDS
+Tasks16-19; language0.2; bounded first implementation,26 October2026.
+
+BACKEND AND EXECUTION
+penta_science is a lazy Qt-free DLL/SO with versioned C ABI, host-owned input/output
+buffers, process-resident loading and cancellation. Current kernels are serial
+inside the shared CPU reservation; they do not create another thread pool. Heavy
+numeric work is charged to the request operation budget. Missing/incompatible
+modules reject explicitly. All observations must be finite real values. For
+Pentarnion observations select a coefficient/defined real invariant explicitly.
+
+SIGNALS
+fft(x) returns a record(real,imag,magnitude,phase,samples,normalization). Arrays are
+full-spectrum column vectors; forward FFT is unscaled. ifft(split_record) returns
+the same record layout with inverse scaling1/N, preserving imaginary components.
+The existing Eigen/KissFFT backend supports2/3/5-smooth lengths1..262144.
+Language vectors also obey the existing100000-per-axis bound (and any lower host
+limits), so the effective language input/output limit is100000 samples;
+other sizes reject with an explicit padding diagnostic rather than a slow fallback.
+There is no implicit truncation/padding, sampling-frequency inference or new
+complex-array storage. Eigen's default backend is used, not installed FFTW/MKL.
+
+pwelch(x[,options(fs=1,segment=largest_power_of_two_le256,
+                 overlap=floor(segment/2),demean=1)]) returns
+frequency,power,fs,segment,overlap,normalization. Each full segment uses a symmetric
+Hann window, optional segment-mean removal, and energy normalization1/(fs*sum(w^2)).
+Interior positive-frequency power is doubled; DC and even-length Nyquist are not.
+Only complete segments are averaged. Segment>=3,<=N and2/3/5-smooth;0<=overlap<segment.
+Power is a one-sided density per frequency unit. Plot(result.frequency,result.power).
+
+autocorr(x[,options(max_lag=min(20,N-1),demean=1)]) returns lags,correlation,
+normalization. Lag k sums paired centered values divided by the full zero-lag
+energy(the biased normalized convention). A constant centered signal rejects.
+findpeaks(x[,options(min_height=...,min_distance=1)]) returns values,indices,count.
+Peaks exclude endpoints, use strictly increasing left and nonincreasing right
+neighbors(selecting the first plateau sample), prioritize higher peaks for minimum
+distance suppression, then return one-based indices in sample order. This is a
+local peak detector; prominence/width/interpolated peaks are not implemented.
+
+STATISTICS
+variance(x[,population_flag]) and stddev use a real vector; flag0(default) divides
+by N-1 and requiresN>=2; flag1 divides by N and requiresN>=1. The centered accumulation
+uses long-double intermediates. covariance(X[,flag]) treats rows as observations
+and columns as variables, returning the full symmetric covariance matrix.
+Standard deviation takes its wide square root before conversion to binary64;
+a representable SD does not require a representable variance. A variance outside
+the finite binary64 range still rejects. Constant subnormal observations retain
+zero SD, and normalization/sample-count/cancellation rules are shared.
+quantile(x,q) sorts a copy and uses type7 linear interpolation at1+(N-1)*q;0<=q<=1.
+Interpolation retains finite results for opposite-sign finite endpoints even when
+their direct endpoint difference would overflow binary64.
+Scalar q returns real; vector q returns a row vector. This convention is explicit
+and does not claim to reproduce every MATLAB quantile-method version.
+histogram(x,edges) returns counts,edges,centers,density,included,excluded. Bins are
+[left,right), with the final right edge included. Density divides included counts
+by total included observations and bin width; all-zero density if none included.
+Plot(centers,counts/density) uses existing curves; a dedicated bar renderer is later.
+normpdf/normcdf/norminv(x[,mean,sigma]) preserve real array shapes; defaults0,1;
+sigma>0. norminv accepts probabilities strictly in(0,1) for finite results.
+
+bootstrap(x[,options(replicates=1000,seed=0,statistic="mean",confidence=.95)])
+supports statistics mean,median,stddev;2..100000 replicates and at most10000000
+sampled values. It returns estimates,mean,standard_error,lower,upper,confidence,
+replicates,seed,method,statistic. The interval is the type7 percentile interval
+of independently sampled N-observation replicates; standard_error is the sample
+standard deviation of replicate estimates. Means, standard errors and percentile
+bounds retain representable finite values
+through wide accumulation and checked final conversion. An unrepresentable real
+summary rejects instead of returning an infinite record field.
+Seeds reproduce this same build/runtime; no cross-C++-library bit-identity is
+promised. IID sampling is an explicit assumption;
+block bootstrap, arbitrary statistic callbacks and other distributions remain future.
+
+EXACT FORMAL SYMBOLIC EXPRESSIONS
+sym("expression") returns a typed data record(format="PentarnionSymbolic-v1",
+expression,domain="formal_nonassociative",exact=1). Boost multiprecision rational
+coefficients keep integer/decimal/scientific-decimal literals exact, not binary
+floating-point approximations. Supported grammar: identifiers,+,-,*,/,parentheses.
+Division requires a nonzero exact rational constant denominator. No ^,functions,
+whole-algebra inverses,commutation/reassociation or basis reduction is invented.
+symdiff(expr,"x") applies the formal Leibniz derivation preserving every product
+order and grouping. symsubs(expr,"x",replacement) substitutes an exact expression.
+symsimplify folds exact scalar arithmetic and0/1 identities only. symtext returns
+the canonical fully-parenthesized expression. (a*b)*c and a*(b*c) stay distinct.
+symnumeric(expr[,options(x=value,...)]) explicitly converts a fully substituted
+expression to a finite real value. Real numeric bindings first use max_digits10
+decimal text, so an already floating-point binding is not reclassified as exact
+measurement data. Unbound atoms reject. There is no symbolic Pentarnion evaluator
+or symbolic sparse equation solver in this bounded milestone.
+Limits:32768 input/output characters,8192 parsed primary nodes,depth128,1024-digit
+literals/exponents,16384-bit rational numerators/denominators. Unsupported/resource
+cases reject. Symbolic strings are parsed by this bounded expression parser and
+never treated as Studio source, filesystem commands or process instructions.
+
+REPRODUCIBLE RECORDS
+analysisrecord(name,data_record[,settings_record]) records format,version,name,
+algebra,gamma,language,backend,data_hash,data,settings. data_hash is SHA-256 of the
+canonical existing typed-data JSON encoding. Native solver/cache/result metadata
+remain inside data without being erased. Settings can retain source/model identity,
+seeds,solver/derivative/discretization settings and assumptions; the caller supplies
+source identity explicitly, since a label/path alone is not a source-byte hash.
+saveanalysis(path,record) writes a new atomic safe JSON data file with version,
+algebra,gamma and payload SHA-256. loadanalysis(path,typed_template_record) verifies
+format/version/algebra/hash and exact structured type schema before returning data.
+It never evaluates source and does not mutate the template/workspace on failure.
+Existing save/load also store these pure-data records. The hash detects accidental
+changes and is not an authentication/signature mechanism.
+
+ACCEPTANCE AND LIMITS
+Examples signal-analysis, statistics, symbolic-algebra and reproducible-analysis contain expected-value assertions and ordinary plots.
+science_data_tests independently compares FFT with direct DFT,roundtrip scaling,
+Welch sinusoid frequency/integrated variance,known covariance/quantile/bin values,
+seed repeatability,exact rational and grouping behavior,cancellation,rejections
+and analysis-file roundtrip. Native Linux execution remains unverified until run.
+Current statistical/symbolic scope does not implement every future roadmap subcase.
+
+Primary implementation sources:
+https://eigen.tuxfamily.org/dox/unsupported/group__FFT__Module.html
+https://www.boost.org/doc/libs/latest/libs/multiprecision/doc/html/boost_multiprecision/tut/ints/cpp_int.html

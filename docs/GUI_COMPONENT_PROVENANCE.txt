@@ -1,0 +1,65 @@
+PENTARNION DESKTOP COMPONENT PROVENANCE
+31 October 2026
+
+The user requested adapting the general GUI components of GTG Cell Studio while
+retaining the Pentarnion scientific engine. Adaptation is limited to the staged
+Pentarnion copy. The original GTG sources are not modified by this work.
+
+GTG source location:
+  GTG Cell Studio/code/src/ide
+  within the user's Desktop General Theory of Gating framework.
+
+REUSED PRESENTATION PATTERNS
+
+src/ide/desktop adapts GTG's toolstrip, command icons, pane hover/collapse,
+project-file icons and figure docking components. Pentarnion-specific desktop
+coordination, figure-group integration and compact About use these components.
+The original-source SHA-256 records and authorship/dependency notes are retained
+in src/ide/desktop/GTG_COMPONENT_PROVENANCE.txt.
+
+src/ide/assistant adapts GTG's HTTPS provider client, settings controls, context
+ledger, chat presentation and Help search control. Its validation/controller
+integration uses Pentarnion's checked AST and source snapshots. No GTG model
+parser, scientific corpus, model defaults or credential identities are imported.
+See src/ide/assistant/PROVENANCE.txt for protocol reference URLs and scope.
+
+src/ide/workbook follows GTG's DatasetPreview table/worksheet and bounded-load
+presentation patterns. Its editable document, preservation codec, undo history
+and atomic save behavior are independent Pentarnion components. Existing native
+MiniZip/zlib support supplies XLSX package access. Excel itself is not required,
+and this component does not include a formula calculation engine.
+
+PENTARNION INTEGRATION
+
+src/ide/studio_shell.cpp connects the presentations to existing document, project,
+command, Help and scientific-execution actions. Classic/Ribbon share QActions.
+Workbook documents have their own lifecycle and do not replace source documents.
+Source review applies only after static validation, a current snapshot check and
+an explicit user action; it does not execute model code.
+
+src/ide/raster_plot_canvas.* and raster_scene.inc.hpp provide detached CPU scene
+capture, one rendering worker, cancellation and stale-frame protection. The
+new raster_depth_painter.* supplies tiled per-sample geometry depth and bounded
+transparent compositing. Onscreen painting requires no OpenGL context. Existing
+VTK CPU geometry/camera projection and native mathematical annotation support
+are retained; SVG/PDF keep their existing vector export path.
+
+The algebra, language, interpreter, native callback cache, ODE/PDE solvers and
+numerical module interfaces remain the existing Pentarnion scientific engine.
+No claim of new scientific validation follows from these presentation changes.
+
+BOUNDARIES AND ACCEPTANCE
+
+Provider requests require an explicit Send action and configured user credentials.
+Offline Help is independent of cloud providers. Provider protocol references
+were checked against public official documentation; no live provider call is
+implied. Preference/credential identities are private to Pentarnion Studio.
+
+This document records implementation provenance, not test or deployment success.
+Actual commands, outcomes, platforms and unresolved limitations are recorded by
+the integration coordinator in docs/VALIDATION.md. Desktop stress tests are excluded
+from the current user-authorized verification strategy.
+
+Existing third-party licences and source authorship notices remain applicable.
+This GUI adaptation does not select a public project licence or publish a
+repository.

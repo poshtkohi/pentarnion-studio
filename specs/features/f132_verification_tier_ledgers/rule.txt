@@ -1,0 +1,13 @@
+F132: Persistent completed verification tiers
+Authorized inventory-group1 extension,27 October2026.
+Status: implemented; platform acceptance is recorded in docs/VALIDATION.md.
+
+verifyexperiment can atomically preserve completed screens, tangent spectra,
+method/QR/tier convergence and shooting/Floquet evidence. Resume reuses completed
+tiers and reruns an interrupted tier. Exact selected run identity, complete real
+coordinate rows and scientific/backend configuration integrity are validated.
+Corrupt/incompatible ledgers are retained; write failure preserves numerical data.
+
+Authority: language.txt L122; specs/verification_v0_2.txt.
+Acceptance: checkpointed-verification-tiers.p;
+tests/runtime/verification_checkpoint_tests.cpp.

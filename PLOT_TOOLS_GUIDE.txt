@@ -1,0 +1,79 @@
+PENTARNION STUDIO — PLOT CONTROLS
+26 October 2026
+
+Every plot/subplot has its own compact icon toolbar. Hover over an icon for its
+name. Controls work in docked figures and floating figure windows.
+
+Zoom in / Zoom out: select the magnifying-glass icon, then click the position to
+zoom around. The mouse wheel also zooms. Each subplot keeps its own camera.
+Pan: select the Pan icon and drag with the left mouse button.
+Reset / fit: restore all of the plot's data after zooming or panning.
+Rotate: select the Rotate icon, then drag a 3D plot with the left mouse button.
+This control is disabled for 2D plots.
+Data cursor: select the crosshair and click near a saved sample. The tip gives
+the curve name, one-based sample index and original x/y coordinates (plus z in
+3D). It snaps to a stored value; it does not invent an interpolated sample on
+the line.
+Press Escape in the plot to remove the selected tip without clearing any data.
+Show points: toggle visible markers at actual saved samples. Dense plots may
+look busy with this enabled; the stored samples and connecting line stay intact.
+
+Anti-aliasing improves line edges without smoothing the computed solution.
+Numerical spike values are preserved. sample_step controls the saved sampling
+density; rtol/atol control the adaptive ODE solver independently.
+
+Export Image saves the current figure's native plots and LaTeX annotations,
+including all subplots. Choose PNG, JPEG or SVG in the Save dialog. Each subplot
+also has a Save subplot icon; use it to export that panel alone, without its
+neighbors. The button works in docked, tiled and floating figures. Control icons
+are excluded. Visible data tips/markers
+belong to the plotted view. Use Reset/Fit first when a complete view is wanted.
+
+About now describes native ODE solving, cached equation compilation, automatic
+analytic Jacobians/finite differences, subplots, trajectories, LaTeX, image export
+and tic/toc timing. It retains both authors' affiliations/emails and adds:
+Copyright © 2026 Alireza Poshtkohi and Susanne Pumplün.
+
+SVG saves projected vector curves, arrow geometry, axes, point markers and
+text/math glyph paths at the current camera and clipping. It does not embed the
+whole figure as a raster screenshot. Dense curves retain their vertices and can
+produce large SVG files. 3D ordering uses painter depth order; PNG/JPEG capture
+the native raster depth-buffer view. All formats use atomic Unicode-safe writes.
+
+Your existing example source/ODE parameters are preserved. Method changes reuse
+the native equation kernel and its compilation cache identity. No project
+licence or repository publication is selected by the copyright notice.
+
+PERSISTENT DATA TIPS (26 October 2026)
+
+Data cursor clicks add persistent annotations at stored samples or vector ends.
+Multiple tips remain visible simultaneously in each 2D or 3D subplot. Selecting
+an already annotated sample selects that tip rather than duplicating it. Each
+subplot permits up to 128 tips; at that bound an explanatory tooltip requests
+removing or clearing tips. Each tip retains original numerical coordinates and
+its series/sample identity. Interpolated or occluded sample picks are rejected.
+
+Click a tip label or its + marker to select it. The selected tip has a blue frame,
+pale blue background and blue marker; other tips use a cream background and red
+markers. Delete, Backspace or Escape removes only the selected annotation.
+After removal no other tip is implicitly selected. Escape without a selected tip
+returns to normal navigation. Right click offers Remove selected data tip and
+Clear all data tips. The per-subplot trash icon clears all tips in that subplot.
+Removing annotations never removes numerical samples, curves or vector data.
+
+Zoom, pan, rotate, reset/fit, docking/undocking and title/label/caption changes
+retain all tips. Their anchors follow the camera. Tips outside the view are
+hidden until visible again. Label boxes try alternate positions to reduce
+overlap, while retaining their point anchors. A replacement plot, clf or figure
+closure clears the old plot's tips. Tips are independent across subplots.
+
+PNG/JPEG and vector SVG exports include every currently visible data tip and
+marker. SVG emits vector text outlines and backgrounds for all tips. Export does
+not alter source samples or annotation selection.
+
+FigureManager public QA APIs: dataTips(figure,panel), selectedDataPoint(...),
+removeSelectedDataTip(...), clearDataTips(...). Inspection/removal APIs validate
+figure/panel existence. The native interaction suite tests actor label counts,
+selection/deletion, context menus, per-subplot isolation, preservation through
+navigation/docking, both SVG labels, and exact unchanged numerical samples.
+When PENTA_QA_ARTIFACT_DIR is set it writes multiple-data-tips.png and .svg.

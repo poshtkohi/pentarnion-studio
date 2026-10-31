@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Native holonomic constrained mechanics",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "rattle-circle-invariants.p",
+    "gravitational-pendulum.p",
+    "five-coordinate-constrained-motion.p"
+  ]
+}

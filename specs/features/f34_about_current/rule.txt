@@ -1,0 +1,11 @@
+FEATURE F34: Current About capabilities and copyright year
+Version: GUI 0.2 extension
+Authority: language.txt L28; user requests, 26 October 2026
+Status: implemented; actual validation recorded in docs/VALIDATION.md
+
+F34-R1: About lists delivered native ODE compilation/CVODE, generated Jacobians,
+subplots, trajectories, timing and interactive plots; remove stale unsupported text.
+F34-R2: Retain both author names, affiliations and contact addresses exactly.
+F34-R3: Display © 2026 Alireza Poshtkohi and Susanne Pumplün.
+Acceptance: gui_lifecycle studioBrandingAndAuthorHelp and native About screenshot.
+The notice does not select a project-wide licence or publish the repository.

@@ -1,0 +1,10 @@
+#include "runtime/interpreter.hpp"
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <cstdlib>
+int main(){int failed=0,checks=0;penta::runtime::ExecutionOptions options;options.dataDirectory=std::filesystem::temp_directory_path()/("penta-frontier-examples-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));std::filesystem::create_directories(options.dataDirectory);options.odeCacheDirectory=options.dataDirectory/".penta-cache/odes";
+std::vector<const char*> names{"main.p","geometry.p","../chaos-analysis/main.p","../chaos-analysis/lorenz.p","../chaos-analysis/paper1_lyapunov.p","../parallel-map-ensembles/main.p","../signal-analysis/main.p","../statistics/main.p","../symbolic-algebra/main.p","../reproducible-analysis/main.p","../map-explorer/main.p","../evolutionary-optimization/main.p","../evolutionary-optimization/pentarnion_and_log.p","../iteration-callbacks/main.p"};if(std::getenv("PENTA_RUN_PAPER_PDE"))names.push_back("paper_pde_eta1.p");
+for(const auto* name:names){std::ifstream f(std::filesystem::path(PENTA_SOURCE_DIR)/"examples/pdes-and-geometry"/name);const std::string text((std::istreambuf_iterator<char>(f)),{});auto r=penta::runtime::execute(text,{},options);++checks;if(text.empty()||!r.ok()){++failed;std::cerr<<"Example failed: "<<name<<'\n';for(const auto& d:r.analysis.diagnostics)std::cerr<<d.code<<": "<<d.message<<'\n';for(const auto& d:r.runtimeDiagnostics)std::cerr<<d.code<<": "<<d.message<<'\n';}else{std::size_t plots=0;for(const auto& a:r.figureActions)if(a.kind==penta::runtime::FigureActionKind::Plot)++plots;++checks;std::cout<<name<<": "<<r.operations<<" operations, "<<plots<<" plots\n";if((std::string(name)=="main.p"||std::string(name)=="geometry.p"||std::string(name).starts_with("paper"))&&plots!=(std::string(name).starts_with("paper")?10u:4u)){++failed;std::cerr<<"Expected four data-bearing panels: "<<name<<'\n';}}}
+std::error_code ignored;std::filesystem::remove_all(options.dataDirectory,ignored);std::cout<<checks<<" frontier example checks, "<<failed<<" failures\n";return failed?1:0;}

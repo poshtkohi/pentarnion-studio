@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+message: "If you use this software, cite the exact source revision and report the numerical settings and dependencies used."
+type: software
+title: "Pentarnion Studio"
+version: "0.2"
+license: Apache-2.0
+authors:
+  - family-names: "Poshtkohi"
+    given-names: "Alireza"
+    affiliation: "University of Hertfordshire"
+  - family-names: "Pumplün"
+    given-names: "Susanne"
+    affiliation: "University of Nottingham"
+url: "https://pentarnion.com"
+abstract: "A scientific language and desktop environment for algebra experiments, native differential equations and numerical visualization. Consult the versioned contracts for supported mathematical cases and limitations."
+references:
+  - type: unpublished
+    title: "A Five-Dimensional Nonassociative Algebra: elliptic integrability and bracketing-dependent dynamics"
+    authors:
+      - family-names: "Poshtkohi"
+        given-names: "Alireza"
+      - family-names: "Pumplün"
+        given-names: "Susanne"
+    year: 2026
+    url: "https://arxiv.org/abs/2610.34202"
+    identifiers:
+      - type: other
+        value: "arXiv:2610.34202"
+    notes: "arXiv preprint; submitted 25 October 2026."
+  - type: unpublished
+    title: "From Quaternions to Pentarnions I: Algebra, geometry, and a spin model"
+    authors:
+      - family-names: "Poshtkohi"
+        given-names: "Alireza"
+      - family-names: "Pumplün"
+        given-names: "Susanne"
+    year: 2026
+    url: "https://arxiv.org/abs/2610.31485"
+    identifiers:
+      - type: other
+        value: "arXiv:2610.31485"
+    notes: "arXiv preprint; submitted 22 October 2026."
+  - type: unpublished
+    title: "From Quaternions to Pentarnions II: quadratic differential equations"
+    authors:
+      - family-names: "Poshtkohi"
+        given-names: "Alireza"
+      - family-names: "Pumplün"
+        given-names: "Susanne"
+    year: 2026
+    url: "https://arxiv.org/abs/2610.34201"
+    identifiers:
+      - type: other
+        value: "arXiv:2610.34201"
+    notes: "arXiv preprint; submitted 25 October 2026."

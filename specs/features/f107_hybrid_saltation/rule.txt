@@ -1,0 +1,11 @@
+F107: Native hybrid saltation and terminal adjoints
+Authorized second-roadmap extension,27 October2026.
+hybridsolve/hybridval/hybridadjoint use cached native RHS, scalar/vector event, indexed reset, terminal/running/group-cost bodies. Up to16 roots support direction/terminal/priority flags and priority/all reset policies. Compatible simultaneous event-time gradients retain composed native saltation/adjoint derivatives; incompatible branches reject derivatives or explicitly report value-only availability. Scalar, complex, generic algebra and fixed-array states preserve full schemas. Transverse-event time derivatives, fixed-time saltation and reverse CVODES jumps have separate defined layouts. Running quadrature, integrand discontinuities, event cost time terms and moving-terminal adjoint boundaries are explicit. Cold compilation is excluded from numerical timing and wall limits. General IDAS initialization/projection derivatives remain unsupported.
+Authority: language.txt L95; specs/hybrid_saltation_v0_2.txt.
+Acceptance: examples/hybrid-event-sensitivities/project.pprj and independent native/runtime checks.
+ARKODE ERK/ESDIRK sensitivities use bounded variational augmentation, with generated
+second derivatives for analytic implicit augmented Jacobians. Genuine native
+reverse integration uses every-step dense polynomials independent of user sample
+spacing, shared cost/jump terms and bounded storage. General IDAS consistency
+projection derivatives remain unsupported. Actual platform/integration evidence
+belongs in docs/VALIDATION.md.

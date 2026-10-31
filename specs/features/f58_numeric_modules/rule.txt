@@ -1,0 +1,19 @@
+F58: Lazy numerical DLL/SO and host-owned worker foundation
+Authorized extension, 26 October 2026. Numerical foundation only.
+
+Qt-free loader resolves an absolute application modules/ directory or host-supplied
+absolute controlled directory. Load penta_numerics.dll/libpenta_numerics.so only
+when needed; synchronize first use and validate C ABI v1, table size/capabilities.
+Main runtime must not link the optional module eagerly. Borrow explicitly sized
+coefficient buffers; host owns storage. No C++ containers/exceptions cross the ABI.
+Bounded status/error text and atomic cancellation preserve the live workspace.
+Keep successful modules resident until exit. One shared bounded persistent host
+pool coordinates callers; nested worker dispatch runs inline. Deploy module
+dependencies explicitly because executable import scans cannot discover lazy DLLs.
+
+Authority: language.txt L45 and specs/foundations_v0_2.txt section 9.
+Acceptance: foundation_parallel_tests and intentionally incompatible fake module;
+test missing/relative/bad-ABI paths, repeated use, pre/active cancellation, actual
+worker bounds, nested dispatch and reuse after failure. No new dependency needed.
+Out of scope: all future modules, module-management GUI, universal RAM/startup
+claims and unperformed Linux execution. Actual platform/test status: docs/VALIDATION.md.

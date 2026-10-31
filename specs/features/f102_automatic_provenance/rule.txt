@@ -1,0 +1,9 @@
+F102: Automatic research provenance
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Capture source/import/native/backend identities and algebra/language/precision separately from execution paths/thread/timing. Versioned typed data-only records remain integrity-checked and atomic; hashes are not signatures.
+
+Authority: language.txt L90; specs/research_frontier_v0_2.txt.
+Acceptance: examples/native-discovery/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

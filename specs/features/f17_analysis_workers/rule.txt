@@ -1,0 +1,33 @@
+FEATURE F17: Responsive background static analysis
+Version: 0.1
+Status: explicit Check/Run/command worker, snapshots, cancellation and stale-result
+        behavior implemented in 0.2; automatic edit-debounce checking and
+        fine-grained project-check progress remain deferred
+Implementation stage: S4
+Dependencies: F10
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F17-R1: Deferred live-checking extension: a short configurable debounce (~250ms) schedules
+         analysis of immutable text/context/revision snapshots. One worker is
+         enough initially. An explicit Check action can bypass the debounce.
+F17-R2: Never read/write live QTextDocument or widgets from the worker thread.
+F17-R3: Deliver results to GUI thread and accept only matching document identity,
+         revision and context. Ignore cancelled/closed/replaced documents.
+F17-R4: Editing cannot spawn unbounded threads or retain unlimited snapshots.
+         Coalesce pending work to the latest revision per document.
+F17-R5: Project-wide check operates on captured sources and has cancellation and
+         progress. No execution, compilation or numerical simulation occurs.
+F17-R6: Shutdown cancels/joins safely; do not block indefinitely on stale jobs.
+
+ACCEPTANCE
+F17-T1: Editing during explicit checks/runs keeps work bounded and does not apply
+         stale diagnostics/output. Live-check debounce/underlines remain deferred.
+F17-T2: Close/rename/switch project during analysis causes no crash or wrong-tab
+         diagnostics. Two gamma contexts stay independent.
+F17-T3: UI remains usable during a project check; all widget access stays on GUI.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

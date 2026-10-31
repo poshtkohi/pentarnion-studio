@@ -1,0 +1,60 @@
+ALGEBRA CONTRACT A_gamma_v1 — NORMALIZED SWITCHING PENTARNIONS
+Authority: original algebra research; the normalized multiplication contract below and src/algebra define this implementation's conventions.
+Basis order e0=1, e1=i, e2=j, e3=k, e4=ell. Fixed real gamma in [0,1].
+Let kappa=1/sqrt(1+gamma^2), sigma=gamma/sqrt(1+gamma^2), h=1/sqrt(2).
+1 is a two-sided identity; multiplication is real-bilinear.
+
+Complete pure table (row multiplied on the left by column):
+           i                   j                   k                  ell
+i         -1             kappa*k+sigma*ell   -kappa*j-sigma*ell   -h*(j+k)
+j  -kappa*k-sigma*ell           -1            kappa*i+sigma*ell   -h*(i+k)
+k   kappa*j+sigma*ell    -kappa*i-sigma*ell          -1            -h*(i+j)
+ell       h*(j+k)             h*(i+k)             h*(i+j)             -1
+
+p=sum p_r e_r; conj(p)=p0-p1*i-p2*j-p3*k-p4*ell.
+N(p)=norm2(p)=sum(p_r^2), trace=2*p0.
+p*conj(p)=conj(p)*p=N(p)*1.
+p^2-2*p0*p+N(p)*1=0.
+The algebra is power-associative; a one-element power is unambiguous.
+It is NOT generally associative, alternative or flexible. N is NOT assumed
+multiplicative. The full gamma=0 algebra still includes ell; only its
+span(1,i,j,k) restriction is Hamilton's associative quaternion algebra.
+
+CANONICAL RECIPROCAL
+inv(p)=conj(p)/N(p) for p!=0. Define this specific canonical reciprocal,
+not an arbitrary solution of p*x=x*p=1. It can exist even if a multiplication
+operator is singular; do not infer cancellation or invertibility of L_p/R_p.
+
+MATRICES
+Tensor C[a,b,c] gives coefficient c of e_a*e_b.
+L_p[:,b]=p*e_b; R_p[:,a]=e_a*p.
+Right division p/q solves R_q x=p.
+Left division p\q solves L_p x=q.
+These are real numerical linear solves, not different definitions of mul.
+
+DERIVED REGRESSION CHECKS (gamma=1)
+(i*j)*j = (k-ell)/2, while i*(j*j)=-i.
+(i*inv(j))*j=(ell-k)/2 != i.
+(i*inv(j))*j differs from (i/j)*j, which is i for the unique right-division
+solution because R_j is invertible at gamma=1.
+(j-k-ell)*(-3*sqrt(2)+i-4*k+4*ell)=0, despite both factors nonzero.
+These tests are table-specific. Check them independently; do not assume
+nonassociativity means EVERY associator must be nonzero.
+
+NUMERICS
+Use double coefficients and explicitly checked finite results in v0.1.
+Tolerance-based tests are numerical regression tests, not symbolic proofs.
+Use scale-safe reciprocal computation; avoid overflowing N(p) as an
+intermediate when the reciprocal coefficients are representable. Report
+unrepresentable results explicitly. No arbitrary tiny-norm cutoff may turn
+a mathematically nonzero input into zero silently.
+
+CONTEXT
+Each element operation uses an explicit immutable algebra context. Mixing
+contexts/gamma values is rejected unless a future explicit conversion says
+what it means. No automatic additional gamma factor on ell coordinates.
+
+PROVENANCE
+references/source_manifest.json records original source hashes. The generated
+fixtures use a separately specified basis-pair dictionary. They are aids to
+implementation review, not a replacement for reading the paper's table.

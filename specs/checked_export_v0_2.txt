@@ -1,0 +1,210 @@
+CHECKED MATLAB/PYTHON EXPORT - LANGUAGE0.2
+
+The exporter consumes the successful typed AST without evaluating source. It
+writes a new bundle only after every node has an explicit target adapter; a
+failure returns X1601 at the original span and no executable files. CLI/dialog
+publish to a fresh directory atomically and never overwrite an existing one.
+Safe generated identifiers and source-map.json preserve original names/spans;
+compatibility.json records target dependencies and numerical differences.
+
+CLI:
+ penta-export --target python source.p NEW_FOLDER
+ penta-export --target matlab source.p NEW_FOLDER
+ penta-export --target python --python-bdf-adapter source.p NEW_FOLDER
+ penta-export --target matlab --matlab-ode15s-adapter source.p NEW_FOLDER
+ penta-export --target python --scientific-adapters source.p NEW_FOLDER
+ penta-export --target matlab --scientific-adapters source.p NEW_FOLDER
+ --gamma supplies a project default when source has no use_algebra directive.
+
+Both targets retain explicit ordered A_gamma expressions, all five coefficients,
+real/complex scalars, dense real/Pentarnion arrays, column-major one-based indexing,
+end/masks/slices/reshape/transpose, ordinary control flow and scalar functions.
+Records use Python SimpleNamespace or MATLAB scalar structs; nested/array-valued
+fields are retained as fields, not accidentally expanded into MATLAB struct
+arrays. Tuples use Python tuples or MATLAB cells with checked destructuring.
+Named/default arguments are already normalized by Studio's checker. The target
+binder preserves declared Pentarnion casts and constant default records. Pure
+expression lambdas snapshot captured values at creation and preserve typed
+arguments. Captured named functions remain unsupported. Resolved supported module
+functions bundle with their original source identity; arbitrary runtime imports
+and external packages do not execute during export.
+
+Supported numerical calls include the existing five whole-Pentarnion elementary
+functions, scalar real functions, array utilities and explicit real/complex
+queries. Complex values remain distinct from basis i. Generic immutable algebra
+definitions/imported tables, generic element matrices and arbitrary native tensor
+states require a separate table/shape adapter and currently fail export.
+
+Equation adapters: linsolve/solveleft/solveright, leftop/rightop, real det/inv.
+Ordered Pentarnion equations are expanded to complete real coefficient operators;
+right equations transpose the unknown block layout, without reassociation.
+One scaled SVD per equation is reused for rank/conditioning/solve. A singular
+value ratio<=1e-12 or independent relative residual>1e-10 rejects a purported
+unique solution. No reciprocal-product replacement for nonassociative equation
+solve occurs. Default numerical policy only: optional Studio solver settings
+have no implicit mapping. Determinants/inverses of Pentarnion matrices require
+explicit real leftop/rightop operators. General matrix ^ remains unsupported by
+Studio itself; .^ entrywise semantics are retained. Unsupported algebra division
+inside target ODE Jacobians fails export.
+
+EXPLICIT ODE ADAPTERS
+Real/Pentarnion scalar state/parameter groups map to full real coordinate vectors.
+The source method must be bdf, Jacobian analytic. Scalar real/Pentarnion groups,
+t0,t1,sample_step,rtol,atol,initial_step,max_step, constant nonsingular mass,
+event roots/directions/terminal flags and simultaneous error-controlled trajectory
+sensitivities have explicit mappings. Generic/complex/fixed-array state groups,
+other methods or matrix-valued RHS subexpressions have no implicit mapping.
+Python opts into scipy.integrate.solve_ivp(method='BDF'); MATLAB opts into
+ode15s with BDF on. Both use analytic forward AD of the emitted RHS, including
+ordered products and whole-element sin/cos/exp/sinh/cosh. MATLAB bundles its own
+penta_dual.m; there is no Symbolic Toolbox dependency. Singular norm/abs points
+and elementary discontinuities reject derivatives. Radial-zero whole-element
+functions retain their analytic limits. The target adaptive trajectories and
+error control differ from CVODE; an export is not reuse of the Studio DLL/MEX.
+Requested samples are obtained from the target solver's continuous output.
+
+odesens, odeevents, odestats and deval use the exported solution's complete
+coordinate layout. Parameter directions are one-based flattened coordinates;
+initial directions and custom n-by-directions seeds are retained. Tangent
+equations use analytic target AD1; the full augmented BDF Newton Jacobian uses
+analytic target AD2, including mixed state/parameter derivatives. The target
+simultaneous augmented error-control policy differs from CVODES simultaneous/
+staggered sensitivity weighting. Other sensitivity algorithms/error-control
+options reject. Bounds:<=64 state coordinates,<=128 active derivative coordinates,
+<=512 augmented coordinates,<=1048576 Hessian entries. Unavailable target solver
+statistics use explicit-1 sentinels, not invented zero measurements. Event roots
+are localized by the target adaptive solver; terminal roots are retained even
+between requested output times. There are no reset derivatives in plain odesolve.
+
+With both scientific and target BDF opt-ins:
+- masssolve maps real scalar state groups with a regular nonsingular state/time
+  matrix M(t,y). Its transformed vector field M^-1*f uses complete analytic
+  dM/dy terms and implicit first/second derivative solves. One scaled SVD per
+  matrix evaluation is reused for reliability, values and all derivative solves;
+  conditioning policy1e-12 and independent residual policy1e-10 are explicit.
+  Check initialization validates M*yp0-f; consistent initialization retains y0
+  and computes yp0. A singular matrix/nonzero algebraic mask rejects: this target
+  regular-mass adapter makes no DAE-index claim. Other conditioning policies,
+  generic/fixed-array state ABIs and native-operation quotas remain unmapped.
+- hybridsolve/hybridval use adaptive BDF epochs separated by localized roots,
+  indexed/non-indexed complete resets and explicit pre/post sample pairs. Up to16
+  simultaneous surfaces are ordered by priority then index; "all" composes the
+  original active group. Analytic event/reset derivatives produce saltation,
+  parameter jumps, event-time and fixed/moving sensitivities. Unequal normalized
+  event-time gradients or grazing roots reject derivatives; explicit values-only
+  runs expose unavailable derivative arrays. Minimum event interval/event/step/
+  retained-output/wall guards apply. A consistent post-reset side suppresses the
+  spurious initial zero of the target root finder without advancing physical time.
+- odeadjoint/hybridadjoint perform actual continuous reverse integrations with
+  analytic covector-system Jacobians. They retain the target forward solver's
+  adaptive dense information independently of sample_step; no coarse output-grid
+  Hermite trajectory drives the reverse solve. Running quadratures, pre-reset
+  group costs, saltation pullbacks, event-time terms and moving terminal objectives
+  are included. A group cost is evaluated once at the original pre-reset state.
+  Terminal callbacks use(time,states...,parameters...); event costs optionally
+  begin with the one-based winning event index. Results identify their actual
+  target reverse solver/table. These are continuous adjoints, not exact gradients
+  of the adaptive discrete solver algorithm. Explicit BDF methods only; singular
+  DAE consistency-map adjoints and arbitrary target solvers remain unsupported.
+Target solver dense storage/object overhead differs from Studio; max_bytes bounds
+the retained numeric hybrid result, not a promise of an identical process peak.
+
+Python requires NumPy; plots use Matplotlib and explicit BDF uses SciPy. MATLAB
+requires script-local functions and ode15s/deval for its ODE adapter. Basic figures,
+subplots, arrows and labels map through documented plotting adapters; Studio
+window docking/tiling and caption placement remain outside this subset.
+
+EXPLICIT SCIENTIFIC ADAPTERS
+The separate --scientific-adapters opt-in enables the following bounded mappings.
+Target callbacks are emitted directly with the checked function body, bindings
+and argument order. A target run has no embedded Studio source interpreter.
+Studio native DLL/cache/worker settings do not transfer; native_evaluations and
+native_operations remain zero and target backend/work metadata is explicit.
+
+lsqfit/lsqnonlin/curvefit: real scalar unknown groups followed by explicitly bound
+real parameters, real/Pentarnion scalar/tuple or fixed-array residual coordinates.
+Compiler result layouts are retained; generic-algebra/fixed-array unknown groups
+are not yet mapped. Python Ceres LM maps to scipy least_squares TRF, dogleg to
+dogbox; MATLAB maps to lsqnonlin LM without bounds, TRF otherwise. MATLAB dogleg
+also maps explicitly to TRF. Both support target forward analytic AD or selected
+finite differences, bounds/scales, weights, scalar robust losses and conditional
+Gaussian covariance. Native callbacks/caches and optimizer iterations are not
+shared. Unsupported OutputFcn/multistart/options reject rather than disappear.
+
+minimize: real scalar unknowns and one real objective, optional real scalar/tuple
+inequalities g<=0 and equalities h=0. Explicit mappings:
+ source           Python SciPy                MATLAB
+ lbfgs            L-BFGS-B                    fminunc quasi-newton unbounded;
+                                              fmincon interior-point bounded
+ nelder_mead      Nelder-Mead                  unbounded fminsearch only
+ slsqp            SLSQP                       fmincon SQP
+ cobyla           COBYLA                      unsupported
+ bobyqa           COBYQA                      unsupported
+ direct           DIRECT                      unsupported
+Python COBYLA has no equality mapping. DIRECT needs finite bounds. Bounds and
+positive parameter scales retain physical coordinates. Source iteration/stopping
+rules differ: requested tolerances map to documented target controls/observers,
+not a promise of identical NLopt termination. Unsupported relative tolerances,
+initial-step controls or options reject. Evaluation/wall limits retain the best
+fully evaluated candidate with feasible/constraint diagnostics and converged=0
+on budget exhaustion. Real analytic target gradients/Jacobians or selected target
+finite differences are used. MATLAB Optimization Toolbox is required for fitting
+and fminunc/fmincon, but not for basic arithmetic or Newton/PDE adapters.
+
+Graphs: graph/digraph, graphinfo, graphcomponents/components, shortestpath,
+spanningtree, toposort, graphcycle, all seven centralities, graphadjacency,
+graphlaplacian, graphlayout and plotgraph. Real edge weights, one-based complete
+edge IDs, parallel edges/loops and labels are preserved. Directed strength counts
+both endpoints; undirected loops contribute twice to degree/strength and once to
+adjacency; Laplacians omit loops. Weak/strong labels are canonical by the smallest
+node. Negative-cycle status has no fabricated distance. Weighted path centrality
+requires positive weights. Equal-cost path/tree choices and topological order
+can differ from Boost. Python uses heap Dijkstra; MATLAB uses a bounded linear
+scan. Both cap graph work at20million and dense matrices at1million entries.
+Construction bounds remain100000 nodes/500000 edges. Target scheduling is serial.
+
+PDEs: pdesolve and pdecoeff for complete real/five-coordinate fields on3..4096
+increasing1D nodes. FD uniform grids or P1 consistent-mass FEM, constant scalar
+diffusion, periodic/constant Dirichlet/homogeneous Neumann boundaries, explicit
+RK4 or IMEX Euler. RK4 retains the explicit diffusion stability guard. Sparse mass
+or implicit operators are factored once per distinct actual step and reused over
+all coefficients. Reaction callbacks retain(state,time,x,parameters...) order.
+Dirichlet values are enforced at RK stages and implicit elimination; field means
+and centered spatial RMS use the original quadrature weights. Output nodes/
+sample grids and complete coefficients are retained; target sparseLU rounding can
+differ. Samples<=1million field values, step/reaction/wall bounds explicit.
+No max_native_operations quota mapping, adaptive/2D/3D/PETSc PDE target adapter,
+native code cache or Studio CPU budget is implied; unsupported calls/options fail.
+
+Mechanics:1..8 real scalar coordinate groups. Newton supports RK4/position-force
+velocity Verlet, constant positive masses and state/position forces. Lagrangian
+RK4 generates Lq,Lv,Lvv,Lvq,Lvt and solves the regular velocity-Hessian mass
+equation. Hamiltonian RK4/implicit midpoint uses canonical equations and an
+analytic Hamiltonian Hessian in the midpoint Newton solve. Momentum remains
+distinct from velocity. q,v,p and defined kinetic/Lagrangian/Hamiltonian energy,
+explicit-time power, work and energy-balance diagnostics retain their definitions;
+work is trapezoidal on retained samples. Generalized-force callbacks, constraints,
+unit-aware mechanics and generic/fixed-array coordinate ABIs remain unmapped.
+
+Sampled geometry: curvegeometry retains the discrete arc/tangent/normal/curvature
+estimates and rejects duplicate points/cusps. surf/imagesc/contour/isosurface map
+to target graphics with finite increasing axes and<=1million grid samples.
+Python uses bounded marching tetrahedra, MATLAB its native isosurface routine;
+triangulations, contour interpolation, shading and camera state can differ.
+Intrinsic geometry/atlases/differential operators have no automatic target map.
+
+No source interpreter or package importer is embedded in the output. Singular/
+general DAE and non-BDF solver exports, broader PDE/geometry/mechanics adapters,
+generic-array unknowns, native-cache reuse, parallel scheduling, GPU/MPI and
+arbitrary MATLAB/Python import are not claimed. Unsupported constructs retain
+source diagnostics. Target callback calculus rejects numerical factorization/
+ordered equation solvers and unsupported complex intermediates rather than
+silently substituting finite differences.
+Target binary64/int operations do not reproduce all Studio extended-accumulator
+underflow/overflow and exact int64 edge behavior; the report exposes those limits.
+
+Tests: tests/export/export_tests.cpp emits both targets; validate_python_exports.py
+executes emitted Python bundles. MATLAB target bundles and the analytic dual
+calculus have independent numerical/finite-difference references. Record exact
+executed platform results in HANDOFF; a generated bundle is not proof of target
+runtime acceptance.

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Native tensor fields and ODEs",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "column_major_fields.p",
+    "typed_tensor_decay.p"
+  ]
+}

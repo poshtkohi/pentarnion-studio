@@ -1,0 +1,19 @@
+F61: Canonical sparse storage, products and guarded solves
+Authorized extension, 26 October 2026.
+
+sparse(A) and sparse(i,j,v,m,n) produce immutable validated CSC records with
+one-based row indices/pointers, sorted unique rows, input-order duplicate sums
+and omitted exact zeros. Validate every field even after with_options changes.
+full,nnz,sparsemul,sparsetranspose are explicit; arbitrary record*record is not
+overloaded. Real/Pentarnion storage and ordered binary products are supported.
+Real square sparse solves use Eigen SparseLU/COLAMD or BiCGSTAB with ILUT,
+diagonal or identity preconditioning. Independently verify equation residuals;
+report unavailable rank/condition estimates rather than treating placeholders as
+measurements. Sparse Pentarnion solves require explicit real coordinate assembly.
+Bound fill/work/RHS lanes conservatively; no universal total-RSS bound is claimed.
+Acceptance: sparse kernel/record/error/cancel tests; linear-algebra/sparse_operators.p.
+
+Authority: language.txt L49; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.

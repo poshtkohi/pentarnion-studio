@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "name": "SUNDIALS IDAS native index-one DAE adapter",
+  "version": "7.9.0",
+  "url": "https://github.com/LLNL/sundials/releases/download/v7.9.0/sundials-7.9.0.tar.gz",
+  "archive": "sundials-7.9.0.tar.gz",
+  "source_directory": "sundials-7.9.0",
+  "sha256": "13f898a27b48fe3449483f9e438a800ed545abf93bc2e2ceec2d1e00ae8db5ef",
+  "license": "BSD-3-Clause",
+  "components": [
+    "idas",
+    "core",
+    "nvecserial",
+    "sunmatrixdense",
+    "sunlinsoldense"
+  ],
+  "configuration": {
+    "BUILD_SHARED_LIBS": "OFF",
+    "BUILD_STATIC_LIBS": "ON",
+    "SUNDIALS_ENABLE_IDAS": "ON",
+    "SUNDIALS_ENABLE_IDA": "OFF",
+    "SUNDIALS_ENABLE_CVODE": "OFF",
+    "SUNDIALS_ENABLE_CVODES": "OFF",
+    "SUNDIALS_ENABLE_ARKODE": "OFF",
+    "SUNDIALS_ENABLE_KINSOL": "OFF",
+    "SUNDIALS_INDEX_SIZE": 64,
+    "SUNDIALS_PRECISION": "double",
+    "SUNDIALS_ENABLE_MPI": "OFF",
+    "SUNDIALS_ENABLE_OPENMP": "OFF",
+    "SUNDIALS_ENABLE_FORTRAN": "OFF"
+  },
+  "install_prefix": "third-party/idas-sdk",
+  "notices": [
+    "third-party/idas-sdk/share/doc/idas/LICENSE",
+    "third-party/idas-sdk/share/doc/idas/NOTICE"
+  ]
+}

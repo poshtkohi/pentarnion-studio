@@ -1,0 +1,13 @@
+use_algebra("A_gamma", gamma=1);
+clc;
+clear;
+pentarnion p = i + j;
+display("p =", p);
+display("p squared =", p^2);
+display("norm2(p) =", norm2(p));
+display("inv(p) =", inv(p));
+assert(norm2(p^2 + 2) < 1e-24);
+figure(1, "Name", "First Pentarnion vector", "NumberTitle", "off");
+plot2("i", "j", p);
+title("A vector in the $(i,j)$ plane");
+xlabel("$i$"); ylabel("$j$");

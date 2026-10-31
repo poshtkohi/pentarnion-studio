@@ -1,0 +1,17 @@
+{
+  "format": "StudioAlgebraDefinition",
+  "version": 1,
+  "name": "Dual numbers from a multiplication table",
+  "dimension": 2,
+  "basis": ["one", "eps"],
+  "coefficient_domain": "rational",
+  "unit": ["1", "0"],
+  "omitted_products": "zero",
+  "products": [
+    {"left": 0, "right": 0, "terms": [[0, "1"]]},
+    {"left": 0, "right": 1, "terms": [[1, "1"]]},
+    {"left": 1, "right": 0, "terms": [[1, "1"]]}
+  ],
+  "conjugation": [["1", "0"], ["0", "-1"]],
+  "metric": [["1", "0"], ["0", "1"]]
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Consistent-mass surface heat and Pentarnion reactions",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "sphere-heat-eigenmode.p",
+    "pentarnion-surface-reaction.p"
+  ]
+}

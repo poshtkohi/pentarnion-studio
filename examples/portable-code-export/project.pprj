@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "name": "Portable scientific code exports",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "algebra-and-shapes.p",
+    "decay-ode.p",
+    "structures-and-ordered-equations.p",
+    "native-fitting-and-constraints.p",
+    "weighted-graph-analysis.p",
+    "diffusion-and-field-decay.p",
+    "newton-motion-and-sampled-geometry.p",
+    "events-mass-and-analytic-mechanics.p",
+    "hybrid-resets-and-reverse-costs.p"
+  ]
+}

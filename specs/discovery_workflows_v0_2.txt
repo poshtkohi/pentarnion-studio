@@ -1,0 +1,81 @@
+NATIVE DISCOVERY WORKFLOWS - LANGUAGE0.2 (27 October2026)
+
+basins(model, initial_rows [,options])
+Uses the checked native ODE and discovery scheduler. A basin catalogue compares
+one fixed parameter vector and gamma; parameter sweeps are rejected. At most256
+runs,32 complete physical coefficients,256 tail samples and256 candidate labels.
+Default tail_samples64,tail_fraction0.5,cluster_tolerance0.1,
+separation_tolerance3*cluster_tolerance,stationarity_tolerance=cluster_tolerance,
+maximum_attractors16. The forecast runs*labels*samples^2*dimension <=1e8.
+The complete physical coordinate tail is retained, never a closed projection.
+Equilibrium candidate endpoints cluster separately. Recurrent tails require
+half-window means/stds within the stationarity tolerance and symmetric sampled
+Hausdorff distance <=cluster_tolerance. Ambiguous matches/grey-zone distances
+remain unresolved; labels are deterministic by original row order.
+All distances use explicit Euclidean coordinate distance, not an assumed
+multiplicative algebra norm. Positive labels denote finite-tail candidates;
+0 unresolved,-1 escape threshold,-2 numerical/timeout/replay failure,-3 pending.
+Reports contain labels,initials,representative_run_ids,counts,fractions,
+conditional_fractions and source_experiment. Fractions use every initial row;
+conditional_fractions explicitly condition on resolved positive labels. Sampling
+is user-chosen, so fractions are not estimates of a global basin measure.
+Replay uses resident/cached native equations. Discovery checkpoints remain valid;
+the compact clustering is recomputed after resume. No attractor is certified.
+
+lyapunovscan(model,initial_rows[,options])
+Composes native parameter Cartesian discovery and verification. At most256 runs.
+Accepts discovery options plus horizons,tightening,minimum_observation,qr_step,
+max_intervals,lyapunov_tolerance,minimum_positive,compare_method and separate
+verification_checkpoint/verification_resume/verification_overwrite.
+Reports verification (full original tier report),parameters,initials,
+catalogue_runs,workflow. Exponents stay in original run-ID/tier order. The final
+tier can be plotted against parameter columns; two-coordinate Cartesian grids can
+be reshaped for fieldplot/surf. Failed/escaped screen rows keep their masks.
+Native CVODES variational QR is required; bdf/adams only. Every derivative is
+compiler generated, and all coefficients of physical state groups are retained.
+
+Verification classifier additions
+Code11 quasiperiodic_candidate requires an autonomous nonstationary recurrent
+trajectory, at least two near-zero ordered exponents, no exponent greater than
+minimum_positive, two longer-horizon tiers and full ordered-spectrum agreement
+between windows, methods/QR steps and tiers. A successful periodic corrector
+takes precedence. Quasiperiodicity/irrationality, torus topology and exclusion of
+very long periods cannot be proved from these finite numerical diagnostics.
+near_zero_exponents,quasiperiodic_candidate,failure_reason_codes are explicit
+availability/evidence fields; existing codes0..10 retain their meanings.
+
+Structured native solver failure reasons
+Existing numerical_failure/timeout statuses and full messages remain unchanged.
+failure_reason_codes/labels and discoverstatus.failure_reason[_code] distinguish:
+0 none,1 cancelled,2 wall_time_budget,3 invalid_input,
+4 step_limit_or_possible_stiffness,5 nonlinear_convergence,
+6 linear_solver_failure,7 nonfinite_or_domain,8 singular_rhs,
+9 other_numerical_failure,10 native_work_budget.
+Reason4 is not a diagnosis/proof of stiffness. Backend message parsing is a
+conservative explanatory taxonomy; the original backend message is preserved.
+Checkpoint payloads append the codes; older compatible ledgers derive them from
+their statuses/messages. Verification pipeline identities now include version3.
+
+exportexperiment additions
+kinds: heatmap,return_error,force,associator in addition to existing five kinds.
+force/associator require derived=options(force=f,associator=g), where each checked
+native callback takes (time,all typed state groups,all typed model parameters).
+All input types/shapes/algebra definitions match the original ODE. Histories
+display the Euclidean norm of every output coefficient, not a scalar projection.
+No force/associator formula is invented or inferred by the exporter.
+return_error is Euclidean physical-state distance from the first sampled
+post-transient state, explicitly different from a final nearest-return score.
+heatmap_parameters=[one_based_real_parameter_coordinate_x,y] requires exactly
+one selected initial/gamma per Cartesian pair, at least2 nodes each direction.
+heatmap_value=maximum_norm/return_error/rhs_norm/period/status_codes/
+failure_reason_codes. Numerical scalar heatmaps mask pending,escape,timeout and
+failure corners; code heatmaps retain all classifications. Triangles never cross
+a masked corner. Surface colors interpolate between sampled scores only.
+units=options(time="s",coordinate_1="...",force="...",associator="...",
+norm="...",parameter_1="...",maximum_norm="...") supplies labels verbatim;
+units are not inferred or dimensionally certified.
+filename_template defaults to {prefix}-run-{run6}-{kind}.png. Supported tokens:
+{prefix},{run},{run6},{kind}. Output must be a distinct ASCII basename ending in
+.png,1..180 characters, no separators/traversal. Collective summaries/heatmaps use
+run0. Derived callback keys, units, heatmap choices and template enter the atomic
+export ledger identity. No existing image is overwritten without authorization.

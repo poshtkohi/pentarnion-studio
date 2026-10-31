@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "Native Structural Derivatives",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "consistent-time-dependent-algebraic-constraint.p",
+    "higher-index-structural-diagnostics.p",
+    "structural-sparsity-at-zero.p",
+    "tensor-constrained-evolution.p",
+    "tensor-native-derivatives-roots-and-fit.p"
+  ]
+}

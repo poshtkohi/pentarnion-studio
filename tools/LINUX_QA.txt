@@ -1,0 +1,64 @@
+LOCAL LINUX BUILD, GUI AND RELOCATION QA
+
+The native project uses the same CMake build through the Linux Code::Blocks
+project. A full CMake build followed by a Code::Blocks incremental build checks
+both entry points; Code::Blocks does not maintain a separate compiler backend.
+
+A tested host is Ubuntu24.04 amd64 with GCC13, CMake3.28, Qt6.4, Eigen3.4 and
+system OpenBLAS. Install the development prerequisites listed in
+.github/workflows/build.yml. Code::Blocks and patchelf are additional tools for
+its build-entry and runtime-package checks. Xvfb permits actual Qt/VTK rendering
+and application lifecycle tests without a physical desktop/GPU.
+
+From the source root:
+  PENTA_BUILD_JOBS=2 bash tools/linux-acceptance-dependencies.sh
+  cmake --preset linux-release
+  cmake --build --preset linux-release --parallel 2
+  xvfb-run -a ctest --preset linux-release --parallel 1
+  xvfb-run -a codeblocks -ns --build --target=Release Pentarnion-Linux.cbp
+
+First use of Code::Blocks may ask to accept its detected GCC compiler. This is
+ordinary application setup; the project uses its custom CMake build command.
+The release preset recognizes the project-local SDK. Optional PETSc is selected
+when its compatible local/system installation is discovered. Explicit
+-DPENTA_BUILD_PETSC=ON requests it and rejects missing/incompatible prerequisites.
+Bootstrap downloads/builds remain explicit; normal configure never downloads.
+
+The disposable local QA VM used -O1 -DNDEBUG and one compiler job to fit its
+memory allowance. That is compilation/numerical correctness evidence, not an
+-O3 benchmark result. Native generated callback compilation and all numerical
+algorithms remain independently checked. Record the source snapshot manifest,
+compiler options, test outputs and any focused fixes with each acceptance run.
+
+Create a new installed runtime package (the output must not already exist):
+  python3 tools/package-linux.py --build-dir build/linux-release \
+    --output build/linux-runtime-package
+
+The tool installs via CMake, resolves every installed ELF dependency, copies
+project-local SDK shared libraries and SONAME aliases, retains vendor notices,
+and rewrites runtime paths on PACKAGE COPIES only. SDK/source installations are
+never modified. It verifies all installed ELF files using ldd with
+LD_LIBRARY_PATH/LD_PRELOAD removed; unresolved and source-SDK paths reject. Path-bearing DT_NEEDED entries and installed runtime
+symlinks escaping the verified bin tree also reject; package output cannot be
+inside a source SDK. Contract regression: python3 tests/tools/linux_package_tests.py.
+runtime-manifest.json records packaging-host/ABI information, original/copied
+hashes, bundled vendor libraries and remaining system SONAME dependencies.
+
+This is a package for a compatible Linux system ABI. Qt/platform/graphics,
+OpenBLAS, libc and compiler-runtime prerequisites remain explicit; it is not a
+universal self-contained AppImage. New destination OS/toolchain combinations
+require their own build and acceptance. No artifact is published by this tool.
+
+For relocation acceptance, move only the freshly generated package to a new
+path, remove LD_LIBRARY_PATH/LD_PRELOAD, and run at least:
+  <new-package>/bin/penta-run --headless-figures \
+    examples/native-petsc/sparse-poisson-ksp.p
+  <new-package>/bin/penta-run --headless-figures \
+    examples/native-petsc/cached-native-snes-root.p
+  xvfb-run -a <new-package>/bin/pentarnion-studio --smoke-test --no-session
+
+Use a fresh script/cache directory for one native callback solve to prove the
+relocated application can compile a new shared object, then repeat it to verify
+cache reuse. Measure actual module loading, GUI/figure rendering and clean
+shutdown; a successful linker invocation alone does not establish these.
+The ordinary system GCC toolchain is required for native callback compilation.

@@ -1,0 +1,39 @@
+NATIVE BATCHED REAL/COMPLEX LINEAR ALGEBRA (LANGUAGE0.2)
+Canonical rule F119; language summary L107.
+
+ndsolve(A,B), ndinv(A), ndlu(A) operate on versioned real or explicit complex
+ND records. Matrix axes1,2 must give a nonempty square A of order1..256. A solve
+requires matching B equation rows and at least one RHS column. Axes3..8 are
+independent matrix pages, with the same checked singleton expansion as ndmatmul.
+Packed LU uses an internal factor axis, so ndlu accepts input rank at most7.
+ND API structs/layouts are unchanged; only additive operation codes are used.
+
+Each page uses one scaled Eigen FullPivLU decomposition. Solve/inverse reuse
+that factor for numerical rank, reciprocal-condition estimate and solution;
+no preliminary SVD is performed. Unique solutions require full rank and a
+reciprocal-condition estimate greater than1e-12. Independent long-double
+ordered residuals must satisfy a scaled1e-10 bound. Singular, ill-conditioned,
+nonfinite and failed residual cases are explicit failures, not success reports.
+LU can factor singular matrices; its existence does not imply invertibility.
+Returned L/U/P/Q factors additionally pass a scaled reconstruction check.
+
+ndlu returns a record {L,U,P,Q,relation,method,threads_used}. Its convention is
+P*A*Q=L*U, with full row and column pivoting. Factor-index axes are explicitly
+named, while P/Q retain the original physical equation/unknown axes needed for
+checked reconstruction. Batch axes retain their physical metadata. ndsolve
+maps equation rows to A's unknown-column domain and retains B's RHS domain;
+ndinv swaps the original row/column domains. Nonmatching physical coordinates,
+names or transform markers are not silently treated as the same batch domain.
+
+Pages run through Studio's shared CPU pool. Inner Eigen parallelism is disabled
+for this module; per-page factors/temporary buffers are private. A128 MiB scratch
+budget bounds concurrent pages; cancellation and native work are checked before
+and after each bounded decomposition. A single matrix page does not promise
+internal parallel speedup. Larger/wider work may require a larger explicit host
+work allowance; retained element/coordinate limits remain in force.
+
+Pentarnion and other nonassociative equations require explicitly chosen ordered
+real-coordinate operators. These central real/complex factorization routines do
+not silently invent an algebraic determinant or reciprocal matrix convention.
+This rule does not itself add general N-D native callback type syntax or sparse
+derivative pattern objects; those remain separate interfaces.

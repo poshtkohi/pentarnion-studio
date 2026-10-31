@@ -1,0 +1,44 @@
+GUI TEST HARNESS MIGRATION -31 October 2026
+
+offscreen_test_bootstrap.hpp is the shared entry point for21 QWidget suites in
+tests/gui and tests/figures. It rejects a non-offscreen QT_QPA_PLATFORM and any
+conflicting -platform command-line override before constructing QApplication.
+Rejected desktop invocations return77. It disables native dialogs and does not
+enable shared OpenGL contexts or install an OpenGL surface format.
+
+Migrated GUI suites: assistant_ui, busy_execution, command, desktop_shell,
+find_replace, gui, inline_rename, iteration_progress, map_explorer,
+project_data_navigation, source_assistance and workbook_editor.
+
+Migrated figure suites: drawn_tile, field_animation_widget, field_render,
+figure, graph_view_widget, interaction, math_text, publication_plot and
+tile_layout.
+
+The integration coordinator owns the independent raster_presentation and
+window_stability entry points. The pure raster_depth suite remains app-less;
+it cannot create a desktop surface. No app-less scientific test is promoted to
+a QApplication test by this migration.
+
+Historical native/GPU acceptance cases are explicit QSKIP entries:
+  figure_tests:10 visual/export/camera cases.
+  interaction_tests:7 native framebuffer/FXAA/picking cases.
+  field_render_tests:1 native rendered field/export case.
+  publication_plot_tests:1 exposed native camera case.
+  gui_tests:3 optional large native screenshot/ODE capture cases.
+
+These22 skips are disabled acceptance paths, not passes. Dedicated bounded
+offscreen raster presentation/depth/lifecycle suites cover the new rendering
+path. Scientific/headless model assertions, source safety, algebra projection,
+field geometry, figure state, layout and iteration-progress checks remain.
+Iteration-progress desktop screenshot opt-ins are disabled; its residual,
+cancellation, progress and numerical-state checks are retained.
+
+Remaining iteration-progress screenshot canvas lookups use RasterPlotCanvas.
+Obsolete native-only QVTK renderWindow/texture/FXAA helper code is removed.
+Legacy tab-label/floating-window fixtures explicitly select showTabs so that
+their assertions describe the requested presentation rather than assume the
+new default FigureGroupHost is the old tab widget.
+
+This note records source changes only. No build, test executable, application,
+desktop graphics or GPU activity was executed by the migrating agent. Actual
+acceptance results and any additional skips belong in docs/VALIDATION.md.

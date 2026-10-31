@@ -1,0 +1,32 @@
+#include "original_dense.hpp"
+#include "../model_forwarding.cpp.inc"
+#include <iostream>
+#include <cmath>
+
+namespace penta_generated {
+template<>struct UniversalTraits<0>{static constexpr unsigned dimension=2;static constexpr bool has_unit=true,has_conjugation=true,has_metric=true,scalar_first=true,canonical_reciprocal=true,quadratic=true,associative_exact=true,power_associative_exact=true;static constexpr std::array<long double,2> unit{{1,0}},pure_square{{0,1}};static constexpr std::array<long double,4> conjugation{{1,0,0,-1}},metric{{1,0,0,1}};static constexpr std::array<UniversalTerm,4> terms{{{0,0,0,1},{0,1,1,1},{1,0,1,1},{1,1,0,-1}}};static constexpr long double product_bound=1;};
+}
+
+namespace penta_reference {
+template<>struct UniversalTraits<0>{static constexpr unsigned dimension=2;static constexpr bool has_unit=true,has_conjugation=true,has_metric=true,scalar_first=true,canonical_reciprocal=true,quadratic=true,associative_exact=true,power_associative_exact=true;static constexpr std::array<long double,2> unit{{1,0}},pure_square{{0,1}};static constexpr std::array<long double,4> conjugation{{1,0,0,-1}},metric{{1,0,0,1}};static constexpr std::array<UniversalTerm,4> terms{{{0,0,0,1},{0,1,1,1},{1,0,1,1},{1,1,0,-1}}};static constexpr long double product_bound=1;};
+}
+
+int checks=0,failures=0;
+void channel(long double a,long double b){++checks;if(a!=b&&std::abs(a-b)>1e-17L*(1+std::abs(b))){++failures;std::cerr<<"channel "<<checks<<" "<<double(a)<<" != "<<double(b)<<"\n";}}
+void equal(const penta_generated::Jet2&a,const penta_reference::Jet2&b){channel(a.v,b.v);channel(a.x,b.x);channel(a.y,b.y);channel(a.xy,b.xy);++checks;if(a.dependent!=b.dependent)++failures;}
+void equal(const penta_generated::Jet3&a,const penta_reference::Jet3&b){for(unsigned k=0;k<8;++k)channel(a.c[k],b.c[k]);++checks;if(a.dependent!=b.dependent)++failures;}
+template<class A,class B>void flat(const A&a,const B&b){if(a.c.size()!=b.c.size()){++failures;return;}for(unsigned k=0;k<a.c.size();++k)equal(a.c[k],b.c[k]);}
+template<class A,class B>void seed(A&a,B&b,double value){a=A(value);b=B(value);if constexpr(std::is_same_v<A,penta_generated::Jet2>){a.x=b.x=.25L;a.y=b.y=-.125L;a.xy=b.xy=.0625L;a.dependent=b.dependent=true;}else{for(unsigned k=1;k<8;++k)a.c[k]=b.c[k]=std::ldexp(1.L,-int(k+2));a.dependent=b.dependent=true;}}
+template<class S,class R>void suite(){
+ penta_generated::Universal<S,0> u,v;penta_reference::Universal<R,0> ru,rv;
+ for(unsigned k=0;k<2;++k){seed(u.c[k],ru.c[k],.8+.2*k);seed(v.c[k],rv.c[k],.3-.1*k);}
+ flat(u+v,ru+rv);flat(u-v,ru-rv);flat(-u,-ru);flat(penta_generated::universal_product(u,v),penta_reference::universal_product(ru,rv));flat(penta_generated::universal_conjugate(u),penta_reference::universal_conjugate(ru));flat(penta_generated::universal_pure(u),penta_reference::universal_pure(ru));equal(penta_generated::universal_norm2(u),penta_reference::universal_norm2(ru));equal(penta_generated::universal_coordinate_norm2(u),penta_reference::universal_coordinate_norm2(ru));flat(penta_generated::universal_inverse(u),penta_reference::universal_inverse(ru));flat(penta_generated::universal_complex_log(u),penta_reference::universal_complex_log(ru));
+ for(int e=-3;e<=4;++e)flat(penta_generated::universal_power(u,e),penta_reference::universal_power(ru,e));for(unsigned op=1;op<=5;++op)flat(penta_generated::universal_whole(u,op),penta_reference::universal_whole(ru,op));
+ penta_generated::FixedArray<S,2,3,-1> a;penta_reference::FixedArray<R,2,3,-1> ra;for(unsigned k=0;k<6;++k)seed(a.c[k],ra.c[k],1+.1*k);
+ flat(a+a,ra+ra);flat(a-a,ra-ra);flat(-a,-ra);flat(a*S(2),ra*R(2));flat(penta_generated::array_divide(a,S(2)),penta_reference::array_divide(ra,R(2)));flat(penta_generated::array_add_scalar(a,S(2)),penta_reference::array_add_scalar(ra,R(2)));flat(penta_generated::array_transpose(a),penta_reference::array_transpose(ra));flat(penta_generated::array_matmul(a,penta_generated::array_transpose(a),1),penta_reference::array_matmul(ra,penta_reference::array_transpose(ra),1));equal(penta_generated::array_sum(a),penta_reference::array_sum(ra));equal(penta_generated::array_norm(a),penta_reference::array_norm(ra));flat(penta_generated::array_reduce<1>(a,true),penta_reference::array_reduce<1>(ra,true));flat(penta_generated::array_reduce<2>(a),penta_reference::array_reduce<2>(ra));
+ auto ua=penta_generated::array_cast<0>(a);auto rua=penta_reference::array_cast<0>(ra);flat(ua,rua);flat(penta_generated::array_entry_product(ua,ua,1),penta_reference::array_entry_product(rua,rua,1));flat(penta_generated::array_scale_element(ua,u,1,true),penta_reference::array_scale_element(rua,ru,1,true));flat(penta_generated::array_transpose(ua,true),penta_reference::array_transpose(rua,true));flat(penta_generated::array_entry_divide(ua,a),penta_reference::array_entry_divide(rua,ra));
+ auto t=penta_generated::tensor_from_array<S,0,2,3>(ua);auto rt=penta_reference::tensor_from_array<R,0,2,3>(rua);flat(t,rt);flat(penta_generated::tensor_entry_product(t,t,1),penta_reference::tensor_entry_product(rt,rt,1));flat(penta_generated::tensor_scale_element(t,u,1,true),penta_reference::tensor_scale_element(rt,ru,1,true));flat(penta_generated::tensor_reshape<3,2>(t),penta_reference::tensor_reshape<3,2>(rt));flat(penta_generated::tensor_coefficient(t,0),penta_reference::tensor_coefficient(rt,0));flat(penta_generated::tensor_coordinates(t),penta_reference::tensor_coordinates(rt));equal(penta_generated::tensor_norm(t),penta_reference::tensor_norm(rt));
+ flat(penta_generated::array_map_as<-1>(a,[](const auto& value){return cb_sin(value);}),penta_reference::array_map_as<-1>(ra,[](const auto& value){return cb_sin(value);}));flat(penta_generated::tensor_map_as<0>(t,[](const auto& value){return universal_whole(value,3);}),penta_reference::tensor_map_as<0>(rt,[](const auto& value){return universal_whole(value,3);}));
+ penta_generated::FixedArray<S,2,2,-2> p;penta_reference::FixedArray<R,2,2,-2> rp;for(unsigned k=0;k<20;++k)seed(p.c[k],rp.c[k],.1+.02*k);flat(penta_generated::array_matmul(p,p,1),penta_reference::array_matmul(rp,rp,1));for(unsigned e=0;e<4;++e)flat(penta_generated::array_power(p,e,1),penta_reference::array_power(rp,e,1));
+}
+int main(){suite<penta_generated::Jet2,penta_reference::Jet2>();suite<penta_generated::Jet3,penta_reference::Jet3>();std::cout<<checks<<" dense bridge channel checks, "<<failures<<" failures\n";return failures?1:0;}

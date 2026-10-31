@@ -1,0 +1,76 @@
+{
+  "algebra": "A_gamma_v1",
+  "gamma": 1.0,
+  "absolute_tolerance": 1e-12,
+  "relative_tolerance": 1e-12,
+  "cases": [
+    {
+      "name": "left_associated_ijj",
+      "expression": "(i*j)*j",
+      "expected": [
+        0.0,
+        0.0,
+        0.0,
+        0.5,
+        -0.5
+      ]
+    },
+    {
+      "name": "right_associated_ijj",
+      "expression": "i*(j*j)",
+      "expected": [
+        -0.0,
+        -1.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "name": "reciprocal_non_cancellation",
+      "expression": "(i*inv(j))*j",
+      "expected": [
+        0.0,
+        0.0,
+        0.0,
+        -0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "right_division_i_by_j",
+      "equation": "x*j=i",
+      "expected": [
+        0.0,
+        -0.7071067811865476,
+        -0.0,
+        -0.7071067811865476,
+        0.7071067811865476
+      ]
+    },
+    {
+      "name": "paper_zero_divisor",
+      "left": [
+        0.0,
+        0.0,
+        1.0,
+        -1.0,
+        -1.0
+      ],
+      "right": [
+        -4.242640687119286,
+        1.0,
+        0.0,
+        -4.0,
+        4.0
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

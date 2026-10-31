@@ -1,0 +1,41 @@
+PENTARNION STUDIO — PRINT SOURCE WITH SYNTAX COLORS
+26 October 2026
+
+Select the source tab to print, then choose File > Print (Ctrl+P). File > Print
+Preview shows the same formatted source before printing. File > Page Setup
+changes paper, orientation and margins. Each operation uses the active document.
+
+Print output retains the editor's explicit syntax RGB colors, bold/italic token
+styles, monospace font, indentation, tabs and Unicode. Long source lines wrap
+within the printable width; long documents paginate. Filename headers and page
+numbers identify the printed document. Line-number gutters, selections and UI
+decorations are excluded. The source code itself is never reflowed or edited.
+Paper is white; a dark theme's near-white unstyled text is printed black for
+legibility. Explicit syntax colors are retained.
+
+Printing captures an independent snapshot of the current buffer, including
+unsaved changes. Preview stays tied to that snapshot if another tab is selected.
+It does not execute, compile or force-save source. Autosave is paused while
+print/preview/page-setup dialogs are active and resumes afterwards. Normal safe
+saving, undo history, source encoding and recovery remain unchanged.
+
+The print dialog supports available printers, PDF output where offered, page
+ranges and a selected source region when one was captured. Color is the default;
+the user's grayscale/printer settings are respected. Physical colors depend on
+the printer, driver and paper. Preview/PDF checks verify the software RGB values
+and layout; no physical paper job is sent by the automated tests.
+
+Printing uses full formatted source snapshots, independently of the rich-copy
+HTML size cap. Failure to obtain a printable page or destination is reported.
+No .p print() command or new language grammar is introduced. See F41/L33.
+
+FIRST-PLOT WINDOW STABILITY
+Studio now prepares its graphics surface before its first show, without opening
+a figure or initializing a hidden rendering context. This prevents Qt from
+recreating the main native window on first plotting. The Studio process, editor
+buffers, native window and application icon remain stable across the first run,
+first plot and subsequent close-all/replot. F42 records the regression evidence.
+
+UPDATED PRINT WORKFLOW (F47): Print and Preview now both open Studio's integrated
+preview/settings dialog. Select a destination, inspect the rendered pages and
+choose Print or Save PDF. Windows' generic print screen is not used.

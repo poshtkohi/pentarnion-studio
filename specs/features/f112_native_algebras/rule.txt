@@ -1,0 +1,15 @@
+F112: Native finite-dimensional algebras and table imports
+Authorized algebra-first extension,27 October2026.
+Immutable algebra definitions and typed elements preserve complete coefficients,
+explicit product grouping, actual unit vectors and proof-aware capabilities.
+Native R/C/H/O/sedenion/dual/split/Clifford and associative/Lie/Jordan presets
+coexist with unchanged legacy Pentarnion and Complex values. Strict JSON and
+literal native CSV/XLSX imports capture data-only exact source snapshots.
+Left/right equation division, verified reciprocals, coordinate metrics and
+whole-element elementary calculus retain separate mathematical contracts.
+Checked descriptor widths/hashes drive cached native callbacks/ODEs/generated
+Jacobians and safe workspace persistence. No interpreted solver fallback or
+unproved associative shortcut is authorized.
+Authority:language.txt L100;specs/native_algebras_v0_2.txt.
+Acceptance:examples/native-algebras/project.pprj and core/runtime/native tests.
+Record actual build/test/deployment evidence in docs/VALIDATION.md; do not infer Linux.

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Higher Index Descriptor Systems",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "index-three-consistent-initial-sensitivities.p",
+    "index-two-hidden-constraint.p",
+    "local-residual-rank-diagnostics.p"
+  ]
+}

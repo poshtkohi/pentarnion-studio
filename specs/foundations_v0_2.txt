@@ -1,0 +1,318 @@
+PENTARNION LANGUAGE 0.2 — SCIENTIFIC FOUNDATIONS
+Authorized extension: 26 October 2026. Feature rules F50-F58.
+This contract extends language.txt L39-L46 and supersedes earlier exclusions
+only for the features explicitly described here. Validation status is recorded
+in docs/VALIDATION.md; Windows is the validation target. Native Linux execution remains
+unverified until its build, numerical and graphics acceptance checks are run.
+
+1. CALLBACKS AND CAPTURES (F50)
+  callback f=@square;
+  callback g=@sin;
+  real gain=2;
+  callback h=@(real x)=>gain*x;
+  gain=3;
+  display(h(4));                       % 8: capture is a value snapshot
+
+Anonymous parameters have explicit types. Captures are immutable snapshots of
+referenced outer bindings, including copy-on-write arrays. Changing or clearing
+an original variable does not change an existing capture. Named function handles
+retain the available function environment; ordinary named functions do not gain
+implicit global numerical variables. Function definitions must precede use;
+self-recursion remains bounded. Imported functions retain module function
+resolution. Scalar mathematical builtins can be named with @; use an anonymous
+wrapper to choose other overloads. Callback parameters are supported. Generic
+callback parameters have contextual/default real return typing; pass concrete
+typed handles to numerical APIs. Runtime errors retain the current call site,
+including handles kept from previous Command Window submissions.
+
+2. OUTPUTS, TUPLES AND TYPED OPTIONS (F51)
+  function [real lower,real upper] bounds(real x){return x-1,x+1;}
+  [real lo,real hi]=bounds(5);
+  [lo,hi]=bounds(6);                    % untyped targets already exist
+  real first=bounds(7);                % typed single assignment takes output 1
+  tuple pair=(1,"two");
+
+Output lists contain 1..16 values. Evaluate the call once; validate all targets
+and commit them transactionally. A tuple declaration retains all outputs. The
+declared output types control conversion; multiple outputs are not arrays.
+
+  options cfg=options(scale=2.0,tol=1e-9);
+  record updated=with_options(cfg,scale=3.0);
+  display(cfg.scale,get_option(updated,"scale"));
+  function real scaled(real x,options cfg=options(scale=2.0)){
+    return x*cfg.scale;
+  }
+  display(scaled(cfg=options(scale=4.0),x=2.0));
+
+record and options are aliases for immutable typed fields, limited to 64 fields
+and nested depth 32. Read fields by dot or get_option. with_options rejects
+unknown fields and incompatible values. Field assignment/dynamic schemas are
+not introduced. Constant function defaults supply accepted option-field schemas.
+Named arguments reorder declared parameters; positional arguments precede named
+ones. Missing, unknown or duplicate keys are errors. The defaults of each solver
+remain explicitly documented rather than inferred from unrelated record fields.
+
+3. SOURCE MODULES AND VERSION COMPATIBILITY (F52)
+  import "helpers.p" as science;
+  display(science.square(3.0),science.version);
+
+Check reads and recursively checks .p source without executing it or loading
+native modules. Run evaluates checked module statements in an isolated scope;
+its exported values form the namespace record. Functions retain module function
+resolution. Numerical module values are read explicitly through the namespace;
+ordinary functions still have no implicit numerical globals. Relative paths
+resolve beside the importing source. Imports are file/Command Window scope only.
+Reject cyclic imports, duplicate direct imports (reuse their namespace), algebra
+context mismatch, depth over 16 and aggregate imported source over 8 MiB. Existing
+per-file/token/node limits also apply. Embedders can supply a module resolver.
+Studio retains exact analysed dependency bytes for freshness checks. Before
+publishing results it rejects changed/missing saved dependencies or dependency
+buffers that differ from analysed disk source. Imports use saved source; save
+dependency editors before running. Imported diagnostics explicitly identify the
+import statement as their navigation location; static messages also retain the
+module path and internal line/column. Runtime errors identify the module and
+import statement rather than inventing an internal source position.
+
+New syntax/builtins are language 0.2. Existing language 0.1 source retains the
+identifier meaning of newly reserved names; its manifest is not silently changed.
+Execution still uses the existing 0.2 profile. Highlighting shares the lexer.
+
+4. EXPLICIT COMPLEX SCALARS AND REAL FUNCTIONS (F53)
+  complex z=complex(2,3);
+  display(realpart(z),imagpart(z),arg(z),conj(z));
+
+Complex is a separate two-real scalar type. Integer/real values embed into it.
+Pentarnion basis i retains its published meaning; no implicit Complex/Pentarnion
+mixing is permitted. Supported complex arithmetic includes +,-,*,/,^ and equality,
+with finite-result/domain checks. abs gives magnitude and norm2 squared magnitude.
+Scalar complex sqrt, sin, cos, exp, sinh, cosh, tan, asin, acos, atan, tanh, asinh,
+acosh, atanh, log, log10 and log2 are available. Complex dense arrays, FFT,
+eigenvalue/Floquet analysis and symbolic complex algebra remain future features.
+
+Additional real functions: expm1, log1p, erf, erfc, hypot and sign. Real log1p
+requires x>-1. Existing finite-result/domain diagnostics apply. Whole-Pentarnion
+sin/cos/exp/sinh/cosh continue to use the published one-element calculus, never
+coefficientwise substitution. Other functions require their documented real or
+complex input type until a whole-Pentarnion definition is implemented.
+
+5. CACHED NATIVE SCALAR FUNCTIONS (F54)
+  native function real cube(real x){return x*x*x;}
+  native function pentarnion square(pentarnion p){return p*p;}
+
+Check validates the restricted pure scalar subset without compiling it. First
+Run compiles a cached shared kernel; unchanged structure reuses it, while runtime
+parameters do not change the kernel structure. Function caches are distinct from
+ODE caches. Real/Pentarnion parameters/results, scalar expressions, typed locals,
+assignment, if/else and return are supported, with declared size/operation bounds.
+Preserve explicit product grouping and operand order. Supported scalar builtins
+match the compiler's accepted subset. Integer literals can appear in expressions;
+computed native arithmetic must use real literals/parameters where diagnosed.
+
+No silent interpreted fallback: reject loops, arrays, complex values, callback or
+record operations, imports, IO, captures, helper function calls and multiple
+outputs. Require a configured project/source cache directory. Build failures and
+cancellation are diagnostics, not new console windows. Native function and ODE
+compilation times are excluded from tic/toc on every run. General .p JIT is not
+introduced by this scalar subset.
+
+6. ARRAYS, SHAPES, MASKS AND GRIDS (F55)
+  matrix A=reshape([1,2,3;4,5,6],3,2);  % [1,5;4,3;2,6]
+  matrix B=reshape(A,[],3);             % infer one dimension
+  matrix C=reshape(A,[2,3]);
+  matrix D=diag([2,4,6]);
+  matrix d=diag(D,0);
+  [matrix X,matrix Y]=meshgrid([-1,0,1],[0,2]);
+  [matrix U,matrix V]=ndgrid([-1,0,1],[0,2]);
+
+reshape preserves element count and one-based column-major traversal; one []
+dimension may be inferred. diag(vector[,offset]) constructs a square matrix;
+diag(matrix[,offset]) extracts a column. Preserve real/Pentarnion/logical entries.
+meshgrid(x[,y]) uses length(y)-by-length(x), with y=x by default. ndgrid(x,y)
+uses length(x)-by-length(y); ndgrid(x) returns a column. This milestone retains
+bounded TWO-DIMENSIONAL arrays. More than two shape dimensions are rejected;
+N-dimensional storage remains an explicitly considered future extension.
+
+  matrix samples=[2,5,4,8,3,9];
+  logicalmatrix mask=samples>4;
+  matrix selected=samples(mask);        % [5,8,9]
+  matrix indices=find(mask);            % [2;4;6]
+  samples(mask)=4;
+
+logical(A) explicitly converts finite real numeric entries to logical values.
+Array <,<=,>,>= and elementwise &,| produce logical masks; ~ negates a logical
+interpretation. Existing ==/!=/~= array equality stays a single shape/data
+predicate. Numeric index lists remain distinct from logical masks. A full-array
+mask matches numel(A) and traverses column major; per-axis masks are vectors
+matching that extent. Masked writes broadcast a scalar or accept matching values.
+Old immutable aliases retain old data; writes do not resize arrays. find returns
+one-based column-major nonzero indices as a real column. A Pentarnion entry is
+nonzero when any original coefficient is nonzero.
+
+dot(a,b) is an explicitly REAL vector inner product; equal lengths are required.
+norm(v[,1|2|"inf"]) provides real vector norms; norm(A,"fro") gives a real
+matrix Frobenius norm. No whole-Pentarnion array inner product is silently
+defined. Scalar Pentarnion norm2 remains its separate published algebra operation.
+
+7. NUMERICAL CALCULUS (F56)
+  real value=interp1([0,0.5,1],[0,1,0],0.25);
+  matrix fine=interp1(x,y,xq,"linear","extrap");
+  pentarnion at_time=deval(solution_value,0.25,"p");
+  real area=integral(@(real x)=>x^3,0,1,
+                     options(abs_tol=1e-9,rel_tol=1e-8,max_intervals=10000));
+
+interp1 supports piecewise linear interpolation of matching sampled vectors;
+values may be real/Pentarnion or solution series. Coordinates are finite and
+strictly increasing/decreasing. Query scalar/array shape and element type are
+preserved. Outside queries fail by default; "linear","extrap" is explicit.
+deval uses cubic Hermite interpolation from stored solution values and retained
+compiled-RHS endpoint slopes. It IS NOT the integrator's internal dense-output
+polynomial. Accuracy depends on output sample spacing; validate refinement.
+Queries remain in the sampled interval, and multiple states require a state
+name. Legacy files without endpoint slopes fail clearly, with no linear fallback.
+
+integral uses adaptive Simpson quadrature for real/Pentarnion scalar callbacks.
+abs_tol>0 defaults to 1e-9; rel_tol>=0 defaults to 1e-8; max_intervals is an
+integer in 1..100000, default 10000. Reverse intervals negate the result; equal
+endpoints give zero after a validation evaluation. Callback source failures,
+nonfinite values, interval/depth exhaustion, unrepresentable subdivisions and
+cancellation are errors. This is not a rigorous error bound or Gauss-Kronrod API.
+Callbacks run synchronously on the owner thread, never concurrently in workers.
+
+trapz(y) and trapz(x,y) integrate vectors to real/Pentarnion scalars. For matrices,
+trapz(x,Y,dimension) explicitly selects dimension 1/2 and retains reduced matrix
+shape. cumtrapz has those signatures and preserves input shape, starting with
+zero. Omitted coordinates use unit spacing. Empty integration yields zero;
+cumulative empty arrays retain their shape.
+
+diff(A[,order[,dimension]]) gives repeated forward differences along the first
+nonsingleton dimension by default. Dimensions are 1/2, order is 0..100000; zero
+preserves data and order>=extent produces an empty selected dimension.
+[matrix gx,matrix gy]=gradient(F[,h] or [,hx,hy]) gives sampled spatial
+derivatives. A vector has one derivative gx and zero gy. For 2D fields x runs
+across columns and y down rows. laplacian sums unscaled second derivatives;
+divergence(Fx,Fy[,h] or [,hx,hy]) sums dFx/dx+dFy/dy for equal shapes/types.
+
+Spacing defaults to one; one scalar can apply to both axes. Accept nonzero signed
+scalar spacings or monotone nonuniform coordinate vectors. Local three-point
+coordinate-polynomial stencils use one-sided endpoints. A first derivative on
+three well-spaced nodes has second-order truncation error for smooth functions
+as the local spacing shrinks. On a uniform grid, the second derivative is
+second-order at centered interior nodes but first-order at one-sided endpoints.
+General unequal spacing can make the three-point second derivative first-order.
+These local error orders assume bounded derivatives and reasonably scaled grids;
+refine the coordinates to check numerical convergence. diff returns differences
+rather than dividing by a grid spacing.
+A first derivative on
+two points is the secant; singleton derivatives are zero. Second derivatives on
+fewer than three points are zero (constant/linear sampled continuation). Linear
+Pentarnion calculus acts on five coefficients while preserving products within
+the original field/integrand. These sampled/spatial gradients are distinct from
+objective gradients with respect to unknown parameters. PDE solvers are future.
+
+8. PARALLEL VECTORS AND SHARED CPU BUDGET (F57)
+  threads(4);
+  vector x=linspace(0,1,40000);
+  vector y=sin(x);
+  vector z=axpy(2.0,x,y);               % alpha*x+y, alpha on the left
+  record status=parallel_info();
+  display(status.threads_used,status.peak_active);
+  threads(0);
+
+threads() returns the requested Integer. threads(0) selects logical CPUs
+automatically, bounded to 64; threads(n) accepts Integer 1..64. Setters are Void.
+The setting persists across submissions and clear; Reset Workspace restores 0.
+Cancellation restores prior session settings/statistics. The limit is a maximum,
+not a promise every worker participates. Small tasks stay serial; automatic mode
+also adapts active workers to available work. Default cost-weighted threshold:
+32768 work units. Kernel benchmarks guide this policy; speedup is machine specific.
+
+parallel_info returns immutable typed fields requested, effective, threads_used,
+peak_active, parallel_calls, serial_calls, last_elements, threshold, module_loaded.
+Inspection alone does not load the module. Counters describe numerical dispatch,
+not arbitrary interpreter statements, all OS threads or end-to-end application RAM.
+
+Supported row/column vectors route +,-,scalar scaling, real division, .*, ./, .^,
+unary signs, whole-element sin/cos/exp/sinh/cosh, real-only elementary maps and
+conj/scalar/pure/norm2 maps through the numeric module. axpy accepts equal-shaped
+real/Pentarnion vectors and a real/Pentarnion scalar alpha. Operand order remains
+explicit. sum/mean vector reductions retain the old 1-by-1 matrix result shape.
+Real dot/norm reductions use the same backend. Full matrix products remain the
+existing serial operations; category 5 parallel GEMM/OpenBLAS is not implemented.
+
+Sum/mean/dot use fixed 256-entry blocks and fixed merge order with long-double
+accumulation, independent of thread count. Tested same-build/platform results
+are identical at one/four threads; cross-platform/compiler bit identity is not
+promised. L2 uses scaled sums of squares. Nonfinite final values remain errors.
+
+9. LAZY NATIVE MODULE AND RESOURCE CONTRACT (F58)
+Numerical kernels use penta_numerics.dll (Windows) or libpenta_numerics.so (Linux)
+in modules/ beside the application. An embedding host can provide an absolute
+module directory; source code cannot redirect module loading. The Qt-free loader
+validates C ABI v1, table size and required capabilities. It diagnoses absent,
+incompatible or dependency-broken modules without committing candidate results.
+Successful libraries remain resident until process exit. Module initialization
+is synchronized. Main runtime links the loader, not the optional numerical DLL.
+
+Only explicit-sized borrowed contiguous buffers, widths 1/5, callbacks and bounded
+status/error text cross the C boundary. Host owns storage. C++ values/exceptions
+stay inside their own libraries. One host-owned bounded persistent pool serves
+modules and coordinates concurrent callers. Nested worker numerical work executes
+inline to avoid new pools/deadlock. Future modules must use this shared budget.
+Parallel callbacks inspect only atomic cancellation and native buffers; the owner
+thread precharges work and packs/unpacks interpreter values. Active cancellation
+joins dispatched tasks; the pool remains reusable. Quadrature callbacks stay
+synchronous. Arbitrary interpreter execution is not moved into numeric workers.
+
+Existing array/solution/operation/output/source limits remain in force. Captures,
+records, tuples and suspended caller scopes count retained data once per shared
+immutable object. Pure-data complex/record/tuple/logical values can be saved;
+callbacks and records containing callbacks are rejected before atomic file writes.
+Record/tuple loads validate existing schemas. Solution files may carry endpoint
+slopes; older files remain loadable even when deval is unavailable for them.
+
+This implements the numerical-module foundation only, not all proposed optional
+libraries, module management GUI, performance-memory survey or PDE architecture.
+
+RUNNABLE ACCEPTANCE EXAMPLES
+  examples/language-foundations/project.pprj: callbacks/outputs/options/imports/native scalars.
+  examples/array-shapes/project.pprj: reshape/diag/grids/logical indexing/dot/norm.
+  examples/numerical-calculus/project.pprj: interpolation/quadrature/derivatives/ODE deval.
+  examples/parallel-vectors/project.pprj: real and ordered Pentarnion parallel vectors.
+Each includes a README with expected values; timings/worker participation vary.
+Integrated suites: foundation_language_tests, foundation_numerics_tests,
+foundation_parallel_tests, calculus_kernel_tests, native_function_tests, plus
+existing compatibility/algebra/ODE/GUI suites. HANDOFF records actual results.
+
+CURRENT ADVANCED NUMERICAL EXTENSION — 26 OCTOBER 2026
+specs/advanced_numerics_v0_2.txt, language.txt L47-L55 and F59-F67 supersede earlier
+deferred claims only for current categories5-8 and revised per-call threading:
+parallel matrices/OpenBLAS, real dense/sparse linear algebra, explicit Pentarnion
+left/right operators, cached native derivatives/Hessians/products, roots and direct
+ODE RHS partials. Historical rules above remain unchanged. Whole-Pentarnion matrix
+determinants/inverses are not inferred from real operator quantities; complex
+eigendata uses split real/imaginary arrays. Native ODE trajectory sensitivities,
+complex dense arrays, general native scripts, fitting, chaos/PDE/geometry packages
+and Map Explorer(plan20) remain future. All37 staged Windows suites passed; final
+installed/Code::Blocks/native GUI evidence is in HANDOFF; Linux is unverified.
+
+
+RESEARCH EXTENSION SUPERSESSION — 26 OCTOBER2026
+specs/research_v0_2.txt and language.txt L56-L63/F68-F75 supersede earlier future
+claims for native Ceres/NLopt fitting/optimization, CVODES integrated sensitivity/
+terminal adjoints, ODE events/dense output/backward time, native maps, parallel
+callback preparation and Studio run/help/interrupt/find. Instantaneous RHS partials
+remain distinct from integrated sensitivities. The existing callback subset/cache
+rules continue; arbitrary native scripts, chaos/PDE/geometry and Map Explorer are
+not added. HANDOFF records actual acceptance/deployment/platform status.
+
+
+SECOND-DERIVATIVE INSUFFICIENT-DATA CORRECTION — 26 OCTOBER 2026
+For nonempty PENTA_CALC_DERIVATIVE2 requests, the differentiated axis must
+contain at least three samples. Two samples determine a secant, not curvature.
+The unchanged C ABI returns PENTA_NUMERIC_ARGUMENT with an Insufficient data
+diagnostic before writing any output; laplacian propagates the runtime error.
+Real/Pentarnion coefficients and row/column axes follow the same rule. Empty
+arrays stay empty; the two-sample first derivative remains the secant. diff(A,2)
+is a different operation and retains its ordinary empty-difference semantics.
+Regression coverage: calculus_kernel_tests (buffer sentinels/axes/widths),
+foundation_numerics_tests (language errors and valid first/quadratic derivatives).

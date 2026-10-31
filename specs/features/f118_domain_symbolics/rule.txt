@@ -1,0 +1,12 @@
+F118: Domain-aware native symbolic coefficients, functions and matrix equations
+New lazy penta_cas DLL/SO retains exact rational expression/domain snapshots,
+explicit positive/nonzero assumptions, known/formal symbolic functions,
+product/quotient/chain derivatives, real/complex radical domains and principal
+branch-cut checks. Symbolic gamma uses the actual ordered A_gamma table.
+Central symbolic matrix products/conditional linear solves/determinants retain
+their pivot domains; no general nonlinear CAS or nonassociative reciprocal solve
+is implied. Checked native export preserves assumption guards and uses cached
+typed code generation; unsupported source/native contracts fail explicitly.
+Authority: language.txt L106; specs/domain_symbolics_v0_2.txt.
+Acceptance: tests/runtime/cas_kernel_tests.cpp and cas_language_tests.cpp,
+plus examples/domain-aware-symbolics/project.pprj. Record actual test evidence.

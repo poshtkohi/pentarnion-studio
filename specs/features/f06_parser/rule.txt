@@ -1,0 +1,32 @@
+FEATURE F06: Grouping-preserving expression parser
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S3
+Dependencies: F05
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+INPUT/OUTPUT
+Tokens -> AST and syntax diagnostics. Parser does not call numerical algebra.
+
+REQUIRED BEHAVIOUR
+F06-R1: Implement L13 with ordinary recursive-descent/precedence parsing.
+         A small hand-written parser is sufficient; do not add a compiler suite.
+F06-R2: AST variants: directive, declaration, assignment, expression statement,
+         literal, reference, unary, binary, Group, call, constructor and range.
+F06-R3: Preserve (B*q)*q and B*(q*q) as distinct nested nodes and source spans.
+F06-R4: Apply stated sign/power precedence: -q^2 = -(q^2), q^-1 = q^(-1).
+F06-R5: Missing semicolon/closing delimiter produces a targeted diagnostic;
+         recover at semicolon or EOF so later declarations can be analysed.
+F06-R6: Detect excessive nesting using a documented resource limit and return
+         a diagnostic instead of risking stack overflow on hostile source.
+F06-R7: No flattening, evaluation, code generation or optimisation of expressions.
+
+ACCEPTANCE
+F06-T1: Golden ASTs for grouping and precedence examples.
+F06-T2: Whitespace/comments do not change AST meaning except source positions.
+F06-T3: Multiple errors in one file do not suppress all later valid statements.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

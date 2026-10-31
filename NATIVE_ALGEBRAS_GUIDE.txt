@@ -1,0 +1,47 @@
+NATIVE ALGEBRAS - GETTING STARTED
+
+Open examples/native-algebras/project.pprj. Run a named script with F5 or Run File.
+quaternion-rotations-and-products.p prints ordered Hamilton products and draws
+a quaternion-generated rotation. octonion-bracketing.p and
+sedenion-zero-divisors.p show why parentheses and equation uniqueness matter.
+native-quaternion-jacobians-and-odes.p generates a native 4x4 Jacobian, checks it
+independently, integrates a quaternion ODE and plots selected coefficient series.
+
+  algebra H=builtin_algebra("quaternion");
+  element<H> p=1+H.i+2*H.j;
+  element q=element(H,[2,-1,0,1]);
+  display("p*q:",p*q);
+  display("q*p:",q*p);
+  display("a*x=b:",solveleft(p,p*q));
+
+Use H.i for the quaternion basis; unqualified i remains the original Pentarnion
+basis. Native definitions can coexist. Real scalar promotion uses the actual
+unit vector. Nonunital Lie products support real scaling without inventing a unit.
+The native-algebras README lists all13 preset families and their conventions.
+
+import-custom-multiplication-table.p shows strict rational JSON definitions.
+import-csv-and-excel-products.p shows native CSV/XLSX imports plus separate
+floating metadata. prepare-csv-xlsx-tables.p can recreate its bundled numeric
+files. JSON indices are zero-based; exported/imported CSV/XLSX index columns
+are one-based. Spreadsheet formulas are never executed by the importer.
+
+algebra_info(A) reports mathematical capabilities together with their evidence.
+sin/cos/exp/sinh/cosh use whole-element calculus only where a validated unit and
+exact proof of power associativity support it. Numerical or declared identity
+checks are not proof. norm2 uses an explicit positive coordinate metric;
+algebra_norm is the Euclidean coordinate norm. Neither implies norm composition.
+
+For a*x=b use solveleft(a,b); for x*a=b use solveright(a,b). Report variants
+algebra_solveleft/right return rank, conditioning, residual and uniqueness status.
+inv(a) is a verified reciprocal and has a different contract. The sedenion
+example explicitly shows why reciprocal existence does not imply unique division.
+Use real leftop/rightop coefficient matrices with numerical linear algebra.
+
+save/load preserve checked frozen definitions with their elements and typed ODE
+series. Native bodies cache descriptor/table structure, while changed runtime
+parameters reuse compiled code. Exact source/table bytes remain dependencies.
+Keep native body formulas parenthesized when products are nonassociative.
+
+The complete syntax, capability gates, mathematical semantics and limits are in
+specs/native_algebras_v0_2.txt (languageL100/featureF112). Read docs/VALIDATION.md for
+actual accepted builds/tests; cross-platform source support is not a Linux test.

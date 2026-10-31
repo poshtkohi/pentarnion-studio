@@ -1,0 +1,38 @@
+FEATURE F03: Safe document lifecycle
+Version: 0.1
+Status: implemented for S1; verification and limits in docs/VALIDATION.md
+Implementation stage: S1/S7
+Dependencies: F02
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+PURPOSE
+Protect the user's source text during editing, saving, closing and conflicts.
+
+REQUIRED BEHAVIOUR
+F03-R1: New, Open, Save, Save As, Save All, Close. Track dirty state and revision.
+F03-R2: UTF-8 source. Accept an existing UTF-8 BOM; preserve encoding/BOM and
+         LF/CRLF choice per document. New files: UTF-8 without BOM and LF.
+F03-R3: Use QSaveFile safe replacement (or equivalent); keep direct-write fallback
+         disabled for project sources. A failed commit leaves dirty state intact.
+F03-R4: Close/project switch/app quit prompts Save / Discard / Cancel for dirty
+         docs. A failed save does not turn into an implicit discard.
+F03-R5: External modification/deletion prompts Reload / Keep Buffer / Save As;
+         do not silently overwrite an externally changed version.
+F03-R6: One writable editor document per canonical file identity. Two paths to
+         the same file must not lead to unnoticed competing writable buffers.
+F03-R7: Invalid UTF-8/binary input is reported, not silently replacement-decoded
+         and then saved over the original. Preserve the original on every error.
+
+ACCEPTANCE
+F03-T1: Simulated permission failure preserves original file and editor edits.
+F03-T2: Cancel on close preserves tab/text. Save As updates path only on success.
+F03-T3: CRLF/BOM/Unicode roundtrip tests; external edit conflict test.
+F03-T4: Explicit file deletion asks confirmation and resolves any dirty buffer.
+
+OUT OF SCOPE
+Automatic formatting, save-triggered execution, cloud sync and collaboration.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

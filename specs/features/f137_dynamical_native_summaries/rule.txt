@@ -1,0 +1,10 @@
+F137 - Native dynamical metric and advanced-solver summaries
+Implemented: sampled rising-crossing period; full-coordinate native explicit-ODE
+Lyapunov summary; localized native event-time summary; constant-mass/event ODE
+and native index-one DAE final/temporal/period/event sensitivity adapters.
+Complete states/derivatives/algebra groups are retained; residual Jy/Jyp is
+compiler generated. Unsupported constrained/reset variational dynamics are
+rejected, rather than silently replaced with explicit ODE tangents.
+Contract: specs/dynamical_summaries_v0_2.txt.
+Examples: examples/native-uncertainty/.
+Regression: tests/runtime/inference_uncertainty_tests.cpp.

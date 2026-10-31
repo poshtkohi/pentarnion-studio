@@ -1,0 +1,27 @@
+F54: Restricted native scalar functions and structural cache
+Authorized extension, 26 October 2026. Language 0.2.
+
+native function real cube(real x){return x*x*x;} validates in Check without
+compilation and compiles in a separate shared-kernel cache on first Run. Runtime
+parameters reuse unchanged structure. Support Real/Pentarnion scalar parameters,
+results, expressions, typed locals, assignment, if/else and return. Preserve
+nonassociative grouping, finite/domain errors, cancellation and bounded work.
+Unsupported loops, arrays, complex values, callbacks, records, imports, IO,
+captures, helper calls and multiple outputs diagnose with no silent fallback.
+Require a configured project/source cache. Exclude build time from tic/toc.
+
+Authority: language.txt L41 and specs/foundations_v0_2.txt section 5.
+Acceptance: native_function_tests and foundation_language_tests; language-foundations native
+cube example. Verify cache reuse, parameter changes, invalid subsets and errors.
+Out of scope: general .p JIT, native arrays and compiler-generated parameter AD.
+Actual platform/test status: docs/VALIDATION.md.
+
+
+RESEARCH EXTENSION SUPERSESSION — 26 OCTOBER2026
+specs/research_v0_2.txt and language.txt L56-L63/F68-F75 supersede earlier future
+claims for native Ceres/NLopt fitting/optimization, CVODES integrated sensitivity/
+terminal adjoints, ODE events/dense output/backward time, native maps, parallel
+callback preparation and Studio run/help/interrupt/find. Instantaneous RHS partials
+remain distinct from integrated sensitivities. The existing callback subset/cache
+rules continue; arbitrary native scripts, chaos/PDE/geometry and Map Explorer are
+not added. HANDOFF records actual acceptance/deployment/platform status.

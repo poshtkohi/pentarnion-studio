@@ -1,0 +1,97 @@
+PUBLIC SOURCE PREPARATION NOTE
+
+The following notes describe the frozen 31 October 2026 research preview.
+Newly built public installers need a new identity, confirmed licence, matching
+source/notices and their own validation. No SignPath approval is claimed.
+
+PENTARNION STUDIO 0.2 - STANDALONE WINDOWS DISTRIBUTION
+Prepared 31 October 2026
+
+LOCAL RELEASE CANDIDATE. No website upload or public publication was performed.
+The exact tested installer identity and validation results accompany this file.
+
+INSTALLATION
+
+Run Pentarnion Studio Installer.exe as the current Windows user. The default
+destination is %LocalAppData%\Programs\Pentarnion Studio. Administrator rights,
+external downloads, a global compiler/Python installation, global PATH changes
+and system-font installation are not required. No activation code is required.
+Copilot is optional; configure a provider only if desired.
+
+The package contains the compiled scientific application, native shared runtime,
+minimal model-generation interfaces, private GCC/CMake/Ninja tools, and private
+CPython with NumPy/SciPy/Matplotlib and Tcl/Tk. Exported Python programs use
+penta-python.exe. Exported MATLAB programs require the user's licensed MATLAB;
+MATLAB itself is not bundled.
+
+Start Menu provides Studio, Examples, Documentation, both manuals and Uninstall.
+Examples are copied into the Windows Documents known folder under Pentarnion
+Studio\Examples. Existing files are never overwritten. The Quick Start and
+Theory and Programming Language Fundamentals are supplied as editable DOCX and
+PDF files, with verified document hashes.
+
+UPDATES AND REMOVAL
+
+An update accepts only a verified owned installation. Changed owned files are
+backed up outside the app and SHA-256 verified before replacement. Active work
+blocks update and uninstall; it is not terminated.
+
+Uninstall removes the verified owned installation, internal caches/settings,
+shortcuts and installer registration. External projects, edited examples, data,
+results, checkpoints, provider credentials and recovery backups are preserved.
+Reparse entries inside the app are unlinked themselves; deletion never follows
+their outside targets. A replaced external shortcut directory is refused before
+Inno's logged-file removal.
+
+SOURCE AND NUMERICAL IMPLEMENTATION
+
+The installed payload excludes private first-party IDE, compiler and numerical
+implementation sources. Native models contain user expressions and explicit
+type/ABI forwarding glue; reusable numerical implementations stay compiled in
+shared libraries. Python/MATLAB exports contain compiled helper implementations
+and minimal forwarding/data interfaces. The normal development source remains
+unchanged. The separate private installer-code handoff reconstructs and rebuilds
+the distribution from the frozen baseline and reviewed overlay.
+
+The TIFF 4.7.2 dependency is rebuilt with the JBIG codec disabled. Its other 20
+baseline codecs and 206 exported symbols are retained. This removes the startup
+JBIG dependency; JBIG-compressed TIFF input is intentionally unsupported. Exact
+upstream source, configuration, patch/build instructions and bounded codec/ABI
+validation accompany that variant under licenses/libtiff-no-jbig.
+
+Corresponding-source materials for the actual compiler/binutils, Qt and shipped
+LGPL runtime closure, plus pinned JKQTMathText sources, accompany the product.
+The pagmo source/relink companion includes library sources/development inputs
+and compiled first-party object files for recombination with a modified library;
+readable first-party scientific/IDE/compiler implementation is not included.
+
+VALIDATION SCOPE
+
+The accompanying VALIDATION.txt and JSON receipts identify the exact final EXE,
+installed workflows, closure/privacy audit and isolated install/update/uninstall
+checks. Component validation includes 2,454 selected host checks and 48,733
+compiled native-bridge comparisons with zero failures. Compiled export helpers
+were checked using 13 Python bundles, 12 MATLAB bundles and 106 MATLAB automatic
+derivative/Hessian oracle comparisons. These are bounded checks, not a claim
+that every scientific language feature or numerical problem has been validated.
+
+No desktop resize/maximise/graphics stress tests or live Copilot provider calls
+were performed. Native first launch is checked only on a new private desktop,
+with one CPU and graceful close; the user's input desktop is never selected.
+GUI MathText and CPU-only command-line export use different rendering paths;
+headless PNG/SVG/PDF export is validated, with typography that differs from GUI.
+
+LIMITATIONS AND PRE-PUBLICATION CHECKS
+
+Windows 10 x64 version 1903 (build 18362) or newer and Windows 11 x64 are targeted.
+Windows 10 VM acceptance is still pending; follow WINDOWS-10-VM-CHECK.txt before
+claiming that platform was tested. The installer is unsigned. SHA-256 establishes
+file identity, not publisher authentication; SmartScreen may warn about it.
+
+Third-party licence terms remain applicable. Corresponding-source availability,
+exact package/patch provenance and static LGPL relinking materials must be
+reviewed before public redistribution. A generic upstream homepage is not a
+complete source/relinking package. Do not interpret this local build or its
+technical tests as public-redistribution clearance. The separately supplied
+dependency review records the actual remaining source/licensing work. No offer
+or legal commitment is made in the authors' names.

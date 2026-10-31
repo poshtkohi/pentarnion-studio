@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "packages": [
+    {
+      "name": "Ceres",
+      "version": "2.2.0",
+      "filename": "ceres-solver-2.2.0.tar.gz",
+      "url": "https://github.com/ceres-solver/ceres-solver/archive/refs/tags/2.2.0.tar.gz",
+      "source_directory": "ceres-solver-2.2.0",
+      "sha256": "12efacfadbfdc1bbfa203c236e96f4d3c210bed96994288b3ff0c8e7c6f350d4",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "NLopt",
+      "version": "2.11.0-1",
+      "filename": "mingw-w64-ucrt-x86_64-nlopt-2.11.0-1-any.pkg.tar.zst",
+      "url": "https://mirror.msys2.org/mingw/ucrt64/mingw-w64-ucrt-x86_64-nlopt-2.11.0-1-any.pkg.tar.zst",
+      "sha256": "c44a8bb342aaa178f066c6882befa638887990a73efb55d8e4d062e55978aeee",
+      "license": "LGPL-2.1-or-later",
+      "source": {
+        "url": "https://github.com/stevengj/nlopt/archive/refs/tags/v2.11.0.tar.gz",
+        "filename": "nlopt-2.11.0.tar.gz",
+        "source_directory": "nlopt-2.11.0",
+        "sha256": "53e552d83e9294d67db37f0f4a23f15933a9ef698485301a18b98b40004cf0de"
+      },
+      "payload": ["ucrt64/bin/libnlopt.dll", "ucrt64/include/nlopt.h", "ucrt64/include/nlopt.hpp", "ucrt64/lib/libnlopt.dll.a", "ucrt64/lib/cmake/nlopt"]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+F139 Research archive/catalogue/source replay
+savearchive/loadarchive preserve typed data and frozen algebra descriptors in a
+separate version2 envelope; old experiment bundles retain version1 semantics.
+Automatic bounded scientific call capture and accepted source/import/RNG history
+expose explicit completeness/omission metadata. Explicit replay requires a fresh
+isolated session/output directory and captured-only imports. Loading/cataloguing
+never executes code. Migration wraps verified version1 data without changing
+numerical context. Embedded native artifacts are opaque platform-tagged bytes.
+See specs/research_archives_v0_2.txt and examples/research-archives.

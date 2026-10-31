@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Pentarnion Studio</title>
+  <desc id="description">An original P monogram within five outer vertices and four flowing inner arcs, inspired by Pentarnions and quaternions.</desc>
+  <defs>
+    <linearGradient id="tile" x1="52" y1="30" x2="446" y2="490" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#132C50"/>
+      <stop offset="0.58" stop-color="#0A1933"/>
+      <stop offset="1" stop-color="#121632"/>
+    </linearGradient>
+    <linearGradient id="orbit" x1="100" y1="134" x2="408" y2="396" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#61E7F2"/>
+      <stop offset="0.47" stop-color="#56B8FF"/>
+      <stop offset="1" stop-color="#AA8BFF"/>
+    </linearGradient>
+    <linearGradient id="letter" x1="214" y1="174" x2="341" y2="355" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#DDEEFF"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#tile)"/>
+  <rect x="17" y="17" width="478" height="478" rx="111" fill="none" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="2"/>
+  <path d="M256 74 429 200 363 404H149L83 200Z" fill="none" stroke="url(#orbit)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="none" stroke="url(#orbit)" stroke-width="10" stroke-linecap="round" opacity="0.62">
+    <path d="M162 246C162 198 198 162 246 162"/>
+    <path d="M266 162C314 162 350 198 350 246"/>
+    <path d="M350 266C350 314 314 350 266 350"/>
+    <path d="M246 350C198 350 162 314 162 266"/>
+  </g>
+  <path d="M211 359V164H276C326 164 354 190 354 233S326 303 277 303H245V359ZM245 197V270H276C305 270 320 258 320 234S305 197 276 197Z" fill="url(#letter)" fill-rule="evenodd"/>
+  <g fill="url(#orbit)">
+    <circle cx="256" cy="74" r="14"/>
+    <circle cx="429" cy="200" r="14"/>
+    <circle cx="363" cy="404" r="14"/>
+    <circle cx="149" cy="404" r="14"/>
+    <circle cx="83" cy="200" r="14"/>
+  </g>
+</svg>

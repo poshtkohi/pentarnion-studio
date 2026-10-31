@@ -1,0 +1,211 @@
+PENTARNION STUDIO 0.2 - NATIVE FINITE-DIMENSIONAL ALGEBRAS
+Authorized extension, 27 October 2026. Language L100; feature F112.
+
+1. SCOPE AND TYPE IDENTITY
+The original A_gamma_v1 Pentarnion algebra and complex(...) scalar retain their
+existing meanings. This additive profile supplies immutable algebra definitions
+and scalar elements with every real coefficient retained. Definitions can coexist
+in a file. Neither a matching name nor a matching dimension establishes type
+compatibility: elements must carry the same normalized definition hash.
+
+  algebra H=builtin_algebra("quaternion");
+  element<H> q=1+2*H.i-H.j;
+  element r=element(H,[1,2,-1,0]);
+  element s=element(H,1,2,-1,0);
+  algebra A=import_algebra("definition.json");
+
+algebra/element are contextual type words; existing variables/functions with
+these names remain usable in0.2 and retain their old identifier meanings in0.1.
+An element<A> annotation uses a previously declared immutable algebra binding;
+a bare element declaration infers its definition from an element initializer.
+Real/integer scalar embedding uses the entire validated unit vector, which need
+not be the first basis vector. Embedding is rejected for a nonunital algebra.
+Real scaling and addition of elements do not presume a multiplicative unit.
+Algebra/member names and literal imports/signatures are known during checking.
+H.i creates a basis element of H; unqualified i remains the Pentarnion basis.
+
+2. NATIVE PRESETS AND CONVENTIONS
+real(1), complex(2), quaternion(4), octonion(8), sedenion(16), dual(2),
+dual_quaternion(8), split_complex(2), split_quaternion(4), matrix2(4),
+lie_so3(3), jordan_sym2(3), and clifford(options(p=3,q=0)).
+Parenthesized numbers above are dimensions, not constructor syntax.
+Clifford signatures require nonnegative integer literals p/q with p+q<=6.
+The dimension is2^(p+q), with positive generators before negative generators.
+Quaternion basis is one,i,j,k and i*j=k. Octonion/sedenion bases are one,e1,...
+and use the explicit Hamilton-based ordered Cayley-Dickson convention stored in
+algebra_info(...).convention. Other Fano conventions require a coordinate map.
+Dual basis is one,eps. Dual quaternions use one,i,j,k,eps,eps_i,eps_j,eps_k.
+Split-complex j^2=1; split-quaternion i^2=-1,j^2=k^2=1,ij=k.
+Clifford basis uses generator bitmaps: one,e1,e2,e12,e3,e13,e23,e123,... .
+matrix2 basis E11,E12,E21,E22 has unit[1,0,0,1] and ordinary matrix product.
+lie_so3 basis x,y,z uses the cross product and has no multiplicative unit.
+jordan_sym2 basis E11,S12,E22 uses (ab+ba)/2, unit[1,0,1] and the explicit
+Frobenius coordinate metric diag(1,2,1). These presets describe scalar algebra
+elements; they do not change the existing real/Pentarnion matrix container types.
+
+3. ARITHMETIC AND EQUATION SOLVING
++,-, unary signs, ordered *, real scaling, integer ^, scalar equality and
+inequality preserve definition identity. Products with three or more algebra
+operands require explicit groups unless associativity is proved exactly.
+Positive integer powers are explicitly left-associated powers; no regrouping
+of a general imported product is implied. The interpreter bounds |exponent|
+to4096. Exponent0 requires a unit. Negative powers use a verified reciprocal.
+
+  element x=solveleft(a,b);     % a*x=b
+  element y=solveright(a,b);    % y*a=b
+  record report=algebra_solveleft(a,b,options(condition_limit=1e12));
+  matrix L=algebra_leftop(a);   % L*c(x)=c(a*x), real column coordinates
+  matrix R=algebra_rightop(a);  % R*c(x)=c(x*a)
+
+leftop/rightop and solveleft/solveright are corresponding scalar-element
+overloads. a\b solves a*x=b; a/b solves x*b=a. Element/real and real\element
+are ordinary real scaling. Solves use rank, conditioning and scaled residual
+safeguards; a pseudoinverse result is never reported as a unique solution.
+Report fields: solution(real coefficient column),has_solution,status,rank,
+condition,condition_available,relative_residual,residual_available. An unavailable
+numeric field is0 with an explicit availability flag. No accepted unique solution
+means an empty solution column and has_solution=0. Direct solves raise an error.
+Options: rank_tolerance(default1e-13),condition_limit(1e12),residual_tolerance(1e-11).
+Statuses: unique,ill_conditioned,singular_consistent,singular_inconsistent,
+nonfinite,residual_rejected.
+
+inv(a) verifies a two-sided reciprocal. This is a separate assertion from unique
+equation division: nonzero sedenions can have reciprocals and zero divisors.
+No whole nonassociative matrix determinant/inverse is inferred from real operator
+quantities. Real operator matrices can be passed to existing numerical routines.
+
+4. UTILITIES, CAPABILITIES AND ONE-ELEMENT CALCULUS
+coeff(a,index0) and algebra_basis(A,index0) use zero-based integer indices.
+algebra_coefficients(a) returns a real row vector. conj,commutator,associator,
+scalar,pure,norm2,algebra_norm and inv retain their mathematical distinctions.
+scalar/pure require the unit to be precisely the first basis vector; other bases
+use explicit coefficients. norm2 uses an explicitly supplied positive metric;
+it does not imply a multiplicative composition norm. algebra_norm is always the
+Euclidean coordinate norm. A missing conjugation/metric is not invented.
+
+sin,cos,exp,sinh,cosh use whole-element one-element calculus. Their capability
+requires a validated unit and proved_exact positive power-associativity evidence.
+Builtins use their family construction; exact imported associative/alternative
+tables can establish this property. Declared,unknown or merely numerically checked
+properties do not authorize elementary calculus or associative native shortcuts.
+Canonical quadratic presets use closed forms; other admitted cases use bounded,
+scaled power series. Nonfinite/unrepresentable/out-of-range results raise errors.
+Other real/complex functions are not implicitly extended coefficient by coefficient.
+
+algebra_info(A_or_element) returns name,id,hash,source_hash,builtin,convention,
+coefficient_domain,basis_labels,dimension,terms,has_unit,has_conjugation,has_metric,
+unit,conjugation,metric and properties. Properties contain unital,commutative,
+associative,alternative,power_associative,conjugation,positive_metric,division.
+Every property contains value,evidence,detail. Evidence is proved_exact,
+numerical_evidence,failed,declared or unknown. An unproved division claim does
+not establish uniqueness, and a declaration does not become a proof.
+
+5. DATA-ONLY JSON / CSV / XLSX IMPORTS
+JSON format: StudioAlgebraDefinition,version1,name,dimension,basis,
+coefficient_domain(rational|floating),omitted_products(zero|error), and exactly
+one of products or tensor. Optional fields:unit,conjugation,metric,convention,
+properties. Unknown/duplicate fields and attempted builtin provenance spoofing
+are rejected. JSON sparse products contain zero-based left/right indices and
+terms[[output_index,coefficient],...]. Dense tensors are n-by-n-by-n in
+left/right/output order. Repeated ordered products/coefficients are rejected.
+Rational coefficients accept integer JSON values or integer/fraction strings.
+Floating coefficients are finite JSON numbers. Unit vectors are validated against
+every basis vector independently of optional identity-proof work. Alternativity
+requires polarized identities, not only repeated basis-vector tests.
+
+  algebra A=import_algebra("metadata.json","products.csv");
+  algebra B=import_algebra("metadata.json","products.xlsx","Products");
+
+CSV/XLSX metadata requires coefficient_domain=floating, an empty products array,
+and no tensor. Data rows have four numeric columns
+[left1,right1,output1,coefficient] with integral ONE-based basis indices. Existing
+products cannot be overridden, duplicated or ambiguously merged. Blank/text/header
+cells and nonfinite coefficients reject. Sheet selection applies only to XLSX;
+cached numeric formula values can be read, but formulas are never executed.
+Both input files are captured before conversion; parsers consume those exact
+bytes without opening either file again. JSON literals and numeric tables never
+execute script text. Relative paths use the source/project directory.
+algebra_products(A) exports the same one-based numeric sparse rows and can be
+written through native writematrix to CSV/XLSX. algebra_json(A) returns a portable
+JSON definition with zero-based indices. The two index conventions are explicit.
+
+Imported dimensions are1..64; at most262144 coefficients. Frontend import bytes
+share the source import budget(default8MiB), and JSON proof work is capped to
+100000 steps per check. Exact rational sizes, nesting, terms, workbook expansion,
+interpreter work and cancellation are bounded. Exhausted optional proof work
+leaves unknown evidence; invalid unit/shape/data is an error. Exact file bytes
+are recorded as physical dependencies for stale-file guards and provenance.
+CSV/XLSX source_hash fingerprints the constructed validated JSON definition;
+captured raw file snapshots remain the source provenance. Runtime definition
+creation uses the checked immutable descriptor rather than rereading files.
+
+6. NATIVE CALLBACKS, DERIVATIVES AND ODES
+  native function element<H> spin(element<H> p,real omega){return omega*(H.k*p);}
+  ode rotation(t,element<H> q;real omega){q'=omega*(H.k*q);}
+  solution s=odesolve(rotation,q=H.one,omega=1.0,t0=0,t1=1,
+      sample_step=0.01,method="bdf",jacobian="analytic");
+  plot(s.t,coeff(s.q,0));
+
+Checked schemas pack all coefficients in native argument/result/state order.
+ODE models retain the existing64 real state-coordinate limit. Native callbacks
+retain128 real input/output-coordinate bounds and64 declared parameters. Generic
+native powers require literal |exponent|<=64. Inverse/negative-power derivatives
+require the native family's supported reciprocal or exactly proved associative
+semantics; unsupported native cases reject rather than falling back to interpreter
+callbacks. Explicit complex values retain two real coordinates.
+Native whole-element division/backslash and equation-solve calls are presently
+rejected; they do not replace a unique equation solve with reciprocal products.
+Native division by a real scalar remains supported.
+Compiler-generated analytic Jacobians/AD and finite-difference alternatives use
+the same native body. Equation body, descriptor/table hash, convention and compiler
+identity participate in structural cache keys. Runtime state/parameter/integrator
+values do not rebuild an unchanged body. Compilation is excluded from tic/toc.
+coeff(s.q,index0) gives a real series; indexing s.q returns typed elements.
+Plot arbitrary selected coefficients through the established real curve interface.
+
+Basis projections also accept homogeneous native elements or native trajectories:
+  plot2("i","j",p,q,p+q,p*q);
+  plot3("e5","e6","e123456",u,v);
+Axis strings resolve against the complete declared basis, up to64 coordinates.
+The alias"1" selects"one" when that is the first basis label. An individual
+projection cannot mix definitions, legacy Pentarnions, arrows and trajectories.
+Arrow payloads retain all original coordinates for hover/data inspection, with
+arrowheads at their projected endpoints. UI/native exports retain basis labels
+and immutable definition identity; held overlays require matching metadata.
+Projected trajectory points retain their selected real coordinates, preserving
+the existing curve storage budget. Native PNG metadata also records full arrow
+coefficient vectors, so an unplotted coefficient is not silently discarded.
+
+7. WORKSPACE SAFETY AND BOUNDS
+save/load retain frozen canonical definitions, descriptor hashes and complete
+element coefficients, including nested records/tuples and typed ODE state/series
+metadata. Loading validates snapshots before replacing workspace values. A saved
+builtin hint alone conveys no privileges: factory reconstruction must match the
+complete canonical table/hash. Loading does not reopen the original import file
+or execute source/native code. Existing workspace formats remain readable.
+Retained immutable descriptors, matrices and exact spellings share a64MiB
+definition budget; element coefficients count against retained coordinate limits.
+Typed schemas/callbacks are traversed so hidden captures cannot evade accounting.
+Native computations use the existing shared host CPU reservation and work limits.
+Nonquadratic whole-element evaluation is charged conservatively for160 times its
+dimension-plus-sparse-term work to account for bounded Taylor products/doublings;
+quadratic closed forms retain the ordinary base charge.
+Generic element arrays/PDE fields and automatic basis-coordinate conversion are
+not implied by this scalar/native ODE increment.
+
+8. ACCEPTANCE AND PLATFORMS
+Core, language/runtime, cache/native derivative and example checks must establish
+the actual implemented behavior. Mathematical tests include Hamilton signs,
+octonion associators, sedenion zero divisors, non-e0 unit vectors, equation-solve
+statuses and data-only table validation. Actual commands/results and deployment
+status belong in docs/VALIDATION.md. Windows evidence does not establish Linux execution.
+Examples: examples/native-algebras/project.pprj.
+
+NUMERICAL CORRECTNESS CLARIFICATIONS -27 OCTOBER2026
+Real scalar division forms each coefficient quotient directly; it does not
+require the divisor's reciprocal to fit binary64. Finite subnormal divisors
+therefore remain valid when the actual coefficient quotients are representable.
+Quadratic split-algebra exponentials evaluate the real idempotent branches
+together to avoid spurious exp/scalar-hyperbolic intermediate overflow. Native
+value/AD paths use the same one-element definition. Actual nonrepresentable
+outputs and zero divisors in real scalar division still reject explicitly.

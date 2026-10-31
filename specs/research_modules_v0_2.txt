@@ -1,0 +1,256 @@
+SECOND ROADMAP: ADDITIVE NATIVE MODULE CONTRACTS
+Language 0.2; authoritative bounded interfaces. See WORK_TO_DO_2.txt for the
+larger scope, acceptance records and remaining stages. Installing a dependency
+or compiling a file does not complete an entire roadmap category.
+
+PERIODIC ORBITS AND CONTINUATION
+periodicorbit(model, initial, options(period=..., parameters=options(...)))
+uses autonomous full-state shooting with an explicit phase condition. Generated
+tangent equations give the monodromy matrix and complex Floquet multipliers.
+Results distinguish physical/scaled closure, phase residual, neutral multiplier,
+transverse stability and nonconvergence. state_scale/period_scale are explicit.
+continueequilibrium and continueperiodic use native predictor/corrector
+pseudo-arclength, not sampled parameter diagrams. Fold/Hopf/period-doubling
+flags are sampled candidates; bifurcation_refined=0 and fundamental-period flags
+state the current limits. No proof of global stability follows from convergence.
+Examples: periodic-orbits/project.pprj.
+
+PARALLEL, IMPLICIT AND TWO-DIMENSIONAL PDEs
+pdesolve(reaction,x,initial[,options]) retains real/Pentarnion FD/P1-FE semantics.
+threads inherits the shared maximum; 0 means automatic, 1..64 bounds one call.
+Independent reactions/stencils, fixed-slot FE assembly and independent component
+solves use native workers/private buffers. Reductions and factorization retain
+their documented deterministic serial ordering. Actual requested/granted/used
+workers, dispatch counts and peak activity are reported. Nested solves receive
+one inner CPU slot. Compilation is excluded from tic/toc.
+integrator="rk4" is the original explicit method. "imex_euler" uses explicit
+reaction and implicit constant diffusion; it is first-order IMEX Euler, not BDF.
+P1-FE retains consistent mass. Sparse diffusion factorizations/solves are native.
+pdesolve2(reaction,x,y,initial[,options]) supports structured real/Pentarnion
+2D FD fields, anisotropic axis diffusion, periodic, constant Dirichlet and
+homogeneous Neumann boundaries. The callback begins state,t,x,y, then parameters.
+Initial shape is ny-by-nx; retained flattened spatial values have x varying
+fastest. pdeslice(field,one_based_time_index[,coefficient_0_to_4]) returns a
+ny-by-nx frame. All five coefficients remain stored. Higher-order/unstructured
+FE, general nonlinear stiff reaction, variable coefficients and richer boundary
+conditions remain separate stages. Examples: parallel-pdes, stiff-pdes,
+pde-patterns. benchmark.p compares exact scientific values at 1/4/8 workers.
+
+CHART GEOMETRY
+chartgeometry(embedding,[u,v][,options]) uses a cached native R2/R3 tuple or
+five-coordinate Pentarnion embedding. Compiler AD2 supplies derivatives.
+The default induced Euclidean metric uses all embedding coordinates. A supplied
+native [E,F,G] metric callback defines intrinsic geometry explicitly; extrinsic
+quantities are then unavailable unless they refer to that induced metric.
+Results include metric/inverse, tangent/normal projectors, Christoffel symbols,
+Gauss/Ricci/scalar curvature and the mean-curvature vector where defined. R5
+codimension is retained; there is no invented unique surface normal.
+geodesic(embedding,[u0,v0],[du0,dv0][,options]) uses chart-local native RK4 with
+optional parallel transport. Reported speed/transport drift is numerical evidence,
+not exact conservation. Singular/indefinite metrics and invalid chart domains
+fail explicitly. Chart atlases, arbitrary connections, forms and surface PDEs
+are separate extensions. Examples: differential-geometry/project.pprj.
+
+GLOBAL SENSITIVITY
+sensitivity(model,lower,upper[,options]) currently requires a native scalar-real
+output callback. Input real/Pentarnion coordinates are flattened explicitly.
+Independent uniform input ranges are an assumption, not inferred distributions.
+Morris reports signed mu, mu_star and sigma on unit-input-interval scales.
+Sobol uses matched Saltelli first-order and Jansen total-order estimates; raw
+finite-sample estimates are not clipped. Optional matched-row bootstrap intervals
+describe estimator uncertainty under the stated sampling assumptions. Seeded
+samples and result order are scheduling-independent, with one shared CPU budget.
+Pure-function support does not imply ODE/PDE summary adapters automatically.
+Examples: global-sensitivity/project.pprj.
+
+NATIVE REFITS, PROFILES AND UNCERTAINTY
+multistartfit(model,starts,x,y[,options]) runs independent native Ceres fits.
+profilefit(model,theta0,x,y,index,grid[,options]) fixes one flat coordinate and
+refits nuisance coordinates. No equal-bound optimizer workaround is used.
+objective="sse" is descriptive. "gaussian_known_variance" requires a positive
+explicit noise_variance and reports deviance relative to a local reference fit;
+profile_valid and baseline_improved prevent treating invalid rows or an improved
+baseline as an established optimum. Wilks intervals/uniqueness are not automatic.
+fitbootstrap supports pairs, centered residual and circular moving-block residual
+refits, with explicit dependence/block assumptions and deterministic task seeds.
+Rank-deficient fits are identified; statistics_refits and correlation_defined
+indicate which summaries exist. Percentile bands are pointwise fitted-mean bands,
+not prediction intervals for future noisy observations. prediction_x is explicit.
+All numerical evaluations use one cached scalar-real curve callback, with real
+or Pentarnion parameter coordinates first and independent real x last. CPU
+scheduling, task failures and atomic completed-task checkpoints are bounded.
+Resume restarts interrupted fits; it does not serialize private optimizer memory.
+Examples: native-inference-and-refits/project.pprj.
+
+EXACT PENTARNION SYMBOLICS
+symexpand(text,options(reals="a,b",pentarnions="p,q",gamma="1/2")) expands the
+checked grouped polynomial through the published normalized multiplication table.
+Coefficients are central real polynomials with exact rationals/nonnegative
+radicals. No commutation or reassociation of Pentarnion products is inferred.
+symcoeff selects coefficient 0..4; sympentdiff/sympentsubs operate on explicit
+real-coordinate symbols; sympentnumeric evaluates under supplied real values.
+Numeric conversion requires the record's algebra gamma to match the workspace.
+sympenttext and sympentcode expose inspectable expressions/checked native source.
+Generated parameter names are target-safe and the exact algebra context is
+explicit. Existing formal sym/symdiff behavior remains a separate compatible API.
+Examples: exact-pentarnion-symbolics/project.pprj.
+
+INDEX-ONE DAEs AND NATIVE RESETS
+daesolve(residual,y0,yp0[,options]) uses native IDAS BDF. The residual callback
+begins t, complete y groups, complete yp groups, then fixed parameters. All
+physical real/Pentarnion coordinates are explicit. An algebraic mask and local
+index-one rank contract are required. This is not general automatic index
+reduction. Compiler AD builds dF/dy+cj*dF/dyp; finite differences are an option.
+initialization="check" preserves supplied initial data; "consistent" requests
+IDACalcIC's supported algebraic-state/differential-derivative correction.
+Native events/resets are localized and restart consistently, with event/step/
+wall/work limits and a chattering policy. Event before/after states are retained.
+Jump/saltation sensitivities and reset adjoints are not inferred from detection.
+Examples: implicit-daes-and-hybrid-events/project.pprj.
+
+REGULAR MECHANICS
+mechanics(model,q0,second0,options(form=...)) keeps explicit coordinate groups.
+For Newton/Lagrange, second0 is velocity; for Hamilton, it is momentum.
+Newton uses positive diagonal constant masses and native position/state forces.
+Velocity Verlet requires a declared position-only force signature. Regular real
+L(q,v,t) uses native AD2 and Lvv*a=Lq+Q-Lvq*v-Lvt; singular formulations fail.
+Real H(q,p,t) generates canonical equations; midpoint Newton uses its analytic
+Hessian. RK4 is available with the documented form restrictions. Returned energy
+and drift quantities are defined diagnostics; Newton kinetic energy is not an
+invented total energy. Constraints/units/general singular mechanics remain later.
+Examples: native-mechanics/project.pprj.
+
+N-D AND EXPLICIT COMPLEX FIELDS
+ndarray/complexarray/pentarray create bounded immutable PentarnionND-v1 records
+with 1/2/5 real coordinates per element, column-major order and up to eight axes.
+Existing 2D array operators retain their meaning; ND records use explicit nd*
+operations. ndget/ndset are checked one-based linear/multi-index operations;
+ndreshape/ndpermute/ndslice retain kind/context. Elementwise broadcasting aligns
+axes from axis1, extending trailing singleton dimensions. Non-singleton named
+physical axes must agree in names/coordinates/transformed status. Singleton
+coordinates yield to the non-singleton field, treating values as constants.
+ndmatmul currently requires rank2. Ordered Pentarnion products preserve operand
+and accumulation order. ndmap runs cached native scalar callbacks on the shared
+pool; this does not promise arbitrary array-state ODE/compiler callbacks.
+ndfft/ndifft accept selected named/numbered axes and arbitrary supported lengths
+using native radix2/Bluestein transforms. Their complex unit is distinct from
+algebra i. Whole-Pentarnion FFT requires extracting coefficients with ndcoeff.
+Transformed axes retain source coordinates as provenance, with explicit markers;
+physical ndplot/ndinterp reject them. ndvalues exposes coordinate columns for
+explicit spectrum bins/plots. Examples: multidimensional-fields/project.pprj.
+
+PLOTTING, PLAYBACK AND CHECKED EXPORT
+hold/legend/plotstyle, xlim/ylim/zlim, axis, linkaxes and exportgraphics configure
+publication plots without altering samples. UI figures/subplots support drawn
+grids, rectangular spans, resized weights and versioned transactional layouts.
+Native vector PDF has documented 3D painter-order limitations. exportgraphics
+supports physical dimensions/resolution; headless native output is PNG.
+animatefield, animationframe and playanimation display retained PDE samples only.
+exportframes selects bounded PNG frames with explicit path/range/overwrite policy.
+exportvideo streams bounded uncompressed AVI at explicit display FPS, separately
+from physical sample times; it uses no external codec or simulation callback.
+Examples: field-animation and publication-plots.
+penta-export and File -> Export to MATLAB or Python use the checked typed AST,
+safe target identifiers, source maps, a compatibility report and small runtime.
+Unsupported nodes fail before executable output. The explicit optional Python
+BDF adapter uses SciPy BDF and analytic coordinate Jacobians; it is not CVODES.
+Generated Python declares its NumPy/SciPy dependencies. Native Studio discovery,
+solvers and headless rendering use no Python runtime. Examples: portable-code-export.
+
+RESEARCH EXPLORER
+View -> Research Explorer generates checked scripts for ODEs, chaos, fitting and
+discovery. Opening, editing, resetting and previewing never execute source.
+Run/Recompute/Preflight and Cancel use Studio's one existing worker. Exact source
+hashes distinguish submitted/current controls and stale results; exports/replay
+require a fresh completed snapshot. Script saves are atomic, refuse unintended
+overwrite and preserve externally changed files. Numerical bodies remain native;
+ordinary OutputFcn observation remains the existing explicit UI exception.
+Examples: research-explorer/project.pprj.
+
+PARALLEL INDEPENDENT PDE EXPERIMENTS (F105)
+pdeensemble(reaction,x,initial_rows,options) and
+pdeensemble2(reaction,x,y,initial_rows,options) reuse native reaction callbacks.
+Options, explicit paired/Cartesian catalogues, initial layouts, run statuses,
+checkpoint limits and replay rules are defined in
+examples/parallel-pde-experiments/README.txt. Outer runs use the shared CPU pool;
+inner spatial solves use one reserved slot. Runtime values reuse unchanged code.
+Each run has immutable gamma. Results use plain real node-major coefficient
+columns with components=1 or5, value_layout="node_coefficients" and stored gamma.
+pderun(batch,id) reads an explicitly retained field and never silently solves.
+pdeparams returns raw parameter coefficients; pdesettings/pdereplay materialize
+Pentarnion inputs only in the matching algebra context and verify model identity.
+pdecoeff/pdeslice and field animation preserve these stored contexts. Checkpoints
+reuse completed summaries and restart interrupted tasks; they are not mid-step
+integrator snapshots. Workspace estimates are not operating-system RSS limits.
+
+SURFACE MESHES, REAL FORMS AND SURFACE DIFFUSION (F104)
+meshplane/meshsphere/meshcylinder/meshcircle create analytic sampled primitives;
+paramesh samples a cached native embedding; trimesh validates explicit vertices,
+triangles and tagged boundaries. meshinfo/meshtransform/meshrefine retain all
+2..5 real coordinates. meshplot projects explicitly selected coordinates.
+meshplot(mesh) displays geometry in the current series colour, with surface
+lighting in 3D; it requires no scalar field and shows no scalar colour bar or
+scalar data-tip value. options(values=...) supplies one finite real value per
+vertex for field colouring. Missing values remain absent in retained data and
+PNG/SVG/PDF exports; malformed supplied arrays and invalid connectivity reject.
+meshread/meshwrite support versioned .pmesh and a strict triangular OBJ subset;
+existing output paths are refused. lineplane/raysphere return real intersections.
+Topology/degeneracy checks do not certify absence of global self-intersections.
+dform and formfield create oriented real differential forms with explicit SPD
+metrics. Native wedge, exteriord and hodge enforce dimensions/degree/orientation;
+derivatives requiring unavailable jets fail rather than using stale buffers.
+laplacebeltrami uses native embedding and scalar-field derivatives at a chart
+point. These are metric-defined real forms, not invented algebra-dependent forms.
+surfaceheat(mesh,initial,options) uses consistent-mass P1 triangle FEM, implicit
+diffusion and optional explicitly evaluated native reaction. It retains all five
+field coefficients. Spatial diffusion/initial/reaction callbacks are cached.
+Shared workers assemble independent contributions deterministically; sparse
+factor/solve calls remain serial and factorization is reused. A bounded symbolic
+fill preflight runs before factor allocation. Cancellation is checked between
+Eigen factor/solve calls. Stored intermediate samples interpolate implicit states
+linearly, not with an unstated higher-order time integrator. surfacecoeff extracts
+one real coefficient/sample. See real-geometry, differential-forms and
+surface-diffusion example READMEs for exact signatures, tags and limits.
+
+GRAPH VIEWS, SPARSE OPERATORS AND NETWORKS (F100)
+plotgraph retains graph topology/labels/weights, deterministic layouts and stable
+node IDs. The existing figure/subplot canvas supports selection, node dragging,
+highlighted paths and edge data tips. savegraphlayout/loadgraphlayout validate a
+versioned topology-matching data-only file before changing positions. Native
+PNG/SVG/PDF exports use the same descriptor. Large graphs remain static where
+the documented interactive node/edge budgets are exceeded.
+graphsparse creates canonical CSC adjacency/incidence/out-Laplacian directly,
+without an N-by-N dense temporary. Existing full/sparsemul interfaces apply.
+graphgen supports seeded path/cycle/grid/gnm generators with stable identities.
+networksolve(local_ode,G,initial,options) evaluates one cached native node body
+and generated local Jacobian for every node. All typed local state coordinates
+are retained as raw node-major real columns. Real directed source->target edges
+add diffusion[c]*weight*(source[c]-target[c]); undirected edges act both ways.
+Negative weights require explicit general coupling, with no inferred stability.
+networkcoeff selects a one-based node and flat local coordinate. Reports define
+Euclidean synchronization separately from algebra products. Solver-specific
+methods, actual worker counts and budgets are documented in native-networks.
+
+TIERED EVIDENCE, SOLVER SENSITIVITY AND CONSTRAINT EXTENSIONS
+verifyexperiment/verifyrun extend native experiment records with selected longer,
+tighter tiers, full physical-state diagnostics and optional phase shooting/Floquet.
+Explicit convergence flags and comparison spectra qualify finite-time evidence;
+weak positivity and numerical failures never become a certified chaos claim.
+The exact reference/options/status contract is specs/verification_v0_2.txt.
+modelsensitivity extends native Morris/Sobol with cached ODE/map/PDE summaries,
+explicit parameter coordinates, deterministic samples and shared outer workers.
+No failed solve is imputed. Temporal summaries use discrete stored samples.
+Aggregate buffer forecasts divide max_bytes across concurrent workers; they are
+not an RSS guarantee. See specs/solver_sensitivity_v0_2.txt.
+constrainedmechanics adds regular autonomous holonomic SHAKE/RATTLE with constant
+real SPD mass, native potential/constraint gradients/Hessians, explicit local
+initial projection and position/tangent/multiplier histories. Retained states
+are actual step states. Nonholonomic/singular/time-dependent constraints are not
+inferred. See specs/constrained_mechanics_v0_2.txt.
+quantity/unit* are an explicit real SI record API, not automatic unit checking
+of every existing equation or native AD expression. See F106 and
+specs/physical_quantities_v0_2.txt. All callbacks/cache interfaces remain additive.
+Paper-specific real forms and multiplication-induced energy are demonstrated in
+paper2-spin-geometry using the explicit original algebra-research definitions included in those educational scripts.
+The tilted induced-Euclidean sphere retains curvature1; the energy anisotropy
+does not supply an invented intrinsic curvature or canonical spin bracket.

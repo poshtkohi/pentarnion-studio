@@ -1,0 +1,9 @@
+F114: Native time/state-dependent mass operators
+masssolve(rhs,mass,y0,yp0,options(...)) composes cached native callbacks into an
+IDAS residual without inverting a singular mass matrix. Its analytic Jacobian
+includes dM/dy*y'. Exact zero initial mass columns can select a local algebraic
+partition; later partition changes and nonregular/higher-index residuals fail.
+Do not report numerical local index-one acceptance as a global index proof.
+Authority: language.txt L102; specs/mass_operators_v0_2.txt.
+Acceptance: native_array_language_tests mass cases and
+examples/state-dependent-mass/project.pprj; record actual acceptance evidence.

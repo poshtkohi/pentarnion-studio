@@ -1,0 +1,6 @@
+F48: Multiple selectable and removable data tips
+Authorized extension, 26 October 2026
+
+Each subplot retains multiple data-tip annotations. Select/delete one or clear all without changing numerical data. Native/raster/SVG views must show every retained tip and reflect removals. See tests/figures/interaction_tests.cpp.
+
+Acceptance: build CMake/Code::Blocks; run registered regression suites and native Windows GUI checks. Linux behavior must be identified as unverified until run. Preserve previous valid programs and numerical algebra/ODE results.

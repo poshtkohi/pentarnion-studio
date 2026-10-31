@@ -1,0 +1,46 @@
+F129 / L119: NATIVE H1 EVALUATION AND CONFORMING LOCAL ADAPTATION
+
+femevaluate(field,face_ids,reference_points[,options]) evaluates a retained
+femsystem field using its actual order1..4 MFEM reference H1 basis. face_ids
+are one based; each reference row[u,v] lies in u>=0,v>=0,u+v<=1. Full state
+coefficient columns and algebra identity are retained in result.values. Stored
+element_dofs identify the real high-order connectivity; P3/P4 data are not
+replaced by linear vertex interpolation. Options threads,max_work,max_bytes,
+max_seconds bound native evaluation. The report adds native_work/worker counts.
+
+meshadapt(mesh,marked_face_ids[,options]) performs conforming local red/green
+triangle refinement. Marked triangles split all three edges; neighboring
+triangles split one/two/three affected edges without hanging nodes. Shared
+midpoints are merged topologically, boundary tags are split consistently, and
+unmarked unaffected elements are retained. Options maximum_nodes=50000,
+max_work,parameter_vertices,geometry,geometry_parameters. A supplied native
+chart is sampled at new parameter midpoints, preserving curved geometry rather
+than replacing it with physical chords. Report mesh,parameter_vertices,
+parent_faces,parent_reference_vertices,native_work,geometry_cache_key,
+refinement. Parent maps make all child reference transformations explicit.
+
+femadapt(reaction,mesh[,options]) repeatedly solves the semilinear high-order
+problem, solves a uniform one-level enriched comparison grid, and compares
+both true H1 fields at child barycentres. Coarse cells whose scaled difference
+exceeds mark_fraction times the maximum and exceeds tolerance are marked for
+the next conforming local red/green grid. This supports real,vector,complex,
+Pentarnion and generic algebra coordinates and optional native curved charts.
+All nonlinear reactions/Jacobians/geometry/forcing/boundaries remain compiled
+and reuse unchanged callback bodies across grids and runtime parameters.
+
+Extra options beyond femsystem:spatial_levels=3(max2..6),
+spatial_max_nodes=10000,spatial_rtol=.05,spatial_atol=1e-6,mark_fraction=.5.
+Time/native work are aggregated across solves/refinement/evaluation. Node or
+triangle limits retain the latest valid field with converged=0 and an explicit
+status. Hard cancellation/work/time failures remain errors and do not publish
+a partially assembled field as a successful solve.
+
+Report field,history,indicator,indicator_mesh,levels,converged,
+scaled_difference,absolute_difference,native_work,elapsed_seconds,status,
+refinement,estimator. History columns:level,coarse_nodes,trial_nodes,coarse_faces,
+scaled_difference,absolute_difference,marked_faces,native_work,elapsed_seconds.
+indicator belongs to indicator_mesh. Convergence means the documented finite
+nested-grid sampling criterion; it is not a rigorous continuum error bound or
+a claim that oscillatory unsampled errors cannot exist. Exact-solution L2
+diagnostics, when supplied, remain independent checks. Hierarchical p marking,
+mixed finite-element spaces and distributed adaptive assembly remain distinct.

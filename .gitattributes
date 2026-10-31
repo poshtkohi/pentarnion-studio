@@ -1,0 +1,21 @@
+* text=auto
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.cmd text eol=crlf
+# Language sources retain deliberate encoding/newline/BOM fixture bytes.
+*.p -text
+
+# Preserve reference bytes and upstream notice inventory identities.
+src/** -text
+apps/** -text
+tests/** -text
+fixtures/** -text
+LICENSES/** -text
+packaging/vendor/** -text
+packaging/components/** -text

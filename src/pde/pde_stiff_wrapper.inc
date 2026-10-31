@@ -1,0 +1,21 @@
+StiffResult Module::solveStiff(const penta_pde_stiff_request_v1& request,const std::shared_ptr<std::atomic_bool>& cancellation,const std::function<void(std::size_t)>& operationCharge,std::size_t threads,const std::function<bool(double,std::span<const double>,std::size_t,std::size_t)>& sample)const{
+    if(threads>runtime::ParallelSettings::maximumThreads||request.nodes<2||request.nodes>16384||request.components<1||request.components>64||request.nodes>262144/request.components||!std::isfinite(request.t0)||!std::isfinite(request.t1)||request.t1<request.t0||!std::isfinite(request.sample_step)||request.sample_step<=0)throw Error(1,"Invalid implicit PDE dimensions, threads or sample settings.");
+    const auto count=std::ceil((request.t1-request.t0)/request.sample_step)+2;if(!std::isfinite(count)||count>100000||count*request.nodes*request.components>8000000)throw Error(7,"Implicit PDE retained samples exceed their coordinate allowance.");
+    (void)api();const penta_pde_stiff_api_v1* stiff=nullptr;{
+        std::lock_guard lock(registryMutex);const auto handle=registry.at(path_).handle;
+#ifdef _WIN32
+        const auto query=reinterpret_cast<penta_pde_stiff_query_function_v1>(reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(handle),"penta_pde_stiff_query_v1")));
+#else
+        const auto query=reinterpret_cast<penta_pde_stiff_query_function_v1>(dlsym(handle,"penta_pde_stiff_query_v1"));
+#endif
+        stiff=query?query(PENTA_PDE_STIFF_ABI_V1):nullptr;
+    }
+    if(!stiff||stiff->struct_size<sizeof(*stiff)||stiff->abi_version!=PENTA_PDE_STIFF_ABI_V1||!stiff->solve)throw Error(1,"Loaded PDE module does not provide the compatible fully implicit capability.");
+    StiffResult result;const auto samples=static_cast<std::size_t>(count),total=request.nodes*request.components;result.times.resize(samples);result.values.resize(samples*total);result.means.resize(samples*request.components);result.rms.resize(samples);auto& out=result.report;out.struct_size=sizeof(out);out.sample_capacity=samples;out.value_capacity=result.values.size();out.times=result.times.data();out.values=result.values.data();out.means=result.means.data();out.spatial_rms=result.rms.data();
+    Host context{cancellation,operationCharge,{}};context.requested=threads;context.granted=runtime::ThreadBudget::backendThreadLimit(threads);context.statistics.requestedThreads=threads;context.statistics.effectiveThreads=context.granted;penta_pde_parallel_host_v1 host{};host.base={sizeof(host),PENTA_PDE_ABI_V1,&context,cancelled,charge};host.threads_requested=threads;host.threads_granted=context.granted;host.parallel_for=parallelFor;
+    struct Samples {const std::function<bool(double,std::span<const double>,std::size_t,std::size_t)>& callback;std::exception_ptr failure;
+        static int emit(void* raw,double time,const double* values,uint64_t nodes,uint32_t components,char* error,uint64_t capacity)noexcept{auto& self=*static_cast<Samples*>(raw);try{return self.callback(time,std::span<const double>(values,static_cast<std::size_t>(nodes)*components),nodes,components)?1:0;}catch(const std::exception& failure){self.failure=std::current_exception();if(error&&capacity){const auto n=std::min<uint64_t>(capacity-1,std::strlen(failure.what()));std::memcpy(error,failure.what(),n);error[n]=0;}return -1;}catch(...){self.failure=std::current_exception();return -1;}}
+    } samplesBridge{sample,{}};
+    auto supplied=request;supplied.struct_size=sizeof(supplied);supplied.abi_version=PENTA_PDE_STIFF_ABI_V1;if(sample){supplied.sample_context=&samplesBridge;supplied.sample=Samples::emit;}char error[2048]{};int status=0;runtime::ThreadBudget::instance().withReservation([&]{status=stiff->solve(&host.base,&supplied,&out,error,sizeof(error));});if(samplesBridge.failure)std::rethrow_exception(samplesBridge.failure);if(context.failure)std::rethrow_exception(context.failure);if(status)throw Error(cancelled(&context)?3:status,error[0]?error:"Native fully implicit PDE solve failed.");
+    result.times.resize(out.samples);result.values.resize(out.samples*total);result.means.resize(out.samples*request.components);result.rms.resize(out.samples);result.statistics=context.statistics;result.threadsGranted=context.granted;return result;
+}

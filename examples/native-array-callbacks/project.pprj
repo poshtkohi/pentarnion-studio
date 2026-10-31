@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Native array callbacks and matrix ODE states",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "matrix-product-derivatives.p",
+    "quaternion-array-ode.p"
+  ]
+}

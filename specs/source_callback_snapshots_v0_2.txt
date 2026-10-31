@@ -1,0 +1,28 @@
+F144 / L134: DATA-ONLY PURE NUMERICAL CALLBACK SNAPSHOTS
+
+Workspace records/tuples may retain a named self-contained pure numerical function.
+Save captures exact source, name, SHA256 and the native structural fingerprint;
+load rechecks exactly one function in an isolated environment, validates the pure
+native subset and compares its fingerprint. No compiler, function body, external
+file, DLL or serialized pointer executes during loading. Explicit later invocation
+uses the normal cached native/interpreted function contract.
+
+Named handles may hold a function-name lookup snapshot internally; this environment
+is not serialized. Isolated checking proves the saved source needs no external
+function definitions. Builtin handles, anonymous lexical captures, external/global
+declarations and imported algebra aliases not self-contained in the saved function
+are rejected with R2001. A source/experiment archive can preserve the full closure.
+This supports chart atlas records while avoiding opaque executable deserialization.
+
+Limits:64KiB per function,256 callback entries/8MiB total per save/load request,
+alongside existing workspace size/depth/shape/source checks. Corrupt hashes,
+signatures, effectful bodies or extra declarations reject before workspace commit.
+Whole-workspace save still skips standalone function/model bindings by default;
+an explicitly selected record keeps its numerical callback fields.
+
+The explicit experiment replay API can restore a captured mt19937_64 state into
+a fresh session before submission. The restore path accepts only312 uint64 state
+words plus an index0..312, nondegenerate state and32KiB maximum text. It does not
+accept a binary engine object. Normal archive loading never invokes replay.
+
+Acceptance: source_callback_snapshots and intrinsic_geometry_language.

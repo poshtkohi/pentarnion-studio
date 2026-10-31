@@ -1,0 +1,11 @@
+F87: Native ODE experiments and discovery
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Cached prepared RHS/Jacobian kernels, bounded explicit parameter domains, full-coordinate ensembles, stable task IDs and atomic completed-task checkpoints. Finite-time classifications remain candidates.
+
+Authority: language.txt L75; specs/research_frontier_v0_2.txt.
+Acceptance: examples/native-discovery/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.
+
+Tiered verification and replay: verifyexperiment/verifyrun; specs/verification_v0_2.txt. Evidence flags are finite-time diagnostics.

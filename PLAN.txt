@@ -1,0 +1,5 @@
+PENTARNION STUDIO DEVELOPMENT PLAN
+
+See ROADMAP.md for public development priorities. Current language and
+mathematical contracts are in language.txt and specs/. Each extension should
+include examples, regression tests and explicit mathematical bounds.

@@ -1,0 +1,97 @@
+CURRENT GUI CONTRACT -31 OCTOBER2026
+specs/desktop_shell_v0_2.txt supersedes the older OpenGL/readiness/native-move
+preview rendering requirements below. The running-command, safe-source and
+language layout contracts remain. Historical acceptance is not acceptance of
+the rebuilt renderer. Current execution evidence belongs in docs/VALIDATION.md.
+
+STUDIO WORKFLOW REFINEMENTS - 26 OCTOBER 2026
+Authority: user requests; language.txt L19/L20/L62; F02/F25/F74.
+No source grammar, project schema, solver mathematics or algebra change is added.
+
+RUNNING COMMAND WINDOW
+One protected transcript ends in the editable >> prompt only when ready. During
+pending work it ends in Running… (Ctrl+C to stop), and the dock title shows Running.
+It stays scrollable/selectable, with Copy in its context menu, but accepts no new
+command input. An unsubmitted draft is hidden and preserved during ordinary work.
+Ctrl+C during work, including with editor/console text selected, requests cancel
+through Studio's existing atomic token. Stopping replaces Running, and repeated
+presses do not submit commands or produce additional prompts. Stop/Shift+F5 uses
+the same cancellation path. A ready prompt returns after the latest worker result,
+including errors/cancel, never merely because cancellation was requested.
+Idle Ctrl+C preserves the existing selection-copy/abandon-input behavior.
+
+Cancellation is cooperative, not arbitrary thread termination. In native PDE
+reaction evaluation or on-demand JIT, the shared cancellation token classifies
+the resulting exception as R1006/Cancelled, preserving transactional workspace
+rollback. Genuine PDE validation/evaluation failures remain R2100. Ordinary output
+is black; diagnostic red ranges and clickable locations remain intact.
+
+INLINE SOURCE RENAME
+Project Rename Source or F2 edits the selected source item in place, selecting its
+basename. Enter/focus completion uses the existing safe rename service after Qt
+has closed its editor; Escape cancels. An extension-free filename retains .p.
+Only filenames in the same folder are accepted by this UI. Unsafe names, collisions
+and project changes reject with nonmodal feedback. The service retains filesystem/
+manifest rollback, dirty-document contents, tab identity and external-change
+protections. Tree double-click still opens sources. Root/folder rename is unchanged.
+
+FIGURE TILE LAYOUTS
+Studio Tile buttons have dropdowns; floating figure Tile menus offer both targets.
+Automatic retains existing behavior. Presets include 1x1,1x2,2x1,2x2,2x3,3x2,3x3,
+4x4. Custom chooses positive rows/columns, each <=64 and product <=64, with capacity
+for every open figure. Desktop cells must also fit the monitor. Validation precedes
+layout changes, Cancel preserves docking/cameras/data, and unused explicit cells
+retain equal space. A chooser remains safe if live updates close floating figures.
+Existing tilefigures("studio",rows,columns) and desktop syntax remain unchanged.
+
+ACCEPTANCE
+tests/gui/busy_execution_tests.cpp checks prompt lifecycle and actual warm PDE
+Ctrl+C from F5/editor, console run and direct commands, including selection,
+restored workspace and a usable next command. tests/runtime/pde_cancel_tests.cpp
+checks FD/FE stage/reaction/cold-JIT cancellation and genuine error preservation.
+tests/gui/inline_rename_tests.cpp checks commit/Escape/F2, basename selection,
+manifest/tab/dirty text preservation, unsafe names/collisions and source-only scope.
+tests/figures/tile_layout_tests.cpp checks presets/custom validation, cancellation,
+empty cells, floating lifetimes and existing language layout behavior.
+Actual results/deployment belong in docs/VALIDATION.md; native Linux is unverified.
+
+IDLE AND WINDOW RESPONSIVENESS -31 OCTOBER2026
+Windows with Qt6.12+ keeps the editor/console main window on raster composition. The figure
+pane has its own native rendering boundary and a hidden readiness widget, so
+first plots still preserve the main window and taskbar identity. Native promotion
+must not leave the dock content explicitly hidden; no figure is opened at startup.
+Existing non-Windows and older-Qt rendering paths are unchanged.
+File notifications share one bounded100ms check deadline without postponement
+under sustained activity; unchanged file/directory watches stay registered and
+atomic replacement reinstalls dropped file watches.
+Recovery checkpoints are rewritten only after source/encoding/path/project/cursor
+or saved-file metadata changes. Failures retry, missing checkpoints are recreated,
+and foreign records retain the existing ownership validation. Cursor-driven UI
+updates reuse source-free default-context metadata; actual Check/Run snapshots
+still independently validate paths and context. No language grammar changed.
+
+LOADED FIGURES DURING NATIVE WINDOWS WINDOW MOVEMENT -31 OCTOBER2026
+The displayed figure pane is captured once when moving/resizing the Studio frame
+by its native title bar/border. A cached image follows the changing pane geometry;
+the live canvases remain allocated under their original parents and are refreshed
+at the final size when movement ends or is cancelled. Plot data and source files
+are never resampled/rewritten for this preview. Restore original layout policy,
+visibility and focus and dispose the image on exit/cancel/deactivation/hide/close.
+Nested cancellation during capture/hiding must not leave child canvases hidden.
+This concerns the Studio frame's native move/resize loop; plot pan/zoom, individual
+floating figure windows and non-Windows rendering retain their existing behavior.
+No language grammar, solver setting or system graphics-driver policy is changed.
+
+FIGURE PANE PAINTING AND MAXIMIZE/RESTORE -31 OCTOBER2026
+This follow-up supersedes the native-child rendering boundary described above.
+Use Qt's standard main-window composition tree with the hidden readiness anchor;
+the native-child split presented incorrect raster regions before a first plot.
+The visible figure manager paints its own palette background, including before
+the first plot and after closing all figures. An empty pane retains its controls;
+editor pixels and uninitialized black regions must not appear in it.
+Native Windows maximize/restore and figure-dock/layout size changes reuse the
+cached preview and coalesce live refresh until geometry settles. Interactive
+title-bar resizing keeps its explicit release/cancel behavior. A failed capture,
+minimize, deactivation, close or destruction must not strand hidden canvases or
+stale timer callbacks. Actual desktop pixels are part of native acceptance;
+offscreen widget images and isolated framebuffers do not prove visible output.

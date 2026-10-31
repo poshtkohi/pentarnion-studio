@@ -1,0 +1,12 @@
+F106: Explicit SI quantities with rational dimensions and typed algebra magnitudes
+Authorized second-roadmap extension, 26 October 2026.
+Optional versioned quantity records preserve old numeric/native AD interfaces.
+Seven rational SI dimensions, explicit absolute/delta temperatures and logarithmic
+references, typed whole-algebra magnitudes, equal-shape or scalar-expanded
+entrywise arithmetic and shared native CPU/work bounds apply. Existing ordered
+algebra division semantics remain explicit; no reassociation or implicit stripping.
+Ordinary integer real quantities retain v1 records/ABI. Additive v2 handles the
+new dimension/conversion domains. Fractional whole-element branches reject.
+Authority: language.txt L94; specs/physical_quantities_v0_2.txt.
+Acceptance: physical-quantities examples and independent native/runtime tests.
+Actual platform evidence belongs in HANDOFF, not inferred from this rule.

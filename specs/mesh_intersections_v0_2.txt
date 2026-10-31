@@ -1,0 +1,50 @@
+F155 / L145: NATIVE TRIANGLE-MESH INTERSECTIONS
+Status: implemented candidate; numerical acceptance is recorded in docs/VALIDATION.md.
+
+record result=meshintersect(first_mesh,second_mesh[,options]);
+
+Inputs are explicit real three-dimensional triangle embeddings, with positive
+one-based face indices and resolved nondegenerate triangles. This is physical
+surface geometry. A five-coefficient algebra value is not a spatial solid by
+virtue of its coefficient count. BVH candidate filtering and independent triangle
+pair predicates retain noncoplanar segments/tangent points and coplanar overlap
+polygons/shared edges/points. Coplanar area polygons have at most six vertices.
+
+Predicates translate and scale each candidate pair, use long-double arithmetic,
+unit plane normals and an explicit spatial tolerance band (default1e-9), with a
+roundoff floor. They are numerical tolerance predicates, not certified exact
+arithmetic. Near-coplanar inputs inside that band are treated as coplanar. Very
+thin/unresolved triangles reject explicitly. Points are deterministic within
+each ordered first-face/second-face pair, independently of worker scheduling.
+The operation does not merge face-pair contacts into watertight union topology.
+It is not a Boolean CSG/remeshing/self-intersection-certification API.
+
+options(first_values=nodal_field,second_values=nodal_field,max_primitives=10000,
+tolerance=1e-9,threads=shared_setting,max_work=execution_allowance,
+max_bytes=512MiB,max_seconds=60). Nodal fields have one complete element per
+vertex or real vertices-by-components data. All1..64 coordinates and immutable
+algebra hash/basis metadata are retained independently for the two surfaces.
+Interpolation uses each original face's barycentric system; no coefficient is
+dropped and no algebra norm/multiplication is inferred. Inside tolerance bands,
+small barycentric extrapolation can occur and is not disguised as exact contact.
+
+Result points has three real coordinate columns. first_barycentric and
+second_barycentric have three columns each. first_values/second_values retain
+all corresponding coefficient columns. offsets/counts locate each primitive's
+contiguous points using one-based offsets; first_faces/second_faces identify its
+original triangle pair. dimensions=0,1,2 means point,segment,area polygon;
+coplanar flags the plane-band classification. primitive_count,point_count,
+coplanar_pairs,native_work,threads_used,parallel_calls and explicit semantics
+are retained. Per-surface algebra_id/hash/basis_labels remain separate.
+
+Bounds:100000 vertices and200000 triangles per surface,50000 primitives,
+300000 retained contact vertices,explicit conservative BVH/worker/output memory,
+native work/wall-time/cancellation limits and Studio's lower array allowances.
+Candidate pairs use the shared CPU pool; no private pool or BLAS thread mutation.
+Output-bound exhaustion fails explicitly rather than truncating intersections.
+Closed-solid inside/outside/boundary queries remain meshcontains with its explicit
+oriented-manifold validation and winding semantics.
+
+Acceptance:tests/runtime/mesh_intersection_kernel_tests.cpp and
+mesh_intersection_language_tests.cpp. Example:
+examples/geometry-queries/triangle-pair-intersections.p.

@@ -1,0 +1,8 @@
+F79: Scalar fields and sampled real geometry
+Authorized extension,26October2026.
+
+Native structured surfaces,colour maps,2D contours and tetrahedral3D level sets preserve physical samples, exact-level ownership and finite limits. Curve geometry is explicitly sampled; rich unstructured/manifold packages remain future.
+
+Authority: language.txt L67; specs/pde_geometry_v0_2.txt.
+Acceptance: examples/pdes-and-geometry/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

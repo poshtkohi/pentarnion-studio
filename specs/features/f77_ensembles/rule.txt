@@ -1,0 +1,8 @@
+F77: Native parallel map ensembles
+Authorized extension,26October2026.
+
+Independent cached native map tasks share the CPU pool, preserve task identities and isolate failed/escaped runs. General parfor, ODE ensembles and checkpoint/resume remain future.
+
+Authority: language.txt L65; specs/chaos_v0_2.txt.
+Acceptance: examples/parallel-map-ensembles/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

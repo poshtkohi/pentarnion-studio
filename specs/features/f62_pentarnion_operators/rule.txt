@@ -1,0 +1,18 @@
+F62: Explicit Pentarnion left/right matrix operators
+Authorized extension, 26 October 2026.
+
+leftop(A) maps column x coefficients to A*x and has size5m-by5n for m-by-n A.
+rightop(A) maps row x coefficients to x*A and has size5n-by5m. Entry coordinates
+are(1,i,j,k,ell), using established scalar multiplication maps. solveleft(A,B)
+solves A*X=B and solveright(A,B) solves X*A=B with explicit RHS packing and real
+solver safeguards. Direct Pentarnion array det/inv/decompositions are rejected.
+det(leftop(A)),det(rightop(A)),inv(leftop(A)),inv(rightop(A)) are real coordinate
+operator quantities; do not label them associative whole-Pentarnion inverses or
+determinants. Preserve grouping and do not infer inverse reversal, determinant
+product identities or leftop(A*B)=leftop(A)*leftop(B). Scalar inv remains unchanged.
+Acceptance: scalar/coordinate residual and grouping checks; Pentarnion operator example.
+
+Authority: language.txt L50; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.

@@ -1,0 +1,96 @@
+NATIVE BIFURCATION POINT REFINEMENT - LANGUAGE0.2
+
+refinebifurcation(model,seed,options(kind=...,parameter=...,parameters=...))
+refines necessary equations for a fold, Hopf or period-doubling point. This is
+different from drawing a sampled bifurcation diagram or marking a sign change.
+The original continueequilibrium/continueperiodic interfaces remain unchanged.
+
+kind is fold(default),hopf,period_doubling. model is a checked autonomous explicit
+ODE. seed retains every declared state coefficient (complete1..8 real coordinates).
+parameters binds all original model parameters. parameter names the selected
+declared parameter. A Pentarnion parameter requires component=0..4 explicitly;
+the selected flat real coordinate varies while all other coefficients stay fixed.
+The immutable gamma and original multiplication groups survive every evaluation.
+
+The new optional penta_bifurcation DLL/SO exposes a versioned checked C ABI and is
+loaded only for this feature. Small Eigen augmented correctors run serially under
+one shared CPU reservation. Equations/derivatives/flow are resident native cached
+callbacks; no interpreter or source AST executes per corrector/flow evaluation.
+Changing values, seeds or tolerances reuses the original structural kernels.
+
+FOLD: augmented unknowns(x,v,mu), equations
+    f(x,mu)=0, J(x,mu)*v=0, v^T*v-1=0.
+The complete corrector Jacobian comes from generated native RHS AD2, including
+state/parameter mixed derivatives. Independent conditions include a simple zero
+eigenvalue and left/right null-vector pairing. With unit-norm left null vector w,
+the command records w^T*f_mu and(1/2)*w^T*f_xx[v,v]. Both must be nonzero above
+the selected transversality threshold for a generic fold candidate. Signs depend
+on eigenvector orientation; no unstated branch-orientation convention is inferred.
+
+HOPF: augmented unknowns(x,u,v,omega,mu), equations
+    f=0, J*u+omega*v=0, J*v-omega*u=0,
+    u^T*u+v^T*v-1=0, u_ref^T*v-v_ref^T*u=0.
+The phase reference is initialized from a native complex eigenvector. frequency=0
+(default) initializes omega from a positive imaginary eigenvalue; an explicit
+positive frequency is an alternative seed. The corrector Jacobian is native AD2.
+Transversality differentiates the eigenvalue ALONG the equilibrium branch:
+dx/dmu=-J^-1*f_mu and dJ/dmu=J_mu+J_x*(dx/dmu), with native second partials.
+This avoids confusing fixed-state J_mu with a moving-equilibrium derivative.
+An isolated conjugate pair and nonzero real crossing derivative are required.
+First Lyapunov coefficient/criticality is NOT computed: no third-derivative,
+supercritical/subcritical or emerging-cycle claim is made.
+
+PERIOD DOUBLING: augmented unknowns(x,v,T,mu), equations
+    Phi_T(x,mu)-x=0, phase(x)=0, (M+I)*v=0, v^T*v-1=0,
+where native CVODES sensitivities generate M=dPhi_T/dx. Full state closure and
+phase are corrected together with T and the parameter. This bounded corrector
+uses centered differences of native first-variation flow, explicitly reported by
+corrector_derivatives. It does not claim generated second variations/AD3.
+The refined spectrum must contain one isolated real multiplier near-1 and the
+autonomous neutral multiplier near+1. Native sampled subflows establish nonzero
+orbit amplitude. Transversality follows corrected adjacent periodic branches at
+mu+-h and mu+-h/2, with h=parameter_step*max(1,abs(mu)). The two slopes must agree
+within fd_agreement*max(1,abs(slope)). Nearby branch multipliers must remain
+isolated real values near-1; otherwise the user must reduce the parameter step.
+Cubic criticality, minimal/fundamental period and emerging4*pi branch direction
+are NOT inferred from the Floquet crossing alone.
+
+All three paths report extra critical/center modes. A second zero-real-part mode
+outside the chosen equilibrium critical set, or a second unit-modulus multiplier
+outside the neutral/flip pair, prevents a generic codimension-one candidate label.
+Degenerate/no-crossing/insufficient convergence yields inconclusive or a precise
+corrector failure, retaining numerical flags/residuals. These numerical candidate
+labels are not interval-certified mathematical bifurcation proofs.
+
+Common options: min_parameter/max_parameter, tolerance=1e-7,
+spectral_tolerance=1e-5,transversality_tolerance=1e-6,max_iterations=25(<=100),
+max_seconds=120,max_native_operations,max_bytes=64MiB.
+Hopf:frequency,min_frequency(default1e-4),max_frequency(default1e6).
+Period doubling:period(default2*pi),min_period/max_period,
+fd_step=1e-4,parameter_step=1e-4,fd_agreement=1e-3,
+method=bdf/adams,rtol=1e-9,atol=1e-11,t0,max_steps=1000000.
+Options belonging to other kinds fail explicitly rather than being ignored.
+Centered differences must stay within parameter/period bounds. The native flow
+has an aggregate step limit and remaining wall budget across all correctors.
+max_bytes forecasts small augmented/derivative/native Jacobian buffers; it is not
+an exact process-RSS guarantee. Cancellation and atomic native work quotas apply.
+
+Results: x,parameter/name/coordinate/values,frequency/linear_period(Hopf only),
+period(period doubling only), normalized vectors,matrix(J or M), complex spectrum
+split into real/imaginary arrays,augmented residual,critical eigenvalue,
+crossing_derivative/kind,quadratic_coefficient,fd_step_difference,neutral_error,
+amplitude,converged/simple/transverse/criticality_computed/nondegenerate/
+step_refined/other_critical_modes flags. Uncomputed Hopf/flip criticality is
+explicitly0, not an assertion of degeneracy. History columns are iteration,
+residual,step_size,line_search_alpha,parameter,frequency_or_period. Stored native
+keys/backend/module fingerprints/settings support reproducibility. Source state
+names/widths and raw parameter layout preserve all five-coefficient groups.
+
+Examples: examples/bifurcation-point-refinement. Tests:
+tests/runtime/bifurcation_tests.cpp. Windows isolated native27 checks passed:
+analytic saddle-node/Hopf, moving-equilibrium crossing1.5, degenerate/extra-center
+rejection, full Pentarnion fold, and an independent4D flip with mu=0,T=2*pi and
+multiplier derivative-2*pi. Measured native flip refinement gave mu~1.28e-10,
+residual~1.72e-11 and h/h2 derivative disagreement~3.10e-7 in the isolated test.
+These are one-machine acceptance measurements, not universal accuracy promises.
+Global/runtime/Linux acceptance is separate and belongs in HANDOFF.

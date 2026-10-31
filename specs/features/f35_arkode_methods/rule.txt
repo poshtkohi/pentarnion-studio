@@ -1,0 +1,15 @@
+FEATURE F35: Native adaptive ERK and ESDIRK ODE methods
+Version: current profile 0.2 extension
+Authority: language.txt L23-L24; user request, 26 October 2026
+Status: implemented; actual validation recorded in docs/VALIDATION.md
+
+F35-R1: Accept method="erk" and method="esdirk" alongside unchanged bdf/adams.
+F35-R2: ERK uses ARKODE_DORMAND_PRINCE_7_4_5; ESDIRK uses ARKODE_ESDIRK436L2SA_6_3_4.
+F35-R3: Reuse native RHS/Jacobian ABI, structural cache and compilation-excluding timing.
+F35-R4: Preserve output sampling, finite checks, cancellation and time/step/sample limits.
+F35-R5: Implicit methods accept analytic/finite_difference. ERK accepts but does not
+evaluate either Jacobian mode; its summary reports jacobian=not_used.
+F35-R6: Keep bdf as the language default; do not silently switch methods or fall back.
+Acceptance: native_ode_compilation_and_solver plus language/runtime option checks,
+independent scalar/time-dependent/stiff and Pentarnion references, cache reuse.
+No IMEX, multirate, DAE, parameter sensitivity or parallel solver mode is added.

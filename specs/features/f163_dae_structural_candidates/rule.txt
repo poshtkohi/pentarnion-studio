@@ -1,0 +1,6 @@
+F163: daestructure uses compiler incidence, a native highest-value transversal,
+canonical offsets and an explicitly conditional structural index candidate.
+Numerical rank/condition checks validate only the stated local index0/1 initial
+partition. Higher-index candidates and structural singularity are retained as
+diagnostic outcomes, not treated as general nonlinear index proofs/reductions.
+See structural_derivatives_and_dae_v0_2.txt.

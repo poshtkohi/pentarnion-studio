@@ -1,0 +1,8 @@
+F82: Exact ordered formal expressions
+Authorized extension,26October2026.
+
+Native rational formal expression trees support substitution,differentiation and controlled constant simplification without commuting or reassociating products. No automatic whole-Pentarnion symbolic identity is invented.
+
+Authority: language.txt L70; specs/science_data_v0_2.txt.
+Acceptance: examples/symbolic-algebra/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

@@ -1,0 +1,17 @@
+FEATURE F25: Figure naming, docked/floating windows and tiling
+Authority: language.txt L20-L22 and the user's current explicit request.
+Status: implementation with actual final results recorded in docs/VALIDATION.md.
+
+Names/NumberTitle follow the specified property-pair syntax. Docking, undocking
+and Studio/desktop tiling are available from both language and figure UI. Keep
+numeric identity, mathematical data/context, camera/zoom and metadata through
+reparenting. Validate entire grid before moving any figure. Floating windows are
+owned figure-only windows; closing/destruction must not leave dangling callbacks
+or extra consoles. Export remains tied to the correct selected figure.
+
+Tile controls expose Automatic, common row/column presets and a validated Custom
+chooser in Studio and floating toolbars. Preserve explicit unused cells and equal
+row/column stretches. Reject insufficient capacity, more than64cells or unusable
+desktop cell sizes before changing layout. Cancel preserves layout/camera/data.
+The chooser outlives individual floating figures safely during live updates.
+See specs/studio_workflow_v0_2.txt and tests/figures/tile_layout_tests.cpp.

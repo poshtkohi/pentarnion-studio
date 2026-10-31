@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Parallel real and Pentarnion PDE kernels",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "compare_serial_parallel.p",
+    "benchmark.p"
+  ]
+}

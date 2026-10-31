@@ -1,0 +1,34 @@
+STUDIO WORKFLOW CHANGES - 26 OCTOBER 2026
+
+LONG RUNS AND CTRL+C
+While a script/command runs, the Command Window shows Running… (Ctrl+C to stop)
+instead of the ready >> prompt. Its dock title also shows Running, so the status
+remains clear when you scroll through older output. It accepts the next command
+only after the worker has finished. The editor stays accessible during execution.
+Press Ctrl+C from the editor or Command Window to stop, even with text selected.
+Stopping… remains visible until cancellation completes, then >> returns.
+To copy selected output during a run, use the Command Window's Copy context menu.
+When idle, Ctrl+C continues to copy a selection or abandon unfinished input.
+Stop/Shift+F5 uses the same cancellation path. PDE interruption restores the prior
+workspace; it does not publish partially completed field data as a success.
+
+RENAME IN PLACE
+Select a project source and press F2, or right-click and choose Rename Source.
+The name becomes editable in the tree; its basename is selected. Type a name and
+press Enter. Escape cancels. An extension-free replacement keeps .p. Existing files,
+unsafe names/paths and external changes remain protected; errors appear in the
+status bar. Dirty editor contents and the open tab stay attached to the renamed file.
+
+CHOOSE FIGURE TILE SIZE
+Use the arrow beside Tile in Studio or Tile on Desktop. Choose Automatic, a preset
+rows-by-columns layout, or Custom rows and columns. Floating figure windows offer
+the same choices under Tile > In Studio / On Desktop. A custom grid must fit all
+open figures and contain at most64cells. Unused cells retain their space, and
+Cancel keeps the existing layout. Desktop cells must fit the current monitor.
+The existing script interface is unchanged, for example:
+  tilefigures("studio",2,2);
+  tilefigures("desktop",1,2);
+These arrange open figures. Existing subplot commands still arrange plots inside
+one figure. Figure data, names, labels and camera state are preserved.
+
+Build/test/deployment evidence is in docs/VALIDATION.md. No new dependency is required.

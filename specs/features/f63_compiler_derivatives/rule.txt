@@ -1,0 +1,19 @@
+F63: Native compiler derivatives, Hessians and products
+Authorized extension, 26 October 2026.
+
+Expose jacobian, objective gradient, hessian, jvp, vjp, hvp and derivative_check
+through cached native callbacks. Ordered real-coordinate second-order hyperdual
+AD is named analytic/ad/automatic; it is not symbolic algebra. Explicit central
+finite differences also invoke native values. Selected wrt names/one-based input
+coordinates preserve written order. JVP/VJP are real coordinate actions; public
+gradient/Hessian/HVP require one real scalar objective. HVP seeds directions
+without allocating a full Hessian. Unsupported/nonsmooth/uncertified operations
+diagnose, with no hidden fallback. Verification reports AD/FD discrepancies,
+cache/native evaluation identity and honest thread use. Initial-value partials
+of explicit mappings do not imply sensitivity through an opaque ODE solve.
+Acceptance: native_derivative_tests, derivative_tests and native-derivatives examples.
+
+Authority: language.txt L51; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.

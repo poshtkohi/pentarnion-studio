@@ -1,0 +1,8 @@
+F86: MATLAB-style iterative output observers
+Authorized extension,26October2026.
+
+OutputFcn(matrix x,record optimValues=iterationinfo(),string state)returns0/1 forcontinue/cleanstop. Native drivers report iterations/generations/evaluations honestly; ordinary observation code mayplot through bounded immutable liveframes,without hidden objective evaluations.
+
+Authority: language.txt L74; specs/iteration_output_v0_2.txt.
+Acceptance: examples/iteration-callbacks/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

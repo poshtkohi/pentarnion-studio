@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "Native Chaos Workflows",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "initial-condition-basin-candidates.p",
+    "native-derived-history-and-parameter-heatmap.p",
+    "near-zero-spectrum-torus-candidate.p",
+    "parameter-dependent-lyapunov-curve.p"
+  ]
+}

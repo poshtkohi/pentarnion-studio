@@ -1,0 +1,64 @@
+F43: Ranges, slices and numeric reductions
+Authorized extension, 26 October 2026
+
+ARRAY LANGUAGE TOOLS CONTRACT (26 October 2026)
+
+Range values retain their existing integer/real range types. Converting a range
+to matrix/vector, using it in array arithmetic or an array-aware call, and using
+it in a matrix literal expands it to a real row vector. a:b uses step 1; a:s:b
+uses explicit nonzero finite step. Oppositely directed endpoints produce a
+1-by-0 vector. Floating endpoints use a bounded roundoff allowance so 0:.1:.3
+contains four values. Expansion obeys configured matrix bounds and cancellation;
+steps too small to advance binary64 values are rejected.
+
+Matrix literals concatenate scalar, range and numeric matrix blocks. Blocks
+within each syntactic row must have equal heights, and expanded rows must have
+equal widths. Syntactic rows may contain differing numbers of blocks. Entries
+retain order; Pentarnion-valued cells widen the whole array. No implicit scalar
+replication occurs during concatenation.
+
+Indices remain one based; one selector uses column-major linear order and two
+selectors address rows/columns. A scalar index produces one scalar. Colon, a
+range, or a real row/column vector of positive integer-valued indices produces
+an array. Repeated and descending indices are supported. Bounds are checked.
+Full logical indexing and multidimensional index arrays are not introduced.
+end is the current indexed extent: numel(A) for one selector, rows/columns for
+two. Nested indexing temporarily replaces and then restores the outer extent.
+A(:) always produces a column vector. Other linear selections of vector bases
+retain the base row/column orientation; selections of general matrices retain
+the index vector's orientation. Empty selectors preserve their resulting shape.
+
+Slice assignment supports one numeric scalar broadcast or a matching array.
+Two-selector assignment requires exact selected rows/columns. Linear assignment
+allows any RHS vector/matrix shape with matching element count and traverses
+RHS entries column-major. The old array is immutable; aliases retain old data.
+Repeated targets are assigned in column-major traversal order; the last value
+wins. Assignment never resizes/deletes arrays, and real arrays reject Pentarnion
+values. Selector expressions are evaluated before the RHS expression.
+
+Real/Pentarnion ODE sampled series support the same read selectors as column
+vectors. A small selection need not materialize the entire solution. Selected
+results are scalar values or ordinary bounded arrays. Series are immutable.
+size/length/numel inspect series without copying the data.
+
+sum(A[,dim]) and mean(A[,dim]) reduce along the first nonsingleton dimension by
+default. min/max(A) use the same default; min/max(A,[],dim) specify a dimension.
+min/max(A,B) are pairwise operations on equal shapes or one scalar broadcast.
+Dimension values must be positive integers; dimensions above two are singleton
+dimensions and return the input unchanged. Numeric scalar reductions return a
+scalar; array reductions retain their reduced two-dimensional shape.
+sum/mean support real and Pentarnion values; min/max require real entries.
+sum of an empty extent yields zero; sum([]) is a 1-by-1 zero. min/max over empty
+extents retain empty results. mean of an empty extent that would produce numeric
+entries is rejected because nonfinite results are not admitted by the language.
+Real/Pentarnion ODE series are treated as column arrays by these utilities.
+Accumulation uses independent long-double coefficient sums and checks finite
+results; no Pentarnion multiplication is reassociated.
+
+Retained scope: existing elementwise .*, ./, .^ and scalar expansion, constructors,
+transpose/conjugate transpose, seeded random generation and bounded storage are
+preserved. No determinant, matrix inverse/solve, array resizing, higher-dimensional
+array, native array ODE state, parallel execution, or PDE feature is introduced.
+
+
+Acceptance: build CMake/Code::Blocks; run registered regression suites and native Windows GUI checks. Linux behavior must be identified as unverified until run. Preserve previous valid programs and numerical algebra/ODE results.

@@ -1,0 +1,113 @@
+SECOND ROADMAP: NATIVE EXPERIMENTS, DISCOVERY AND RESEARCH RECORDS
+Language0.2 additive contracts. All indices below are one-based unless stated.
+
+DOMAINS AND PREFLIGHT
+searchset(values) declares a finite nonempty numeric catalogue.
+searchinterval(lower,upper,options(samples=N,method="uniform"|"linspace",seed=S))
+requires explicit finite sampling. Uniform samples use a seeded native64-bit RNG;
+linspace includes endpoints (one sample uses the midpoint). Seed0 is explicit and
+deterministic, not a clock seed. Continuous intervals are not exhaustive searches.
+pentdirections() returns242 normalized real coefficient rows in R5: all nonzero
+members of {-1,0,1}^5, both signs retained, divided by Euclidean length.
+
+discoverplan(model,initial_rows[,options]) validates and counts without compiling
+or solving. Each initial row contains every real state coordinate in declaration
+order, with five adjacent coordinates per Pentarnion (1,i,j,k,ell).
+options(parameters=options(name=value_or_domain,...)) binds every declared model
+parameter exactly once. A Pentarnion domain accepts a Pentarnion array or N-by5
+coefficient rows. gammas accepts a finite vector/domain in[0,1], immutable perrun.
+positive_parameters="m,a,b" enforces strictlypositive real benchmark parameters.
+Candidate order:gamma,Cartesian parameter combination,initialrow; first declared
+parameter varies fastest.242orderedA/B directions give58,564pairs per model;
+paired force models with the same settings give117,128runs before other factors.
+An overbudget plan returns counts and within_budget=0 without candidate tables.
+
+NATIVE EXECUTION
+discover and odeensemble use the same (model,initial_rows[,options]) interface.
+Numerical RHS/Jacobian kernels are prepared once and shared immutably; each task
+owns its CVODES/ARKODE workspace. No interpreted candidate/step callback exists.
+Parameters,initials,gamma and tolerances do not change the structural native key.
+Methods:bdf,adams,erk,esdirk; Jacobian:analytic or finite_difference. Standard
+t0,t1,sample_step,rtol,atol,max_steps,max_samples,max_seconds apply per solve.
+threads inherits the session maximum;0means runtimeauto; explicit1..64isbounded.
+Native solvers use one inner slot. Results report actuallyused pool participants.
+batch_size controls joined checkpoint/progress batches; default16,max4096.
+max_runs defaults4096,hard100000; coordinates1..128; arrays obey VM limits.
+maximum_bytes defaults256MiB,hard1GiB,estimates input/result/trajectory buffers.
+max_native_operations is a shared atomic coordinate-work quota, not a FLOP count.
+max_wall_seconds bounds the overall numerical run; compilation is excluded.
+
+checkpoint="relative/or/absolute.json" enables atomic completed-task ledgers.
+Existing paths require resume=1 or explicit overwrite=1. Checkpoints identify
+model structure,algebra/backend/module versions,inputs and scientificsettings,
+with a payload integrityhash. Compatible resume skips completedtasks; interrupted
+tasks restart at recorded initials. This does not serialize private integrator
+memory. Changing thread scheduling may resume; incompatible science is refused.
+Checkpoint/export failures do not silently discard successful numericalresults.
+
+RESULTS AND EVIDENCE
+Structured results contain complete initial/parameter/gamma/final-state tables,
+stable rowIDs,steps/evaluations,diagnostics,cachekey,requesthash,checkpointstatus.
+discoverstatus(experiment,id) returns an individual summary.
+experimentrun(model,experiment,id[,options]) replays selected initials/parameters
+through the same kernel,optionally tighter tolerances. Returns real t/values
+coordinate matrices plus originalgamma and statewidth/name metadata; no implicit
+conversion to the current workspace's Pentarnioncontext occurs.
+physical_coordinates selects a leading physical-state prefix for diagnostics.
+For q'=v,all five q and all five v coordinates belong in that prefix; auxiliary
+work integrals do not. State/velocity mappings remain explicit in the model.
+Statuses are finite-time evidence:pending,bounded_over_horizon,
+equilibrium_candidate,recurrent_candidate,periodic_candidate,threshold_reached,
+numerical_failure,timeout,inconclusive,cancelled. Repeated full-state sample-grid
+returns are candidates,not certified fundamentalperiods. No automatic positive-
+Lyapunov/torus/globalboundedness/finite-time-blow-up claim is made by this stage.
+escape_radius uses a solver-localized Euclidean norm threshold,not a proof.
+
+OPTIONAL ORDERED WORK
+The model may explicitly augment W'=F*v,V'=v*F,C'=F*v-v*F,all initiallyzero.
+For constantreal m and F=m*v', W+V=m*(v*v-v0*v0),
+W=(m*(v*v-v0*v0)+C)/2. The commutator generally cannot be omitted. These are
+whole Pentarnion products; real Euclidean energy is a separate quantity.
+
+SELECTED HEADLESS PNG
+exportexperiment(model,experiment,options(...)) is opt-in and Qt/Python-free.
+Explicitly choose ids=[...] OR top_n=N. Rank bymaximum_norm(default),return_error,
+rhs_norm orperiod,descending=0/1; exact ties use stable runID. No schedulingorder.
+Choose kinds="series,trajectory2,trajectory3,norm,summary" as any nonempty subset.
+series_columns and trajectory2_columns/trajectory3_columns select realcoordinate
+columns; users can choose q,v or optionalwork coordinates independently. Norm is
+the explicitly Euclidean physicalprefix. No projected plot discards stored data.
+directory,prefix,width,height,dpi,camera_azimuth,camera_elevation are usercontrolled.
+maximum_images(default32,hard512),maximum_bytes(default256MiB) bound exports before
+rendering. Existing files require explicit overwrite; resume=1 verifies a separate
+versioned exportledger and imagehashes and skips valid completed images. Numerical
+results remain usable if an individual replay/render fails; inspect failures and
+messages. enabled=0 creates no directory/images/ledger. Unselected kinds are absent.
+Only selectedruns are replayed and rendered serially after numericalcompletion;
+integrationworkers never wait for each PNG and never touch Qt widgets.
+The native CPU fallback displays ASCII bitmap captions and retains complete UTF8
+metadata. Studio's SVG/PDF renderer provides mathematical text typography. A plot
+too small for itslabels yields a specific exportfailure,not corrupt numericaldata.
+penta-run --headless-figures also permits ordinary figure/plot commands followed
+by explicit exportgraphics(...png...); default CLI scripts still refuse figures.
+
+PROVENANCE AND SAFE DATA
+provenance() captures invocationSHA256,exact imported-sourcecontent hashes,used
+nativekeys,algebra/gamma/language/backend identity,precision and integerwidth.
+Scientific identity fields are separated from execution paths,thread scheduling
+and compilationtiming. A console invocationhash describes that submission; native
+modelkeys identify compiled structure retained from prior workspace submissions.
+researchrecord(name,data_record[,settings_record]) wraps data/settings with this
+automatic provenance and a datahash. saveanalysis/loadanalysis provide existing
+atomic,hashed,data-only persistence with explicit typedtemplates. Existing
+analysisrecord v1 remains compatible. Hashes are integritychecks,not signatures.
+Examples:native-discovery/project.pprj; portable-code-export/project.pprj.
+
+Native PDE batches and scalar-curve multistart refits now have their own APIs
+and bounded contracts in research_modules_v0_2.txt. verifyexperiment/verifyrun
+add selected longer/tighter follow-up evidence under verification_v0_2.txt.
+experimentrun replay has an explicit max_native_operations quota and reports
+native_operations separately from VM dispatch/output work, including when the
+same replay is requested by a verification row or selected image export.
+Current continuation items stay visible in WORK_TO_DO_2.txt. General arbitrary
+array-state callbacks and unsupported broader solver adapters are not inferred.

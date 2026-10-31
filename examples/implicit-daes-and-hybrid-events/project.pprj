@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "Native implicit DAEs and hybrid event resets",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "index_one_constraint.p",
+    "state_dependent_mass.p",
+    "hybrid_bounce.p",
+    "pentarnion_implicit_decay.p"
+  ]
+}

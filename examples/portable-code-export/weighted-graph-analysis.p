@@ -1,0 +1,13 @@
+record network=graph([1,2;2,3;3,1;3,3],options(n=4,weights=[1,2,4,7]));
+record graph_info=graphinfo(network);
+display("Loop-aware degrees:",graph_info.degree);
+record path=shortestpath(network,1,3);
+display("Shortest path and distance:",path.path,path.distance);
+record parts=graphcomponents(network);
+display("Canonical components:",parts.labels);
+record forest=spanningtree(network);
+display("Minimum spanning forest:",forest.edge_ids,forest.total_weight);
+record chain=graph([1,2;2,3]);
+record between=centrality(chain,options(kind="betweenness"));
+display("Chain betweenness, expected [0;1;0]:",between.scores);
+figure(1);plotgraph(network);title("Weighted network and isolated vertex");

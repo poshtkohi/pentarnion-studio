@@ -1,0 +1,8 @@
+F135 - Native likelihoods and parametric bootstrap
+Implemented: lognormal known-log-variance, Student-t known-scale/df and Poisson
+deviance residuals/Jacobians inside the lazy inference DLL; parametric bootstrap
+with independent per-dataset streams; appropriate log-residual resampling and
+count-domain validation. Curve/ODE/PDE refits share the same native implementation.
+Version2 query opts into new semantics; version1 ABI layouts/legacy path remain.
+Contract: specs/inference_uncertainty_v0_2.txt.
+Regression: tests/runtime/inference_uncertainty_tests.cpp.

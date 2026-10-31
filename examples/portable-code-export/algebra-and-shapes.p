@@ -1,0 +1,30 @@
+use_algebra("A_gamma",gamma=1);
+pentarnion p=1+i+j+ell;
+pentarnion q=1-i+j-ell;
+pentarnion combined=p+q;
+pentarnion product=p*q;
+display("Sum:",combined);
+display("Ordered product:",product);
+display("Left grouping:",(i*j)*ell);
+display("Right grouping:",i*(j*ell));
+assert(norm2((i*j)*ell-i*(j*ell))>0.01);
+matrix A=[1,2,3;4,5,6];
+matrix B=reshape(A,3,2);
+assert(B==[1,5;4,3;2,6]);
+assert(A(2)==4);
+assert(A(end)==6);
+matrix selected=A(A>3);
+assert(selected==[4;5;6]);
+matrix C=[1,2;3,4]*[5;6];
+matrix D=[1,2;3,4].*[5,6;7,8];
+display("Column-major reshape:",B);
+display("One-based masked selection:",selected);
+display("Matrix product:",C);
+display("Entrywise product:",D);
+function real square(real x){return x*x;}
+real value=square(3.0);
+assert(value==9);
+integer total=0;
+for(n=1:5){total=total+n;}
+assert(total==15);
+display("Portable arithmetic and shape assertions passed.");

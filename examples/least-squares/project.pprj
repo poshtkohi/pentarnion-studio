@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Native model and ODE fitting",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "main.p",
+    "ode_fit.p",
+    "pentarnion_fit.p"
+  ]
+}

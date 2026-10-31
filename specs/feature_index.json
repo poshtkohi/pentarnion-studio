@@ -1,0 +1,962 @@
+[
+  {
+    "id": "F01",
+    "title": "Reproducible native build",
+    "stage": "S0/S7",
+    "path": "specs/features/f01_build/rule.txt"
+  },
+  {
+    "id": "F02",
+    "title": "Project creation and file tree",
+    "stage": "S1",
+    "path": "specs/features/f02_projects/rule.txt"
+  },
+  {
+    "id": "F03",
+    "title": "Safe document lifecycle",
+    "stage": "S1/S7",
+    "path": "specs/features/f03_documents/rule.txt"
+  },
+  {
+    "id": "F04",
+    "title": "Editor tabs and syntax presentation",
+    "stage": "S1/S2/S4",
+    "path": "specs/features/f04_editor/rule.txt"
+  },
+  {
+    "id": "F05",
+    "title": "Shared source lexer",
+    "stage": "S2",
+    "path": "specs/features/f05_lexer/rule.txt"
+  },
+  {
+    "id": "F06",
+    "title": "Grouping-preserving expression parser",
+    "stage": "S3",
+    "path": "specs/features/f06_parser/rule.txt"
+  },
+  {
+    "id": "F07",
+    "title": "Declarations, promotion and grouping checks",
+    "stage": "S3",
+    "path": "specs/features/f07_types/rule.txt"
+  },
+  {
+    "id": "F08",
+    "title": "Finite range syntax and types",
+    "stage": "S3",
+    "path": "specs/features/f08_ranges/rule.txt"
+  },
+  {
+    "id": "F09",
+    "title": "Built-in algebra function signatures",
+    "stage": "S3",
+    "path": "specs/features/f09_builtins/rule.txt"
+  },
+  {
+    "id": "F10",
+    "title": "Diagnostics and Problems panel",
+    "stage": "S2-S4",
+    "path": "specs/features/f10_diagnostics/rule.txt"
+  },
+  {
+    "id": "F11",
+    "title": "Language help, symbol types and basic completion",
+    "stage": "S4",
+    "path": "specs/features/f11_help/rule.txt"
+  },
+  {
+    "id": "F12",
+    "title": "Paper-grounded immutable algebra contexts",
+    "stage": "S5",
+    "path": "specs/features/f12_algebra_context/rule.txt"
+  },
+  {
+    "id": "F13",
+    "title": "Base arithmetic, norm and product diagnostics",
+    "stage": "S5",
+    "path": "specs/features/f13_algebra_arithmetic/rule.txt"
+  },
+  {
+    "id": "F14",
+    "title": "Canonical reciprocal and one-element powers",
+    "stage": "S6",
+    "path": "specs/features/f14_reciprocal_power/rule.txt"
+  },
+  {
+    "id": "F15",
+    "title": "Equation division with numerical status",
+    "stage": "S6",
+    "path": "specs/features/f15_division/rule.txt"
+  },
+  {
+    "id": "F16",
+    "title": "Independent mathematical and language regression tests",
+    "stage": "S5-S7",
+    "path": "specs/features/f16_testing/rule.txt"
+  },
+  {
+    "id": "F17",
+    "title": "Responsive background static analysis",
+    "stage": "S4",
+    "path": "specs/features/f17_analysis_workers/rule.txt"
+  },
+  {
+    "id": "F18",
+    "title": "Settings, session and unsaved-text recovery",
+    "stage": "S1/S4/S7",
+    "path": "specs/features/f18_settings_recovery/rule.txt"
+  },
+  {
+    "id": "F19",
+    "title": "Validation-only command-line tool",
+    "stage": "S3/S7",
+    "path": "specs/features/f19_check_cli/rule.txt"
+  },
+  {
+    "id": "F20",
+    "title": "Scope and modularity guardrails",
+    "stage": "S0-S7",
+    "path": "specs/features/f20_boundaries/rule.txt"
+  },
+  {
+    "id": "F21",
+    "title": "Interpreter and MATLAB-style Command Window",
+    "stage": "I0.2",
+    "path": "specs/features/f21_interpreter/rule.txt"
+  },
+  {
+    "id": "F22",
+    "title": "Unified console and source autosave",
+    "stage": "I0.2",
+    "path": "specs/features/f22_console_autosave/rule.txt"
+  },
+  {
+    "id": "F23",
+    "title": "Pentarnion vector figures and image export",
+    "stage": "I0.2",
+    "path": "specs/features/f23_vector_figures/rule.txt"
+  },
+  {
+    "id": "F24",
+    "title": "One-element and real elementary functions",
+    "stage": "I0.2",
+    "path": "specs/features/f24_elementary_functions/rule.txt"
+  },
+  {
+    "id": "F25",
+    "title": "Figure naming, docked/floating windows and tiling",
+    "stage": "I0.2",
+    "path": "specs/features/f25_figure_layout/rule.txt"
+  },
+  {
+    "id": "F26",
+    "title": "Native LaTeX mathematical figure annotations",
+    "stage": "I0.2",
+    "path": "specs/features/f26_math_annotations/rule.txt"
+  },
+  {
+    "id": "F27",
+    "title": "Mandatory safe save before script execution",
+    "stage": "I0.2",
+    "path": "specs/features/f27_save_before_run/rule.txt"
+  },
+  {
+    "id": "F28",
+    "title": "Native ODE models and structural compilation cache",
+    "stage": "ODE0.2",
+    "path": "specs/features/f28_native_odes/rule.txt"
+  },
+  {
+    "id": "F29",
+    "title": "Automatic native coordinate Jacobians",
+    "stage": "ODE0.2",
+    "path": "specs/features/f29_automatic_jacobians/rule.txt"
+  },
+  {
+    "id": "F30",
+    "title": "Sampled ODE solutions and trajectory curves",
+    "stage": "ODE0.2",
+    "path": "specs/features/f30_solution_curves/rule.txt"
+  },
+  {
+    "id": "F31",
+    "title": "MATLAB-style subplot grids",
+    "stage": "ODE0.2",
+    "path": "specs/features/f31_subplots/rule.txt"
+  },
+  {
+    "id": "F32",
+    "title": "Monotonic tic/toc elapsed timing",
+    "stage": "ODE0.2",
+    "path": "specs/features/f32_timing/rule.txt"
+  },
+  {
+    "id": "F33",
+    "title": "Interactive subplot controls and anti-aliased curves",
+    "stage": "GUI0.2",
+    "path": "specs/features/f33_plot_tools/rule.txt"
+  },
+  {
+    "id": "F34",
+    "title": "Current About capabilities and copyright year",
+    "stage": "GUI0.2",
+    "path": "specs/features/f34_about_current/rule.txt"
+  },
+  {
+    "id": "F35",
+    "title": "Native adaptive ERK and ESDIRK ODE methods",
+    "stage": "ODE0.2",
+    "path": "specs/features/f35_arkode_methods/rule.txt"
+  },
+  {
+    "id": "F36",
+    "title": "SVG figure and individual subplot export",
+    "stage": "GUI0.2",
+    "path": "specs/features/f36_svg_subplot_export/rule.txt"
+  },
+  {
+    "id": "F37",
+    "title": "Dense real and Pentarnion matrices and vectors",
+    "stage": "I0.2",
+    "path": "specs/features/f37_dense_arrays/rule.txt"
+  },
+  {
+    "id": "F38",
+    "title": "Array constructors and reproducible session random values",
+    "stage": "I0.2",
+    "path": "specs/features/f38_array_random/rule.txt"
+  },
+  {
+    "id": "F39",
+    "title": "Quaternion and Pentarnion inspired Studio branding",
+    "stage": "GUI0.2",
+    "path": "specs/features/f39_studio_branding/rule.txt"
+  },
+  {
+    "id": "F40",
+    "title": "Copy source with syntax formatting",
+    "stage": "GUI0.2",
+    "path": "specs/features/f40_rich_source_copy/rule.txt"
+  },
+  {
+    "id": "F41",
+    "title": "Source printing with syntax colors",
+    "stage": "GUI0.2",
+    "path": "specs/features/f41_syntax_printing/rule.txt"
+  },
+  {
+    "id": "F42",
+    "title": "Stable native window on first plot and run",
+    "stage": "GUI0.2",
+    "path": "specs/features/f42_native_window_stability/rule.txt"
+  },
+  {
+    "id": "F43",
+    "title": "Ranges, slices and numeric reductions",
+    "stage": "Language0.2",
+    "path": "specs/features/f43_ranges_slices/rule.txt"
+  },
+  {
+    "id": "F44",
+    "title": "Control flow and typed user functions",
+    "stage": "Language0.2",
+    "path": "specs/features/f44_control_functions/rule.txt"
+  },
+  {
+    "id": "F45",
+    "title": "Validation, help and workspace inspection",
+    "stage": "Language0.2",
+    "path": "specs/features/f45_workspace_utilities/rule.txt"
+  },
+  {
+    "id": "F46",
+    "title": "Native workspace, CSV and XLSX files",
+    "stage": "Language0.2",
+    "path": "specs/features/f46_native_data_io/rule.txt"
+  },
+  {
+    "id": "F47",
+    "title": "Integrated print preview and collapsed folders",
+    "stage": "GUI0.2",
+    "path": "specs/features/f47_preview_folders/rule.txt"
+  },
+  {
+    "id": "F48",
+    "title": "Multiple selectable and removable data tips",
+    "stage": "GUI0.2",
+    "path": "specs/features/f48_multiple_data_tips/rule.txt"
+  },
+  {
+    "id": "F49",
+    "title": "Clickable Command Window diagnostics",
+    "stage": "GUI0.2",
+    "path": "specs/features/f49_console_diagnostics/rule.txt"
+  },
+  {
+    "id": "F50",
+    "title": "Typed callbacks and snapshot captures",
+    "stage": "Language0.2",
+    "path": "specs/features/f50_callbacks/rule.txt"
+  },
+  {
+    "id": "F51",
+    "title": "Multiple outputs and immutable typed records",
+    "stage": "Language0.2",
+    "path": "specs/features/f51_outputs_options/rule.txt"
+  },
+  {
+    "id": "F52",
+    "title": "Bounded source modules and namespace imports",
+    "stage": "Language0.2",
+    "path": "specs/features/f52_source_imports/rule.txt"
+  },
+  {
+    "id": "F53",
+    "title": "Explicit complex scalars and additional real functions",
+    "stage": "Language0.2",
+    "path": "specs/features/f53_complex_real_math/rule.txt"
+  },
+  {
+    "id": "F54",
+    "title": "Restricted native scalar functions and structural cache",
+    "stage": "Language0.2",
+    "path": "specs/features/f54_native_functions/rule.txt"
+  },
+  {
+    "id": "F55",
+    "title": "Two-dimensional shapes, masks, grids and real vector norms",
+    "stage": "Language0.2",
+    "path": "specs/features/f55_shapes_masks_grids/rule.txt"
+  },
+  {
+    "id": "F56",
+    "title": "Sample interpolation, quadrature and spatial calculus",
+    "stage": "Language0.2",
+    "path": "specs/features/f56_numerical_calculus/rule.txt"
+  },
+  {
+    "id": "F57",
+    "title": "Bounded parallel vector operations and thread control",
+    "stage": "Language0.2",
+    "path": "specs/features/f57_parallel_vectors/rule.txt"
+  },
+  {
+    "id": "F58",
+    "title": "Lazy numerical DLL/SO and host-owned worker foundation",
+    "stage": "Native0.2",
+    "path": "specs/features/f58_numeric_modules/rule.txt"
+  },
+  {
+    "id": "F59",
+    "title": "Parallel dense matrix products and batches",
+    "stage": "Language0.2",
+    "path": "specs/features/f59_parallel_matrices/rule.txt"
+  },
+  {
+    "id": "F60",
+    "title": "Real dense solves, determinants, inverses and decompositions",
+    "stage": "Language0.2",
+    "path": "specs/features/f60_dense_linalg/rule.txt"
+  },
+  {
+    "id": "F61",
+    "title": "Canonical sparse storage, products and guarded solves",
+    "stage": "Language0.2",
+    "path": "specs/features/f61_sparse_operators/rule.txt"
+  },
+  {
+    "id": "F62",
+    "title": "Explicit Pentarnion left/right matrix operators",
+    "stage": "Language0.2",
+    "path": "specs/features/f62_pentarnion_operators/rule.txt"
+  },
+  {
+    "id": "F63",
+    "title": "Native compiler derivatives, Hessians and products",
+    "stage": "Language0.2",
+    "path": "specs/features/f63_compiler_derivatives/rule.txt"
+  },
+  {
+    "id": "F64",
+    "title": "Native roots, equilibria and map fixed points",
+    "stage": "Language0.2",
+    "path": "specs/features/f64_native_roots/rule.txt"
+  },
+  {
+    "id": "F65",
+    "title": "Structural native numerical callback compiler and cache",
+    "stage": "Native0.2",
+    "path": "specs/features/f65_native_callbacks/rule.txt"
+  },
+  {
+    "id": "F66",
+    "title": "Session thread defaults and independent per-call limits",
+    "stage": "Native0.2",
+    "path": "specs/features/f66_per_call_threads/rule.txt"
+  },
+  {
+    "id": "F67",
+    "title": "Direct native ODE RHS state, parameter and time partials",
+    "stage": "Language0.2",
+    "path": "specs/features/f67_ode_rhs_derivatives/rule.txt"
+  },
+  {
+    "id": "F68",
+    "title": "Native Ceres nonlinear least squares and model fitting",
+    "stage": "0.2 research",
+    "path": "specs/features/f68_native_fitting/rule.txt"
+  },
+  {
+    "id": "F69",
+    "title": "Native NLopt local and global optimization",
+    "stage": "0.2 research",
+    "path": "specs/features/f69_native_optimization/rule.txt"
+  },
+  {
+    "id": "F70",
+    "title": "Native ODE events, backward integration and dense output",
+    "stage": "0.2 research",
+    "path": "specs/features/f70_advanced_ode_events/rule.txt"
+  },
+  {
+    "id": "F71",
+    "title": "CVODES trajectory sensitivities and terminal adjoints",
+    "stage": "0.2 research",
+    "path": "specs/features/f71_ode_sensitivities/rule.txt"
+  },
+  {
+    "id": "F72",
+    "title": "Native discrete maps and sampled orbit diagrams",
+    "stage": "0.2 research",
+    "path": "specs/features/f72_native_maps/rule.txt"
+  },
+  {
+    "id": "F73",
+    "title": "Bounded parallel GCC callback preparation and cache reporting",
+    "stage": "0.2 research",
+    "path": "specs/features/f73_parallel_native_compile/rule.txt"
+  },
+  {
+    "id": "F74",
+    "title": "Command Window run, interrupt, help and output colors",
+    "stage": "0.2 research",
+    "path": "specs/features/f74_console_help_run/rule.txt"
+  },
+  {
+    "id": "F75",
+    "title": "Persistent nonmodal source Find and Replace bar",
+    "stage": "0.2 research",
+    "path": "specs/features/f75_find_replace/rule.txt"
+  },
+  {
+    "id": "F76",
+    "title": "Dynamical metrics and local stability",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f76_chaos/rule.txt"
+  },
+  {
+    "id": "F77",
+    "title": "Native parallel map ensembles",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f77_ensembles/rule.txt"
+  },
+  {
+    "id": "F78",
+    "title": "Real and Pentarnion one-dimensional PDEs",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f78_pde/rule.txt"
+  },
+  {
+    "id": "F79",
+    "title": "Scalar fields and sampled real geometry",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f79_geometry/rule.txt"
+  },
+  {
+    "id": "F80",
+    "title": "Native signal analysis",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f80_signals/rule.txt"
+  },
+  {
+    "id": "F81",
+    "title": "Statistics and seeded uncertainty summaries",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f81_statistics/rule.txt"
+  },
+  {
+    "id": "F82",
+    "title": "Exact ordered formal expressions",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f82_symbolic/rule.txt"
+  },
+  {
+    "id": "F83",
+    "title": "Reproducible data-only analysis records",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f83_analysis_records/rule.txt"
+  },
+  {
+    "id": "F84",
+    "title": "No-scripting Map Explorer",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f84_map_explorer/rule.txt"
+  },
+  {
+    "id": "F85",
+    "title": "Genetic and evolutionary optimization",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f85_evolution/rule.txt"
+  },
+  {
+    "id": "F86",
+    "title": "MATLAB-style iterative output observers",
+    "stage": "0.2 frontier",
+    "path": "specs/features/f86_iteration_output/rule.txt"
+  },
+  {
+    "id": "F87",
+    "title": "Native ODE experiments and discovery",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f87_native_experiments/rule.txt"
+  },
+  {
+    "id": "F88",
+    "title": "Selected native headless PNG exports",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f88_selected_native_exports/rule.txt"
+  },
+  {
+    "id": "F89",
+    "title": "Periodic shooting, Floquet and continuation",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f89_periodic_continuation/rule.txt"
+  },
+  {
+    "id": "F90",
+    "title": "Parallel and implicit grid PDEs",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f90_parallel_pde_grids/rule.txt"
+  },
+  {
+    "id": "F91",
+    "title": "Parametric metrics, curvature and transport",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f91_chart_geometry/rule.txt"
+  },
+  {
+    "id": "F92",
+    "title": "Native Morris and Sobol workflows",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f92_global_sensitivity/rule.txt"
+  },
+  {
+    "id": "F93",
+    "title": "Profiles, bootstrap and multistart refits",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f93_native_inference/rule.txt"
+  },
+  {
+    "id": "F94",
+    "title": "Exact basis-aware Pentarnion polynomials",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f94_pentarnion_symbolics/rule.txt"
+  },
+  {
+    "id": "F95",
+    "title": "Native index-one DAEs and resets",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f95_implicit_dae/rule.txt"
+  },
+  {
+    "id": "F96",
+    "title": "Native regular mechanics",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f96_regular_mechanics/rule.txt"
+  },
+  {
+    "id": "F97",
+    "title": "Bounded N-D and explicit complex fields",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f97_nd_complex_fields/rule.txt"
+  },
+  {
+    "id": "F98",
+    "title": "Publication plotting and field playback",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f98_publication_animation/rule.txt"
+  },
+  {
+    "id": "F99",
+    "title": "Drawn tile layouts, spans and dividers",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f99_drawn_layouts/rule.txt"
+  },
+  {
+    "id": "F100",
+    "title": "Native graphs and coupled-network examples",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f100_native_graphs/rule.txt"
+  },
+  {
+    "id": "F101",
+    "title": "Checked MATLAB and Python exports",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f101_checked_exports/rule.txt"
+  },
+  {
+    "id": "F102",
+    "title": "Automatic research provenance",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f102_automatic_provenance/rule.txt"
+  },
+  {
+    "id": "F103",
+    "title": "Checked Research Explorer workflows",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f103_research_explorer/rule.txt"
+  },
+  {
+    "id": "F104",
+    "title": "Tagged meshes, differential forms and surface FEM",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f104_tagged_surface_geometry/rule.txt"
+  },
+  {
+    "id": "F105",
+    "title": "Parallel native PDE experiments",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f105_parallel_pde_experiments/rule.txt"
+  },
+  {
+    "id": "F106",
+    "title": "Explicit real SI physical quantities",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f106_physical_quantities/rule.txt"
+  },
+  {
+    "id": "F107",
+    "title": "Native hybrid saltation and terminal adjoints",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f107_hybrid_saltation/rule.txt"
+  },
+  {
+    "id": "F108",
+    "title": "Bounded real high-order elliptic finite elements",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f108_high_order_fem/rule.txt"
+  },
+  {
+    "id": "F109",
+    "title": "Native fold, Hopf and period-doubling refinement",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f109_bifurcation_refinement/rule.txt"
+  },
+  {
+    "id": "F110",
+    "title": "Safe source-aware data-only experiment bundles",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f110_experiment_bundles/rule.txt"
+  },
+  {
+    "id": "F111",
+    "title": "Cached analytic trilinear third derivatives",
+    "stage": "0.2 second roadmap",
+    "path": "specs/features/f111_analytic_third_derivatives/rule.txt"
+  },
+  {
+    "id": "F112",
+    "title": "Native finite-dimensional algebras and table imports",
+    "stage": "0.2 native algebra extension",
+    "path": "specs/features/f112_native_algebras/rule.txt"
+  },
+  {
+    "id": "F113",
+    "title": "Native fixed-shape arrays and complete coordinate AD/ODE interfaces",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f113_native_fixed_arrays/rule.txt"
+  },
+  {
+    "id": "F114",
+    "title": "Native time/state-dependent mass operators",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f114_native_mass_operators/rule.txt"
+  },
+  {
+    "id": "F115",
+    "title": "Native constrained Lagrangian mechanics and work diagnostics",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f115_general_constrained_mechanics/rule.txt"
+  },
+  {
+    "id": "F116",
+    "title": "Equation-level coherent SI dimensional validation",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f116_equation_si_dimensions/rule.txt"
+  },
+  {
+    "id": "F117",
+    "title": "Batched multidimensional matrix products",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f117_batched_nd_products/rule.txt"
+  },
+  {
+    "id": "F118",
+    "title": "Domain-aware native symbolic coefficients, functions and matrix equations",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f118_domain_symbolics/rule.txt"
+  },
+  {
+    "id": "F119",
+    "title": "Native batched real/complex LU, solve and inverse",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f119_nd_complex_linalg/rule.txt"
+  },
+  {
+    "id": "F120",
+    "title": "Implicit nonlinear and stiff PDE integration",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f120_implicit_pde/rule.txt"
+  },
+  {
+    "id": "F121",
+    "title": "Native successive-grid spatial convergence estimates",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f121_pde_spatial_refinement/rule.txt"
+  },
+  {
+    "id": "F122",
+    "title": "Mean-constrained parallel high-order finite elements",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f122_fem_mean_parallel/rule.txt"
+  },
+  {
+    "id": "F123",
+    "title": "Optional native PETSc sparse and nonlinear backends",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f123_petsc_backends/rule.txt"
+  },
+  {
+    "id": "F124",
+    "title": "Native mesh projection, probing, slicing and solid queries",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f124_mesh_queries/rule.txt"
+  },
+  {
+    "id": "F125",
+    "title": "Higher-dimensional intrinsic tensors, connections and frames",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f125_intrinsic_geometry/rule.txt"
+  },
+  {
+    "id": "F126",
+    "title": "Explicit native chart atlases and transition paths",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f126_chart_atlases/rule.txt"
+  },
+  {
+    "id": "F127",
+    "title": "Variable-metric manifold differential-form jets",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f127_manifold_form_jets/rule.txt"
+  },
+  {
+    "id": "F128",
+    "title": "Native nonlinear vector and algebra high-order FEM",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f128_nonlinear_high_order_fem/rule.txt"
+  },
+  {
+    "id": "F129",
+    "title": "Native high-order evaluation and conforming local adaptation",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f129_adaptive_h1_fem/rule.txt"
+  },
+  {
+    "id": "F130",
+    "title": "Native parallel ODE/PDE fitting and refit ensembles",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f130_solver_refits/rule.txt"
+  },
+  {
+    "id": "F131",
+    "title": "Checkpointed stochastic map ensembles and native progress observers",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f131_map_ensemble_ledgers/rule.txt"
+  },
+  {
+    "id": "F132",
+    "title": "Persistent completed verification tiers",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f132_verification_tier_ledgers/rule.txt"
+  },
+  {
+    "id": "F133",
+    "title": "Native basin/Lyapunov workflows and discovery export adapters",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f133_native_chaos_workflows/rule.txt"
+  },
+  {
+    "id": "F134",
+    "title": "Automatic sampled-candidate refinement and branch presentation",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f134_continuation_refinement/rule.txt"
+  },
+  {
+    "id": "F135",
+    "title": "Native likelihoods and parametric bootstrap",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f135_native_noise_likelihoods/rule.txt"
+  },
+  {
+    "id": "F136",
+    "title": "Prediction uncertainty, identifiability and coverage",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f136_prediction_identifiability_coverage/rule.txt"
+  },
+  {
+    "id": "F137",
+    "title": "Native dynamical metric and advanced-solver summaries",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f137_dynamical_native_summaries/rule.txt"
+  },
+  {
+    "id": "F138",
+    "title": "Evolution sessions and native finishing",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f138_evolution_sessions/rule.txt"
+  },
+  {
+    "id": "F139",
+    "title": "Research archive/catalogue/source replay",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f139_research_archives/rule.txt"
+  },
+  {
+    "id": "F140",
+    "title": "Checked source assistance, navigable call frames and module/reference browser",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f140_source_assistance/rule.txt"
+  },
+  {
+    "id": "F141",
+    "title": "Typed multifield Research Explorer controls and live display",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f141_typed_research_explorer/rule.txt"
+  },
+  {
+    "id": "F142",
+    "title": "Reusable plot styles, linked cameras and headless vector typography",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f142_plot_templates_and_queries/rule.txt"
+  },
+  {
+    "id": "F143",
+    "title": "Native ordered algebra network coupling",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f143_ordered_network_operators/rule.txt"
+  },
+  {
+    "id": "F144",
+    "title": "Checked data-only numerical callback snapshots",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f144_source_callback_snapshots/rule.txt"
+  },
+  {
+    "id": "F150",
+    "title": "Native transient high-order finite elements",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f150_transient_high_order_fem/rule.txt"
+  },
+  {
+    "id": "F151",
+    "title": "Native differential-form pullback jets",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f151_native_form_pullbacks/rule.txt"
+  },
+  {
+    "id": "F152",
+    "title": "Native signal processing",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f152_native_signal_extensions/rule.txt"
+  },
+  {
+    "id": "F153",
+    "title": "Native probability distributions",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f153_native_distributions/rule.txt"
+  },
+  {
+    "id": "F154",
+    "title": "Native custom/dependent bootstrap",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f154_native_block_bootstrap/rule.txt"
+  },
+  {
+    "id": "F155",
+    "title": "Native triangle-mesh intersections and coplanar overlap",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f155_mesh_intersections/rule.txt"
+  },
+  {
+    "id": "F156",
+    "title": "Native mixed-order H1 finite-element spaces",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f156_mixed_order_h1/rule.txt"
+  },
+  {
+    "id": "F157",
+    "title": "Native quasilinear state/gradient weak flux Jacobians",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f157_quasilinear_native_flux/rule.txt"
+  },
+  {
+    "id": "F158",
+    "title": "Local native residual analysis",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f158_local_dae_analysis/rule.txt"
+  },
+  {
+    "id": "F159",
+    "title": "Native index-zero through index-three descriptor systems",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f159_higher_index_linear_dae/rule.txt"
+  },
+  {
+    "id": "F160",
+    "title": "Shared native BLAS configuration coordination",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f160_shared_blas_coordination/rule.txt"
+  },
+  {
+    "id": "F161",
+    "title": "Controlled native scientific workload benchmarks",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f161_controlled_native_benchmarks/rule.txt"
+  },
+  {
+    "id": "F162",
+    "title": "jacobianpattern computes conservative complete real-coordinate CSR from a",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f162_structural_jacobian_patterns/rule.txt"
+  },
+  {
+    "id": "F163",
+    "title": "daestructure uses compiler incidence, a native highest-value transversal,",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f163_dae_structural_candidates/rule.txt"
+  },
+  {
+    "id": "F164",
+    "title": "daeinitialize uses cached compiled residual/time/state AD and native damped",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f164_complete_dae_initial_derivatives/rule.txt"
+  },
+  {
+    "id": "F165",
+    "title": "First-class fixed-shape native tensors",
+    "stage": "0.2 native algebra and roadmap extensions",
+    "path": "specs/features/f165_native_tensors/rule.txt"
+  }
+]

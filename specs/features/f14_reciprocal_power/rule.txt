@@ -1,0 +1,31 @@
+FEATURE F14: Canonical reciprocal and one-element powers
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S6
+Dependencies: F12/F13
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F14-R1: inv(p)=conj(p)/norm2(p) for nonzero p; p^0=1 (including zero), p^1=p.
+         Positive powers in one-element subalgebra; negative powers of inv(p).
+F14-R2: Zero to a negative power/inv(0) fails. Treat a tiny but nonzero input
+         as nonzero; report floating overflow explicitly if output is too large.
+F14-R3: Use scale-safe reciprocal evaluation rather than unnecessarily overflow
+         sum-of-squares. Test both extremely small and large finite coefficients.
+F14-R4: Correct signed exponent magnitude handling for INT64_MIN (no signed
+         overflow). Efficient integer exponentiation does not reassociate words
+         involving independent elements.
+F14-R5: Reciprocal existence must not be advertised as operator nonsingularity
+         or permission to cancel an adjacent third factor.
+
+ACCEPTANCE
+F14-T1: p*inv(p), inv(p)*p approximately equal identity across representative
+         nonzero inputs; identities checked with explicit numerical tolerances.
+F14-T2: p^2 agrees p*p; (p*p)*p and p*(p*p) agree for one p.
+F14-T3: (i*inv(j))*j=(ell-k)/2 at gamma=1, explicitly not i.
+F14-T4: zero, huge/tiny p, negative/zero exponents and exponent overflow tests.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

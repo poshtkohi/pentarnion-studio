@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Native state dependent and singular mass operators",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "state-dependent-decay.p",
+    "singular-mass-constraint.p"
+  ]
+}

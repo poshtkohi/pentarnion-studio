@@ -1,0 +1,12 @@
+FEATURE F30: Sampled ODE solutions and trajectory curves
+Version: current profile0.2 extension
+Authority: language.txt L23-L26; specs/ode_v0_2.txt
+Status: implemented; actual verification recorded in docs/VALIDATION.md
+
+F30-R1: solution retains sampled times, full named state coordinates and solver/cache statistics.
+F30-R2: Readonly s.t/s.state views and coeff(PentarnionSeries,0..4) preserve shared ownership.
+F30-R3: plot(realSeries,realSeries) and plot2/3 projections draw connected ordered curves.
+F30-R4: Existing individual Pentarnion vectors retain arrows; no per-sample arrows or thinning.
+F30-R5: Bound sampling, retained solution coordinates, solve count and plot data.
+Acceptance: interpreter_and_workspace, figure_lifecycle, nativePaperOdeSubplotsWhenRequested.
+General arrays/series indexing, resampling, PDE fields and arbitrary export commands deferred.

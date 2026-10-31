@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Lyapunov spectra, stability and Poincare sections",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "main.p",
+    "lorenz.p",
+    "paper1_lyapunov.p"
+  ]
+}

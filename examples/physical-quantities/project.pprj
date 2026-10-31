@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "Dimensions, Affine Units And Algebra-Valued Quantities",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "conversions-and-dimensional-checks.p",
+    "force-energy-and-array-units.p",
+    "rational-dimensions-and-real-roots.p",
+    "absolute-temperatures-and-log-levels.p",
+    "whole-quaternion-physical-quantities.p"
+  ]
+}

@@ -1,0 +1,42 @@
+PENTARNION STUDIO - CLEAN WINDOWS 10 X64 VM CHECKLIST
+
+This checklist is a compatibility test plan, not a claim that this host is a
+Windows10VM. Record OS edition/build, CPU, RAM, graphics driver, token elevation,
+installer SHA256 and test date in the acceptance report.
+
+1. Use a clean Windows10x64 version1903+ local non-administrator account.
+   No MATLAB, MSYS2, GCC, CMake, Ninja, Qt, VTK, Python or developer PATH.
+2. Disconnect networking. Copy the single installer plus SHA256SUMS.
+   Verify the digest before launch. Record unsigned/SmartScreen presentation.
+3. Install with defaults; verify no UAC prompt, global PATH/font/service changes.
+   Check branded wizard proportions, authors/contact and Start Menu shortcuts.
+4. Start Studio. Verify Project and source are visible, beginner calculations
+   example opens, local Copilot welcome appears, Help and manuals work offline.
+5. Run calculations then a small native ODE with analytic Jacobian. Confirm
+   successful first compile, cache hit with unchanged body, runtime parameters
+   change without rebuilding, and timer excludes compilation as documented.
+6. Exercise matrices, one native optimization callback, one small PDE and a
+   generated/translated program supported by the installed exporter. Check no
+   private implementation source in caches or exported support interfaces.
+7. Plot/export PNG,SVG,PDF; rotate/zoom one small3D plot. No stress/resize loops.
+   Check labels/private fonts and both manuals' DOCX/PDF opening.
+8. Install separately in a path containing spaces and Unicode. Repeat compiler,
+   CLI and graphics checks with a system-only PATH. Verify complete PE closure.
+9. Edit an example and create outside work/data/results/checkpoint sentinels.
+   Update. Confirm hashes unchanged, recovery hashes verified, and running
+   calculations cause update refusal without termination or partial replacement.
+10. Replace an internal payload directory with a junction to an outside folder
+    containing MATCHING INSTALLED FILENAMES. Uninstall. Verify outside hashes
+    remain exact, the junction itself is removed and the complete app root goes.
+    Repeat with nested/file links where the VM permits symlink creation.
+11. Verify uninstall removes only owned app/internal caches/settings/shortcuts/
+    registration and preserves workspaces, credentials and recovery. Refuse
+    cleanup when the owner marker/root/ancestor/shortcut parent is unsafe.
+12. Save logs, source-disclosure audit, dependency closure, SHA256 receipts and
+    screenshots. Mark each executed item pass/fail/pending, never inferred pass.
+
+The installer minimum is Windows10build18362 (version1903). The private native
+compiler/binutils use per-process UTF-8 manifests for Unicode installation paths;
+this Windows feature starts in1903. No system locale/UTF-8 setting is changed.
+Windows11x64 is also a target. An executed Windows11host test does not replace
+the Windows10VM checks above.

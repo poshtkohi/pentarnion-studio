@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "algebra": {
+    "gamma": 1,
+    "id": "A_gamma_v1"
+  },
+  "sources": [
+    "main.p"
+  ],
+  "language_version": "0.2",
+  "name": "Exact ordered symbolic algebra"
+}

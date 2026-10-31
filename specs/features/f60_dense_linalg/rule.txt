@@ -1,0 +1,50 @@
+F60: Real dense solves, determinants, inverses and decompositions
+Authorized extension, 26 October 2026.
+
+Use native OpenBLAS CBLAS/LAPACKE for real linsolve/solve_report, det/inv,
+rank/rcond/cond, LU, pivoted thin QR, lower Cholesky, thin SVD, eig and real Schur.
+Default LU requires square full-rank sufficiently conditioned input. Explicit
+QR/SVD can select least-squares/minimum-norm candidates, but equation convergence
+requires the measured residual; plain solves reject failed residuals. Report
+rank/condition availability explicitly. rcond/cond are2-norm SVD quantities.
+det(0x0)=1, determinant underflow is not a rank test; inverse checks rank/condition
+and backward residual. Eig uses split real/imaginary arrays, distinct from
+Pentarnion i. Reserve/restore configured BLAS limits; LAPACK cancellation occurs
+before/after bounded calls, never claiming internal preemption.
+Acceptance: reconstruction/residual/condition tests and linear-algebra/main.p.
+
+Authority: language.txt L48; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.
+
+LINEAR ALGEBRA PERFORMANCE AND ABI COMPATIBILITY — 26 OCTOBER2026
+SVD decomposition derives rank/rcond from the singular values it already computed;
+SVD least-squares solves likewise reuse DGELSD values. Other legacy dense opcodes
+retain SVD-based2-norm rank/rcond metadata and all inverse/solve default guards.
+There is no silent switch to a1-norm condition estimate or skipped reliability test.
+
+The unchanged ABI-v1 struct layouts/original enum values gain additive capability
+PENTA_LINALG_CAP_VALUE_ONLY(0x80) and opcodes22(DETERMINANT_VALUE),23(CHOLESKY_FACTOR).
+They provide only the scalar/factor requested; rank/rcond result fields are0 and
+UNAVAILABLE, not evidence of rank0/singularity. Original det/Cholesky opcodes keep
+full diagnostics. Language det/chol use value-only requests because they return no
+rank/rcond metadata; older modules lacking the capability fall back to old opcodes.
+Scalar determinant conventions and Cholesky SPD rejection remain unchanged.
+
+OpenBLAS setters can resize global buffers. Managed calls share a refcounted,
+immutable single-thread configuration epoch; setters/restoration run only with no
+active calls. Independent inner BLAS1 calls can overlap under the existing host
+CPU reservation. Different settings and internally threaded calls remain exclusive;
+unknown sequential vendor builds retain an exclusive fallback. No public ABI,
+ThreadBudget locking or nested CPU grants are weakened. Pentarnion-only products
+avoid BLAS configuration because their ordered algebra kernels do not call BLAS.
+The pinned OpenBLAS0.3.34 openblas_set_num_threads_local symbol is NOT assumed to
+be TLS: its source calls the global setter and updates a global variable.
+
+Measured before/after warm-kernel CSVs and concurrency tests belong to validation
+records; there is no universal speedup or claim that a configured backend limit
+measures actual internal BLAS worker participation. Primary implementation sources:
+https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.34/driver/others/openblas_set_num_threads.c
+https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.34/driver/others/blas_server_omp.c
+https://www.openmathlib.org/OpenBLAS/docs/build_system/

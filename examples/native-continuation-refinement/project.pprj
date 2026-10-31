@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Native Continuation Refinement",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "automatic-fold-refinement-and-stability-plot.p",
+    "automatic-hopf-refinement.p",
+    "automatic-period-doubling-refinement.p"
+  ]
+}

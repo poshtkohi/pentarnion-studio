@@ -1,0 +1,67 @@
+GENERAL CONSTRAINED NATIVE MECHANICS (LANGUAGE0.2)
+Canonical rule F115; language summary L103.
+
+mechanicsdae(L,g,q0,v0,options(...)) constructs a regular constrained mechanical
+DAE from native-compatible typed callbacks. L(t,q,v[,parameters...]) is a real
+Lagrangian; g is either a position constraint g(t,q)=0 (default) or a velocity
+constraint g(t,q,v)=0 with constraint_mode="velocity". q,v each contain1..8
+explicit real configuration coordinates; g has1..n real outputs. Scalar groups
+or explicitly shaped real matrices are accepted. This API supports a nonlinear
+Lagrangian velocity Hessian M=L_vv; no constant-mass assumption is made.
+
+For holonomic position constraints the generated system is
+  q' = v
+  L_vv v' = L_q - L_vt - L_vq v + Q + g_q^T lambda
+  g_q v' + g_tt + 2*g_tq v + v^T g_qq v = 0.
+Initial data must satisfy g=0 and g_t+g_q*v=0 within constraint_tolerance.
+For velocity constraints the last equation is
+  g_v v' + g_t + g_q v = 0
+and the reaction is g_v^T lambda, following the d'Alembert convention.
+Initial data must satisfy g(t0,q0,v0)=0. Nonintegrable velocity constraints are
+supported within this regular formulation; vakonomic dynamics is a different
+mathematical model and is not silently substituted.
+
+The augmented differential variables are q,v; lambda is algebraic. IDAS solves
+the acceleration-level index-one system. Its local initialization rank test
+requires a regular constrained mass/constraint block; singular or ambiguous
+formulations fail. This is an explicit regular holonomic index reduction or
+regular velocity-constraint formulation, not universal index analysis.
+IDAS consistently initializes accelerations/multipliers, preserving the given
+configuration and velocity. No automatic geometric initial projection is done.
+
+Cached native AD2 produces L/g gradients and Hessians. Cached native AD3 gives
+the derivatives of those Hessians, so jacobian="analytic" includes nonlinear
+mass, moving constraint and reaction derivatives. Users never write a Jacobian.
+jacobian="finite_difference" explicitly requests IDAS finite differences of
+the native residual. Both modes evaluate user bodies in compiled DLL/SO modules.
+All coordinates, shapes, grouping and immutable definitions enter fingerprints;
+runtime initial values, parameters and tolerances do not force recompilation.
+
+Options: parameters,constraint_parameters,optional native force and its
+force_parameters,constraint_mode,t0,t1,sample_step,rtol,atol,
+constraint_tolerance,index_tolerance,max_wall_seconds,initial_step,maximum_step,
+max_steps,max_evaluations,max_native_operations,jacobian,units,constraint_units.
+units/constraint_units are optional full callback unit annotations (see F116).
+Limits: n<=8,1<=constraints<=n,2*n+constraints<=24 real DAE coordinates;
+callback work, AD3 tensor memory, retained samples and time are bounded.
+
+The result contains t,q,v,lambda,constraints,constraint_time_derivative,energy,
+power,force_power,constraint_power,explicit_time_power,work,
+negative_force_work,energy_balance,maximum_constraint_error and native/cache/
+index/statistics metadata. Energy is E=v·L_v-L. Its expected power is
+  dE/dt = -L_t + Q·v + lambda·(g_q v) [position constraints]
+or -L_t+Q·v+lambda·(g_v v) [velocity constraints].
+Work histories integrate these powers by trapezoids on retained sample times.
+energy_balance=E-E(0)-work diagnoses dynamics plus quadrature error; refine
+sample_step before attributing its error to integration. negative_force_work
+integrates max(0,-Q·v); this descriptive negative-power part does not prove that
+an arbitrary user force is dissipative. Constraint drift is reported explicitly;
+acceleration-level reduction does not imply exact geometric projection.
+
+Existing mechanics(...) also exposes power,force_power,explicit_time_power,work,
+negative_force_work,energy_balance,work_quadrature,balance_energy and
+diagnostic_evaluations. Newton balance uses kinetic energy and total force work;
+Lagrangian/Hamiltonian balance uses the returned energy. Native postprocessing
+evaluations count against existing callback/work limits and do not alter the
+integration trajectory. Existing constant-SPD SHAKE/RATTLE remains available
+through constrainedmechanics(...), with its existing semantics.

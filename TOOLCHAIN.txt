@@ -1,0 +1,145 @@
+WINDOWS/LINUX TOOLCHAINS AND CODE::BLOCKS BUILDS
+
+IMPLEMENTED 0.2 WORKFLOW (supersedes original proposed setup below)
+Windows compiler: existing C:/msys64/ucrt64/bin/g++.exe (GCC 16.2.0).
+Local tools/frameworks: third-party/windows-deps/ucrt64 (Qt 6.12.0,
+CMake 4.4.4, Ninja 1.13.2, GDB 18.1, Eigen 5.0.1). This is a package prefix, not an
+additional MSYS2 installation. The user's C:/msys64 tree is not modified.
+All downloaded package URLs, versions and SHA256 hashes are pinned in
+third-party/dependencies.lock.json. Bootstrap is explicit and authorized;
+configure/build performs no network access or package installation.
+
+WINDOWS — CMAKE OR CODE::BLOCKS
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools/build.ps1 -Configuration Debug -Test
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools/build.ps1 -Configuration Release -Test
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools/build.ps1 -Headless -Test
+Or, from the repository root:
+  third-party/windows-deps/ucrt64/bin/cmake.exe --preset windows-debug
+  third-party/windows-deps/ucrt64/bin/cmake.exe --build --preset windows-debug
+  third-party/windows-deps/ucrt64/bin/ctest.exe --preset windows-debug
+CMake automatically deploys required developer DLLs and Windows Qt platform
+plugins beside the output executables. No installed Qt directory is required
+on PATH to launch a completed developer build from its bin directory.
+
+Open Pentarnion-Windows.cbp in Code::Blocks. Select Debug or Release and use
+Build/Run. Custom make commands invoke tools/build.ps1; CMake/Ninja owns the
+source/dependency graph, including AUTOMOC. Per-file compile builds the graph.
+For interactive debugging select an appropriate GNU GDB debugger and point it
+to third-party/windows-deps/ucrt64/bin/gdb.exe. This revision does not change
+the user's global Code::Blocks compiler/debugger settings automatically.
+The scripts explicitly select the existing UCRT64 compiler regardless of the
+Code::Blocks editor's default compiler profile. PENTA_MSYS2_ROOT overrides
+the existing compiler root when using the wrapper on another machine.
+
+LINUX — SOURCE BUILD
+Requires native GCC/Clang with C++20, CMake >=3.24, Ninja, and Qt >=6.4
+Core/Gui/Widgets/Test development files. They can come from the distribution
+or be installed in third-party/linux. This machine has no Linux/WSL runtime;
+the Linux presets/workflow must be exercised on Linux before claiming a
+verified Linux release. Ubuntu 24.04 is the initial CI baseline.
+  sh tools/build.sh Debug Check
+  sh tools/build.sh Release Check
+  sh tools/build.sh Headless Check
+Equivalent direct commands:
+  cmake --preset linux-debug
+  cmake --build --preset linux-debug
+  ctest --preset linux-debug
+  build/linux-debug/bin/pentarnion-studio
+Open Pentarnion-Linux.cbp for the same build in Code::Blocks. It uses
+sh tools/build.sh rather than PowerShell. Set CMAKE_PREFIX_PATH through a
+CMakeUserPresets.json/custom configure when Qt lives in another local prefix.
+CI definitions for Windows and Linux are included but have not been dispatched
+or published by this local task. GUI tests use the offscreen platform; a real
+desktop launch still needs to be checked on each supported OS.
+
+ORIGINAL DESIGN NOTES (retained for context)
+
+Proposed: Windows 11, Code::Blocks, MSYS2 UCRT64 GCC, C++20 (no modules),
+CMake, Ninja, Qt 6 Core/Gui/Widgets/Test, Eigen for rank-revealing 5x5 solves.
+Do not introduce Qt plotting, WebEngine, SUNDIALS, LLVM or Python runtime deps.
+
+1. INSPECT ONLY FIRST
+In an MSYS2 UCRT64 shell:
+  echo "$MSYSTEM"
+  which g++ cmake ninja
+  g++ --version
+  cmake --version
+  ninja --version
+  pacman -Q mingw-w64-ucrt-x86_64-qt6-base
+  pacman -Q mingw-w64-ucrt-x86_64-eigen3
+Record missing packages and versions. Do not automatically update the whole
+MSYS2 installation or mix its /usr compiler with /ucrt64 native libraries.
+Package availability/names must be checked locally before installation.
+
+2. ONE BUILD AUTHORITY
+Use CMake+Ninja; create Windows UCRT64 Debug/Release CMake presets and a
+separate optional headless-core build. When the repository has CMake files:
+  cmake -S . -B build/debug -G Ninja -DCMAKE_BUILD_TYPE=Debug
+  cmake --build build/debug
+  ctest --test-dir build/debug --output-on-failure
+These build the IDE and its tests. They do NOT compile .p source files.
+
+3. CODE::BLOCKS
+Use Code::Blocks to edit/debug and invoke the CMake build as an external tool
+or documented custom build command. The included .cbp files implement that
+route on both platforms. All Windows dependencies use the same UCRT64
+compiler/runtime. Do not maintain a second independent source/dependency list
+in a .cbp file. A thin navigation/debug wrapper may be added only if needed.
+CMake's CodeBlocks extra generators are deprecated since 3.27; do not make
+them the project's required long-term build route. Inspect local capabilities
+rather than assuming any particular generator has been removed.
+
+4. DEPENDENCY DISCIPLINE
+Use find_package and imported CMake targets. Pin actual installed versions in
+the eventual reproducibility note. Do not download random headers inside a
+build or fetch unpinned dependencies without permission. Check applicable
+Qt/Eigen redistribution requirements before distributing binaries; this
+specification does not provide a licence clearance opinion.
+
+5. C++ RULES
+RAII, explicit ownership, no mutable global algebra, no fast-math by default,
+no raw Windows-only calls inside penta_algebra/penta_language. Use filesystem
+paths through adapters, not narrow-string assumptions. Enable useful warnings
+without initially treating third-party headers' warnings as project errors.
+Use QtTest/CTest; allow the base algebra target to be built without the GUI.
+
+6. LOCAL ACCEPTANCE
+Record successful builds/tests AND a manual Windows launch. A Linux/container
+build cannot establish Windows GUI behaviour. Test a project path containing
+spaces and non-ASCII characters. Verify the runtime DLL search path without
+copying DLLs from incompatible compiler distributions.
+
+Official sources are recorded in references/sources.txt.
+
+CURRENT FIGURE/LABEL/SAVE-RUN EXTENSION: see FIGURE_GUIDE.txt, language.txt L20-L22
+and F25-F27. Only the latest Release build is retained; actual validation and
+limits are in docs/VALIDATION.md. The GUI now permits explicitly undocked figure windows.
+
+NATIVE ODE / SUBPLOT EXTENSION (26 October 2026): ODE_GUIDE.txt and language.txt
+L23-L26 are current; F28-F31 supersede earlier ODE/native/curve exclusions.
+First-paper demo: examples/paper1-bracketing/project.pprj. General native scripts,
+PDEs, parameter sensitivities and parallel scientific execution remain deferred.
+
+ARKODE / SVG EXTENSION (26 October 2026)
+method="erk" selects adaptive Dormand-Prince 5(4); method="esdirk" selects
+adaptive ESDIRK4(3)6L[2]SA. Both use native ARKODE with the existing compiled
+equation cache. BDF remains the default; Adams remains available. See F35.
+Whole figures and individual subplot Save buttons export PNG, JPEG or SVG;
+see F36, language.txt L29 and PLOT_TOOLS_GUIDE.txt. The first-paper source,
+parameters and sampling remain unchanged. See docs/VALIDATION.md for verified results.
+
+SUNDIALS dependencies are installed explicitly by tools/bootstrap-sundials.ps1
+on Windows or tools/bootstrap-linux-sundials.sh on Linux. Both build pinned
+CVODE and ARKODE in the project-local prefix, using static double-precision
+libraries with 64-bit indices. They do not modify global MSYS2. Configure/build
+does not download dependencies. Linux execution was not verified on this host.
+
+EVOLUTIONARY BACKEND -26October2026
+Windows: after the existingSDK bootstrap steps, run
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools/bootstrap-evolution.ps1
+This installs pinned pagmo2.19.1 under third-party/pagmo-sdk, reusing existing
+C:/msys64,projectEigen/TBB and available Boost.Serialization without global changes.
+Then tools/build.ps1 -Configuration Release -Test or the Code::Blocks Release
+target uses the sameCMakegraph. Linux: tools/bootstrap-linux-evolution.sh
+installs the pinned backend locally; Eigen,TBB and Boost.Serialization must
+already be available. NativeLinuxexecution remains unverified.

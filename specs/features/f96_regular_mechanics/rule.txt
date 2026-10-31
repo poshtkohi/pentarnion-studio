@@ -1,0 +1,11 @@
+F96: Native regular mechanics
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Explicit q/v/p coordinates, positive-mass Newton forces, regular AD2 Euler-Lagrange equations, canonical Hamiltonian dynamics, restricted Verlet and analytic-Hessian midpoint. Defined energy diagnostics do not imply exact conservation.
+
+Authority: language.txt L84; specs/research_modules_v0_2.txt.
+Acceptance: examples/native-mechanics/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.
+
+Holonomic extension: constrainedmechanics; specs/constrained_mechanics_v0_2.txt. Constant SPD mass and local regular constraints only; old mechanics ABI is preserved.

@@ -1,0 +1,130 @@
+PENTARNION LANGUAGE0.2 — REGULAR HOLONOMIC CONSTRAINED MECHANICS
+Canonical contract for constrainedmechanics; additive to the existing mechanics API.
+
+1. CALL AND PHYSICAL FORMULATION
+  record result=constrainedmechanics(@potential,@constraints,q0,v0[,options]);
+
+  H(q,p)=1/2 p^T M^-1 p+V(q),  p=Mv,  g(q)=0,
+  M q''=-grad(V)-G(q)^T lambda,  G=dg/dq.
+
+The configuration has1..16 real coordinates and1..n independent real autonomous
+holonomic constraints. M is constant, finite, symmetric positive definite and
+numerically regular. V is one explicitly real scalar; g is a real scalar/tuple.
+The pure typed functions begin with one complete configuration group, followed
+by optional fixed runtime parameters. No time argument is supplied. A group can
+contain real/Pentarnion scalar parameters, with each Pentarnion contributing all
+five ordered coefficients. q0/v0 are scalars or vectors of matching flattened
+length. A row/column of Pentarnions is flattened in element order, then coefficient
+order (1,i,j,k,ell). Retained q,v,p are real samples-by-n matrices.
+
+This explicitly defines a real configuration interpretation. The algebra does
+not supply an implicit physical mass, energy, metric or Poisson structure.
+Parenthesization of any native Pentarnion operations remains unchanged.
+
+2. OPTIONS AND DEFAULTS
+  mass=1: scalar mass, n-entry diagonal vector or n-by-n real SPD matrix.
+  method="rattle": "rattle" or "shake" only.
+  initial_policy="reject": "reject" or explicit local "project".
+  parameters=options(...): fixed trailing potential arguments.
+  constraint_parameters=options(...): fixed trailing constraint arguments.
+  t0=0,t1=1,time_step=0.001,sample_step=0.01.
+  tolerance=1e-11,regularity_tolerance=1e-12 (positive and below0.01).
+  max_iterations=30 (1..100),max_steps=1000000 (1..10000000).
+  max_evaluations=1000000 (1..10000000),max_wall_seconds=120 (finite,positive).
+  max_native_operations: execution's shared native allowance, normally1000000000;
+    an explicit value is positive and cannot exceed that execution allowance.
+
+Times are finite, t1>=t0, and time/sample steps are positive. sample_step/time_step
+must be an integer>=1 (relative ratio tolerance1e-10), at most10000000. Retention
+uses actual step states; final t1 is retained even when a short final step is
+needed. No off-manifold state interpolation is performed. Requests unable to
+advance binary64 time fail. Histories are bounded to100000 retained rows and
+eight million total real coordinates (also subject to the execution array limit).
+
+3. GENERATED NATIVE DERIVATIVES AND CACHE
+Potential and constraints execute through cached native shared libraries.
+Compiler-generated analytic derivatives provide grad(V), G and every constraint
+Hessian. Users supply no Jacobian or multiplier equations. The constant-mass
+SHAKE position Newton matrix is exactly G_new*M^-1*G_old^T. Hessians provide the
+instantaneous acceleration-constraint multiplier diagnostic.
+
+Changing initial state, M, integration controls or fixed argument values does
+not alter the callback body cache. Changed function bodies/signatures/transitive
+native dependencies use the existing structural cache rules. Explicit @ handles
+participate in the existing bounded parallel compiler plan. No interpreted
+per-step callback fallback is introduced. Small dense numerical kernels run
+serially under Studio's shared CPU reservation; nested native callers inherit
+the outer reservation. threads_used=1 is intentional for this bounded solver.
+
+4. NUMERICAL METHOD AND INITIAL CONSISTENCY
+RATTLE uses velocity Verlet with an iterated SHAKE position constraint followed
+by a tangent velocity projection. Position Newton iteration has bounded
+backtracking. Constraint gradients are row-scaled before small Gram/cross solves
+to prevent arbitrary equation scaling from determining numerical conditioning.
+Rank-deficient/zero gradients and singular cross-projection matrices fail with
+an actionable diagnostic. This is a local regular-manifold formulation.
+
+SHAKE uses the same constrained position-Verlet construction and omits the final
+tangent velocity projection. Its returned v is the unprojected endpoint-Verlet
+velocity. velocity_semantics explicitly reports this; Gv need not vanish.
+Use RATTLE when tangent endpoint velocities are required.
+
+Default initials must already satisfy position/tangent tolerances. Explicit
+initial_policy="project" performs iterative local mass-normal position and
+linear mass-metric tangent velocity projections. Original residuals and actual
+coordinate corrections are retained. This is not a global nearest-point claim.
+
+Scaled position_error=max_i(abs(g_i)/max_j(abs(G_ij)))/(1+max_j(abs(q_j))).
+Scaled velocity_error=max_i(abs(G_i*v)/max_j(abs(G_ij)))/(1+max_j(abs(v_j))).
+The solver checks these tolerances; raw g and Gv remain available separately.
+
+5. RETURNED RECORD
+Matrices:
+  t; q,v,p; energy,kinetic_energy,potential_energy;
+  constraints (raw g),tangent_residual (raw Gv),lambda;
+  position_multipliers,velocity_multipliers;
+  position_error,velocity_error,position_iterations,position_correction;
+  initial_q_correction,initial_v_correction (one row each).
+Real scalars:
+  initial_position_error,initial_velocity_error (before consistency projection),
+  max_position_error,max_velocity_error,max_relative_energy_drift,elapsed_seconds,
+  gamma (immutable algebra context for any native algebra-valued expressions).
+Integers:
+  coordinate_dimension,constraint_count,steps,evaluations,iterations,
+  native_operations,threads_used,cache_hit,flattened_pentarnion_input.
+Strings:
+  method,initial_policy,velocity_semantics,constraint_derivatives,
+  potential_cache_key,constraint_cache_key,coordinate_domain,status.
+
+constraint_derivatives="compiler_generated_analytic_gradient_hessian".
+coordinate_domain="explicit_real_configuration"; status="completed" on success.
+cache_hit requires both native function bodies to be cached.
+
+lambda solves
+  (G M^-1 G^T) lambda = [v^T Hess(g_i) v]_i-G M^-1 grad(V).
+For RATTLE this is the physical multiplier in the stated acceleration equation.
+For SHAKE this diagnostic uses its explicitly unprojected recorded velocity.
+Algorithmic multiplier signs are defined by
+  q_new=q+h*v-h^2/2*M^-1*(grad(V)+G_old^T*position_multipliers),
+  v_new=(q_new-q)/h-h/2*M^-1*(grad(V_new)+G_new^T*velocity_multipliers).
+Initial algorithmic multipliers are zero. max_relative_energy_drift is
+max(abs(E-E0)/(1+abs(E0))); numerical energy conservation is checked rather than
+claimed exact for arbitrary potentials. Multipliers/energy contractions use
+extended accumulation before finite binary64 conversion.
+
+6. ERRORS, LIMITS AND ABI
+Static errors use E2510; domain/regularity errors use source-spanned R2510;
+cancellation uses R1006; shared work/resource exhaustion uses R1005.
+Failed/cancelled solves do not publish partial state histories.
+
+Existing penta_mechanics_query_v1 and structures remain unchanged. The optional
+penta_mechanics_constraint_query_v1 negotiates its separate versioned structs
+inside the same lazy mechanics DLL/SO. No generic high-index DAE reduction,
+state-dependent mass, time-dependent/nonholonomic constraints, inequalities,
+contacts or impacts are claimed by this specialized SHAKE/RATTLE interface.
+
+Accepted examples: examples/constrained-mechanics/*.p.
+Validation: independent circle solution and angular pendulum RK4 reference,
+second-order convergence, physical multiplier/energy/constraint checks,
+weighted-SPD initial projections, cache reuse, five-coordinate inputs,
+concurrent callers, cancellation, limits and legacy mechanics regression.

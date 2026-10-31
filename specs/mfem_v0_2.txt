@@ -1,0 +1,75 @@
+BOUNDED REAL H1 ELLIPTIC FEM / SECOND ROADMAP TASK4E
+
+femsolve(mesh,@forcing[,options]) solves
+  -div(a(x,y) grad u) + c(x,y) u = f(x,y)
+with continuous scalar H1 elements of order1..4 on tagged real R2 triangles.
+mesh is the existing PentarnionSurfaceMesh-v1 record; all original vertices,
+triangles and boundary tags remain stored in solution.mesh.
+
+Options: order=1, diffusion=1, reaction=0, dirichlet=0,
+dirichlet_tags=(omitted means all external tags), exact=@function,
+parameters=options(...), rtol=1e-10, atol=1e-14, max_iterations=10000,
+max_work=(shared allowance), max_bytes=268435456, max_seconds=30,
+visualization_refinement=max(4,order), bounded1..16.
+All function fields take real x, real y followed by explicitly bound real or
+Pentarnion runtime scalar parameters and return exactly one real scalar.
+They are compiled using the same immutable native body cache as derivatives;
+changing values/settings/mesh/order never changes those callback bodies.
+The parameters record is shared among supplied callbacks; each uses its named
+trailing subset, and a parameter unused by every supplied callback is rejected.
+No per-quadrature interpreted callback or approximate guessed input is used.
+
+Selected external tags impose Dirichlet data; all others have homogeneous
+natural Neumann conditions. Pure diffusion needs an anchor on each connected
+component or an explicit mean constraint, described below. Positive constant
+reaction may instead provide a nonsingular natural-boundary system. Invalid tags, missing external tags, unused
+vertices, repeated/nonmanifold/degenerate triangles and nonfinite data reject.
+Triangle orientations are normalized by MFEM. Self-intersection detection is not
+claimed. a>0 and c>=0 are checked at all evaluated quadrature points, not globally
+proved for arbitrary functions. Assembly overintegration degree is2*order+6.
+
+Result PentarnionFEM-v1 retains authoritative dof_coordinates N-by2 and
+scalar dof_values N-by1, including all edge and element-interior high-order nodes.
+visualization_vertices/triangles/values are separate per-element sampled arrays;
+they do not masquerade as H1 nodal connectivity. femplot(result) emits a sampled
+scalar height plot and keeps the full high-order data unchanged.
+
+CG with symmetric Gauss-Seidel preconditioning reports actual assembled
+eliminated-system residual_norm/relative_residual, iterations and converged.
+The explicit status distinguishes iteration limit or residual failure from
+convergence. Optional exact callback gives quadrature-based global L2 error.
+The coefficient minima are sampled diagnostics. Estimated assembly/output bytes,
+callback evaluations/native work, callback cache keys, source_hash and actual
+serial policy are retained. Memory is a conservative preflight estimate, not
+process RSS accounting; assembly/solve/visualization honor work/time/cancel bounds.
+
+Backend: lazy penta_fem DLL/SO, static MFEM4.10, exceptions/thread-safe ON;
+MPI/OpenMP/memalloc/Metis/LAPACK OFF. MFEM configuration and assembly are
+serialized after Studio's shared CPU reservation. threads=0 selects Studio's
+shared automatic allowance;1 uses the established MFEM serial solver;2..64
+runs Jacobi-preconditioned CG over the assembled CSR matrix using the shared
+worker pool. Vector work, sparse products and reductions share the grant.
+No private worker pool is created; requested/granted/used counts and parallel
+calls are retained. The original C++ solve() and v1 ABI remain serial-compatible.
+
+NEW F122 / L112: MEAN-CONSTRAINED HIGH-ORDER FEM
+options(mean=target,compatibility_tolerance=1e-10) permits pure diffusion with
+unanchored connected components. Omitting dirichlet_tags then means none.
+Each unanchored component is checked independently for compatible integrated
+forcing; a globally cancelling load cannot conceal incompatible components.
+A temporary vertex gauge is eliminated, the weighted FEM mean is shifted to
+target, and the unmodified physical-system residual is independently checked.
+The request does not silently project an incompatible forcing. The mean gate
+requires zero reaction and no reaction callback. Positive constant reaction
+supports nonsingular natural-boundary problems without a mean constraint.
+New report fields: mean_constraint,nullspace_components,compatibility_residual,
+mean_error,target_mean,threads_requested,threads_granted,threads_used,
+parallel_calls,thread_policy. Visualization and exact-solution L2 diagnostics
+include the same mean shift as all retained high-order DOFs.
+
+Higher-order algebra/vector nonlinear FEM, mixed finite-element spaces,
+high-order curved manifolds and local a posteriori adaptive meshing remain
+separate extensions. Fully implicit real/algebra P1 surface PDEs are provided
+by pdeimplicit. Optional PETSc KSP/SNES is documented in petsc_v0_2.txt.
+Windows build/test status is based on executed evidence; source-level Linux
+portability does not claim a tested Linux binary.

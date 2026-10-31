@@ -1,0 +1,50 @@
+F124 / L114: REAL MESH QUERIES AND FIELD SLICING
+
+meshclosest(mesh,points[,options]) gives Euclidean closest points constrained
+to the mesh's retained triangles, using a bounding-volume hierarchy (BVH).
+Embedding dimensions2..5 retain every coordinate. Five Pentarnion coefficient
+coordinates use the explicitly declared Euclidean coefficient metric; algebra
+multiplication/norm-composition assumptions are not introduced.
+
+meshprobe(mesh,points,nodal_values[,options]) uses those same closest points
+and barycentric coordinates to interpolate complete nodal fields. Values have
+one row per vertex and1..64 real coefficient columns, or one complete typed
+algebra/Pentarnion element per vertex. Generic basis labels and algebra identity
+are retained. The returned values are explicit raw coefficient columns.
+This is P1 nodal interpolation on retained geometry, not an evaluation of an
+arbitrary curved surface or unsupplied high-order FEM shape functions.
+
+meshcontains(mesh,points[,options]) requires a closed consistently oriented
+two-manifold triangle mesh embedded in3D. Classification:0 outside,1 nonzero
+oriented winding,2 within tolerance of the boundary,-1 numerically ambiguous.
+Each edge is checked for exactly two oppositely oriented incident faces.
+Self-intersection detection and a proof of a valid embedded solid are not
+claimed; overlapping/self-intersecting input follows oriented-winding semantics.
+
+meshray(mesh,origins,directions[,options]) returns the first3D ray intersection
+within minimum_parameter=0..maximum_parameter=(largest finite double).
+A direction may be one common row or one row per origin. Parameters multiply
+the supplied direction; directions are not silently normalized. Classification:
+0 miss,1 hit,2 coplanar ambiguity. A missed point/value is zero and faces=0;
+check classification/faces before using it. Coplanar rays do not fabricate
+unique intersections. Shared-edge ties select the smallest face ID.
+
+meshslice(mesh,normal,offset[,options(values=nodal_values)]) intersects the
+mesh with dot(normal,x)=offset. Nonzero normals are normalized together with
+the offset. Shared topological edge/vertex intersections are merged, and
+segments are deduplicated. Tangent points alone emit no segment. Coplanar
+faces are counted separately and omitted rather than inventing a unique cut.
+Interpolated field coefficients and source face/barycentric data are retained.
+
+Options: tolerance=1e-9,threads=shared0(auto),max_work=(execution allowance),
+max_bytes=536870912,max_seconds=60. Native queries use the lazy geometry DLL/SO
+and the common bounded CPU worker pool. Cancellation/work/time/storage bounds
+are checked; unresolved/degenerate triangles reject. Up to100000 vertices,
+200000 triangles,100000 batch query points and64 field coefficients are allowed,
+subject to the execution's lower array/storage/work limits.
+
+Report: format,operation,points,values,distances,parameters,barycentric,faces,
+segments,classification,count,segment_count,coplanar_faces,embedding_dimension,
+field_components,algebra_id,basis_labels,value_layout,native_work,threads_used,
+parallel_calls,solid_semantics. Faces and segment point indices are one based;
+field coefficients remain in their declared zero-based basis-column order.

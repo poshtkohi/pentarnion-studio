@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "name": "Elliptic Fem",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "parallel-pure-neumann.p"
+  ]
+}

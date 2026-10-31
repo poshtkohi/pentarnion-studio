@@ -1,0 +1,48 @@
+FEATURE F16: Independent mathematical and language regression tests
+Version: 0.2
+Status: automated core, lexer, parser/type, algebra, runtime, independent-review,
+        project, document, GUI and CLI suites implemented; exact results and
+        platform/manual limits in docs/VALIDATION.md; full release audit remains separate
+Implementation stage: S5-S7
+Dependencies: all implemented features
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F16-R1: Use fixed table-derived expected outputs plus property tests; do not
+         generate expected results solely by calling the implementation again.
+F16-R2: Separate lexer/parser/type/core/UI tests. QtTest/CTest are test harnesses,
+         not dependencies inside the mathematical or language libraries.
+F16-R3: Every supported operator has successful, invalid-type and boundary tests.
+F16-R4: Exact identities in the papers are tested numerically with declared
+         tolerances; test outcomes are not labelled symbolic proofs.
+F16-R5: Include known nonassociativity and zero-divisor counterexamples. A test
+         must prevent accidental associative rewriting, not just happy-path use.
+F16-R6: Maintain a mapping from feature requirements to test names/files.
+F16-R7: GUI QA includes saving conflicts, stale diagnostics, Unicode positions,
+         project migration refusal and thread-safe shutdown.
+
+ACCEPTANCE
+F16-T1: CTest records results and returns failure on a deliberately broken fixture.
+F16-T2: Reviewable expected fixtures and source hashes are checked in.
+F16-T3: docs/VALIDATION.md differentiates automated, manual, skipped and failed checks.
+F16-T4: Complete the current QA_CHECKLIST.txt before claiming a fully audited
+         0.2 release; do not substitute automated tests for unperformed manual QA.
+
+CURRENT TEST MAP
+F01/F20: tests/core/core_tests.cpp and CMake/CTest build/dependency checks.
+F05: tests/language/lexer_tests.cpp and the document/editor highlighter tests.
+F06-F10: tests/language/frontend_tests.cpp; GUI diagnostics/navigation cases.
+F12-F15: tests/algebra/algebra_tests.cpp and independent numerical fixtures.
+F02: tests/project/project_tests.cpp; tests/gui/gui_tests.cpp project lifecycle.
+F03/F04/F18: tests/document/document_tests.cpp and GUI source/recovery cases.
+F17/F21: tests/gui/gui_tests.cpp worker, stale result, cancellation, console,
+         script-launch, clear/clc, history, scrolling and single-window cases.
+F19/F21: tests/runtime/runtime_tests.cpp; tests/runtime/review_tests.cpp;
+         CTest CLI check/run examples. Check remains non-evaluating.
+This map records suite locations, not proof that every manual acceptance item
+has been performed. docs/VALIDATION.md records the commands and observed outcomes.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

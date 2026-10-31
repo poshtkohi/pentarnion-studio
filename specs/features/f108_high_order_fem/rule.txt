@@ -1,0 +1,6 @@
+F108: Bounded real high-order elliptic finite elements
+Authorized second-roadmap extension,27 October2026.
+femsolve/femplot use MFEM H1 orders1..4 on tagged real R2 triangular meshes. Native coefficient/forcing/boundary/exact callbacks retain structural cache identity. Authoritative high-order nodal data and sampled visualization are distinct. Actual CG residuals, host work/time/memory/cancel bounds and serialized shared-budget execution apply. Pentarnion and embedded-surface high-order FEM are not implied.
+Authority: language.txt L96; specs/mfem_v0_2.txt.
+Acceptance: examples/high-order-finite-elements/project.pprj and independent native/runtime checks.
+Actual platform and integration evidence belongs in docs/VALIDATION.md.

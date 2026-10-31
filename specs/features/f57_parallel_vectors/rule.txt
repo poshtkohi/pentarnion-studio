@@ -1,0 +1,21 @@
+F57: Bounded parallel vector operations and thread control
+Authorized extension, 26 October 2026. Language 0.2.
+
+threads() gets requested Integer; threads(0) auto-detects bounded logical CPUs;
+threads(n) sets Integer 1..64. Settings persist through commands/clear and reset
+with Reset Workspace. Cancellation restores prior settings/statistics. Shared
+persistent CPU workers run native vector kernels; small work stays serial.
+Support ordered real/Pentarnion vector arithmetic/maps, alpha*x+y AXPY, sum/mean,
+real dot/norm and elementwise functions. Never call the interpreter from workers.
+parallel_info exposes requested/effective, actual participation/peak, dispatch
+counters, last size, threshold and loaded status without forcing module load.
+Sum/mean/dot use fixed 256-entry blocks/merge order independent of thread count.
+Promise only tested same-build/platform identity, not cross-platform bit identity.
+Use robust scaled L2 norms, bounded allocation and joined cancellation/recovery.
+
+Authority: language.txt L44 and specs/foundations_v0_2.txt section 8.
+Acceptance: foundation_parallel_tests; parallel-vectors real/Pentarnion examples; measure
+actual concurrent work, serial small work, deterministic 1/4-thread reductions,
+nested calls and recovery. Benchmarks are machine specific, not speedup promises.
+Out of scope: parallel full matrix products/OpenBLAS (parallel-matrices), GPU/MPI.
+Actual platform/test status: docs/VALIDATION.md.

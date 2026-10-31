@@ -1,0 +1,8 @@
+F152 Native signal processing
+Arbitrary supported FFT/axis lengths use bounded native radix2/Bluestein;
+Welch/STFT/inverse/cross/coherence preserve explicit real/complex domains,
+window/detrend/normalization metadata. Native DF2T/forward-reverse filtering and
+bounded stable Butterworth designs retain finite response/state diagnostics.
+Peak properties preserve legacy indices and add topographic prominence, widths,
+plateau metadata and validated parabolic refined positions.
+See specs/signal_statistics_extensions_v0_2.txt.

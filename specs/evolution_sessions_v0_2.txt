@@ -1,0 +1,114 @@
+EVOLUTIONARY SESSIONS, CONSTRAINTS AND NATIVE FINISHING (language 0.2)
+
+The existing evolve(objective,initial,options(...)) interface and version1 module
+ABI remain unchanged. Supplying any session option below selects the separate
+version2 entry point. The pinned open-source engine is Pagmo2 2.19.1. Objectives,
+constraints, local gradients and finalist verification models use the checked
+typed native callback generator and cached DLL/SO files; optimizer loops never
+interpret a user's numerical function body.
+
+Session options
+  checkpoint="relative-or-absolute.json",resume=0,overwrite_checkpoint=0
+  islands=1,migration_interval=5,migrants=1
+  integer_coordinates=[one-based unknown coordinate indices]
+  inequality=fn,inequality_parameters=options(...)
+  equality=fn,equality_parameters=options(...),constraint_tolerance=1e-8
+  local_refinement=options(...),verification=options(...)
+  maximum_bytes=268435456
+All existing parameters/algorithm/bounds/log coordinates/seed/tolerances/budgets/
+threads/OutputFcn/OutputEvery options still apply. Constraints return real scalar
+or real tuple values: inequalities g(x)<=0 and equalities h(x)==0. Their unknown
+coordinates match the original objective; fixed trailing arguments are supplied
+in their own *_parameters records. Complete immutable algebra descriptors and
+fixed native-array layouts are retained by the shared callback compiler.
+
+Bounds are finite strict intervals. Integer coordinates use exactly representable
+bounded lattices (absolute bound<=2^53-1); initial integer coordinates must be
+integral. The native adapter rounds/clamps before every objective and constraint
+call, including survivor presentation. Native int64 callback ABI support is not
+implied: optimization callback inputs remain real or explicit numerical types.
+Single-objective jDE/iDE/CMA-ES/GA sessions use Pagmo's self-adaptive constraint
+adapter. NSGA-II supports its vector objectives and box/integer search; nonlinear
+constraints with NSGA-II are explicitly rejected by this version.
+
+Islands execute complete generation barriers under Studio's shared CPU thread
+budget. Nested population batches cannot allocate an independent worker pool.
+Separate deterministic streams drive each island. At migration_interval complete
+generations, feasible lower-objective candidates migrate on a synchronous ring;
+infeasible candidates are ordered first by maximum constraint violation. Equal
+fitness is resolved deterministically. Changing only worker count on resume
+does not change the tested same-platform numerical trajectory.
+
+Checkpoint contract
+Atomic JSON stores populations/fitness, seeds/RNG engines, complete used Pagmo
+adaptation memory, restart and generation counters, best evaluated point and
+history at complete generation barriers. An interrupted generation is replayed;
+this is not exact integrator/optimizer instruction serialization. Completed state
+is reused, including warm CMA covariance/paths and jDE/iDE F/CR memory. Pinned
+Pagmo's unused uninitialized CMA variation scratch is intentionally excluded.
+The small friend-only header patch exposes numeric fields without changing
+algorithm formulas or layout; both bootstrap scripts reproduce the patched build.
+
+The envelope fingerprints callback keys/fixed arguments/gamma, bounds/log/integer
+maps, scientific settings, seed and the module binary. Changed callback source,
+parameters, settings or backend reject a checkpoint without altering it. Byte,
+JSON depth/node, array shape, counter, engine word and matrix allocation bounds
+are checked before reconstruction. No Boost archive, native pointer, user DLL
+path or executable binary is deserialized. Checked current callbacks are attached
+again and re-evaluate the saved best. Hashes detect accidental corruption; they
+are not a signed research certificate. Existing files require resume or explicit
+overwrite. A failed write is reported by checkpoint_ok/checkpoint_message and
+never pretends that a new durable state was written.
+
+Local finishing
+  local_refinement=options(starts=4,separation=0.1,algorithm="slsqp",
+      max_evaluations=500,max_wall_seconds=10,ftol=1e-12,xtol=1e-10)
+Select up to16 distinct population basins by Euclidean distance in bound-scaled
+coordinates, feasibility and score. Fewer seeds are possible after population
+collapse. Each native NLopt solve preserves original bounds and all nonlinear
+constraints. Integer coordinates are held fixed per basin, while continuous
+coordinates and their compiler-generated analytic gradients are optimized.
+All-integer seeds are evaluated/checked without a false continuous solve.
+SLSQP/COBYLA support constraints; unconstrained LBFGS/BOBYQA/Nelder-Mead are also
+available. Every local attempt retains its coordinates, objective, violation,
+status and convergence flag; failed attempts do not replace a valid global best.
+The shared OutputFcn receives full original coordinates for local iterations.
+Local attempts have their own explicit budgets and are rerun if the outer call
+is resumed; only evolutionary generation state is checkpointed in this version.
+
+Finalist verification
+  verification=options(objective=accurate_fn,parameters=options(...),
+      inequality=accurate_g,equality=accurate_h,
+      inequality_parameters=options(...),equality_parameters=options(...),
+      tolerance=1e-10,finalists=4)
+Evaluate up to32 distinct best candidate points with a supplied compiled
+high-fidelity objective and optional additional compiled constraints. Original
+constraints are always rechecked; tolerance cannot be looser than the search
+tolerance. The user supplies the meaningful tighter model/solver fidelity in
+the native function. The interpreter does not invent a tolerance refinement for
+an arbitrary formula. All candidate scores and violation values are retained.
+verification.best_x/best_objective are separate because scores from a different
+fidelity need not be comparable to the search objective. No finite evolutionary
+or local search certifies a global optimum or all attraction basins.
+
+Added result fields
+  x/objective: best feasible improvement under the original objective
+  global_x/global_objective: original evolutionary best
+  feasible,constraint_violation,population_constraints
+  islands,migrations,restored_generation,checkpoint_ok,checkpoint_message
+  fingerprint,refinement,verification
+The legacy population/Pareto/history/cache/thread/status fields remain. Nested
+refinement reports seed_x,x,objective,constraint_violation,converged,statuses,
+attempts,accepted,integer_semantics. Nested verification reports x,objective,
+constraint_violation,best_x,best_objective,any_feasible,finalists,semantics.
+For multiobjective searches the top scalar is the first objective of the legacy
+lexicographically retained best; the nondominated population remains pareto_f.
+
+Resource limits
+1..128 unknown coordinates,1..16 islands,8..4096 population per island (multiple
+of4),up to32 scalar constraints,at most2 million total population coordinates.
+NSGA-II frontier presentation is bounded to2048 total members. Persistent state
+is at most64MiB, file96MiB,depth28,nodes8 million. Forecast working populations,
+CMA matrices and JSON DOM memory are charged against maximum_bytes before output
+allocation. Existing max matrix elements/native operation/cancellation limits
+still apply. Local/verification work also uses the native operation budget.

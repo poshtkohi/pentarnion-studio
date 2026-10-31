@@ -1,0 +1,209 @@
+EXPLICIT HYBRID ODE SENSITIVITIES AND ADJOINTS - LANGUAGE0.2
+
+hybridsolve(model,event,reset,initial[,options]) returns a data-only trajectory.
+hybridval(trajectory,times[,"pre"|"post"]) queries one continuous epoch at a time.
+hybridadjoint(model,event,reset,objective,initial[,options]) computes genuine
+checkpointed CVODES reverse-mode derivatives for terminal, running and event costs.
+
+This is an EXPLICIT OdeModel path. General implicit DAEs, differentiation of
+IDAS consistent initialization/projection and higher-index constraint tangents
+are explicitly unsupported. Existing daesolve is unchanged.
+The general second-roadmap8D parent remains broader than this accepted increment.
+
+Signatures: event/reset/objective begin(real time, every declared state in order,
+every original model parameter in order). Real, complex, algebra element and
+fixed-array groups retain checked type, shape, immutable algebra hash and every
+real coefficient. An event returns1..16 roots as a real scalar, real tuple or
+fixed real array; flattened fixed-array coordinates use row-major order. A
+terminal objective returns one real scalar. Reset returns every state in
+original declared type/order, as a tuple for
+multiple states. parameters binds original model parameters; no independent
+hidden event/reset parameter mapping is inferred. These callback bodies and the
+RHS parameter derivative compile into cached native shared libraries. All are
+prepared before numerical execution; runtime values/tolerances reuse them.
+A reset may additionally begin(real event_index,real time,...); event_index is
+the one-based root component and is a constant branch selector, not an AD input.
+
+For an event g(t,y,p)=0 and reset y+=R(t,y-,p), with native f-/f+ and generated
+partials, define d=g_t+g_y*f-. Event-time derivatives are
+    tau_p=-(g_y*S-+g_p)/d.
+Fixed-time sensitivity after the reset is
+    S+=R_y*S-+R_p+(R_t+R_y*f--f+)*tau_p.
+The state saltation and direct parameter jump operators are
+    Xi=R_y+(f+-R_y*f--R_t)*g_y/d,
+    Bp=R_p+(f+-R_y*f--R_t)*g_p/d.
+These real-coordinate operators preserve the compiler's original ordered
+Pentarnion expressions. They do not reassociate an algebra product.
+
+hybridsolve sensitivities defaults to"all": model parameter directions first,
+then each flat initial-state coordinate. Other choices:none/parameters/initial.
+sensitivity_parameters selects unique one-based flat model parameter coordinates;
+it cannot combine with initial/all. sensitivity_initial supplies an n-by-directions
+seed matrix. direction_parameters uses1..np for parameter directions and0 for
+pure initial directions; direction_initials identifies default unit seeds.
+Custom seeds clear those unit labels and are stored explicitly in initial_seeds.
+
+Sensitivities/event_fixed_before/event_fixed_after are derivatives at fixed
+physical time. event_total_before/after add f-/f+ times tau and describe the state
+at the moving event time. event_terminal=1 applies the declared reset and stops;
+terminal_time_derivatives and terminal_value_derivatives describe that moving
+terminal event. The fixed-time post-reset derivative remains separately stored.
+Never substitute one kind for the other in a fit or objective gradient.
+
+Output arrays: t has nondecreasing physical time. Each reset stores two rows at
+exactly the same time, side=-1 pre and+1 post, with distinct segment_ids. Other
+rows have side0. values/derivatives retain complete flat state coordinates.
+sensitivities is samples-by(directions*n), direction-major then flat state.
+Event matrices use the same direction/state order; saltation flattens row-major
+n-by-n matrices; parameter_jumps flattens row-major n-by-np matrices. All arrays
+remain raw real coefficients with an explicit immutable gamma. Loading saved
+records executes no callbacks. Other metadata includes state widths/names,
+parameter layout, original input/seeds, native structural/request keys and counts.
+
+hybridval uses stored native RHS slopes and sample-based cubic Hermite inside
+one segment. It does NOT use a polynomial spanning two reset sides. Exact stored
+jump time defaults to post;"pre" selects pre. Requests must stay inside the
+recorded interval; malformed epoch/side/time layouts fail. This sample interpolant
+is distinct from CVODES' internal dense polynomial. Refine sample_step when
+interpolated trajectory accuracy matters. Plot epochs separately using segment_ids
+and hold so a display polyline does not imply a continuous phase trajectory.
+
+hybridadjoint: objective is a native scalar phi(t_final,y_final,p). No forward
+sensitivity seed options are accepted. It first records nominal native epochs,
+then replays each smooth epoch in reverse order through the existing checkpointed
+CVODES adjoint solver. State covectors jump with Xi^T; parameter gradients receive
+Bp^T*lambda in addition to smooth parameter quadratures and explicit phi_p.
+This is actual reverse integration, not a relabelled forward-sensitivity dot
+product. Replayed endpoints must agree with the nominal epoch within the
+documented tolerance-scaled check. A discrepancy fails rather than applying
+derivatives at an inconsistent trajectory. The nested adjoint record returns
+objective, initial_gradient, parameter_gradient, event covectors before/after,
+backward_steps/replay_steps/checkpoints, key/hash and elapsed time.
+
+Optional hybridadjoint running_cost=L and event_cost=C bind typed native scalar
+callbacks with the same(time,states...,parameters...) signature as the objective.
+C may additionally begin(real event_index,...). It is evaluated ONCE per localized
+group, at its original pre-reset state and winning root index, including all-policy
+groups. This is a group-cost convention, not an inferred cost per sequential reset.
+The objective is phi(T,y(T),p)+integral L(t,y,p)dt+sum C(t_event,y-,p).
+CVODES forward quadratures integrate L with error control; reverse equations are
+lambda'=-f_y^T*lambda-L_y and parameter quadrature -f_p^T*lambda-L_p.
+At an event, let H=C_t+C_y*f-+Lminus-Lplus. In addition to the ordinary Xi/Bp
+pullback, add C_y-g_y*H/d and C_p-g_p*H/d. Each cost and gradient is evaluated
+through the compiler-generated native callback, with no user Jacobian or VM loop.
+
+event_terminal flags are also valid for hybridadjoint. The objective is evaluated
+at the actual localized post-reset stopping time, not the requested t1. The last
+post-reset epoch then has zero duration and is not replayed as a fictitious flow.
+Its pullback additionally subtracts(g_y,g_p)*(phi_t+phi_y*fplus+Lplus)/d.
+Combined with H this retains the correct pre-terminal integral boundary term.
+The nested adjoint record reports running_cost,event_cost,terminal_time and both
+cost cache keys. Its status is moving_terminal_native_cvodes_adjoint when stopped
+by an event, otherwise fixed_terminal_native_cvodes_adjoint. Derivatives are local
+to the retained transverse event sequence; event-count/branch boundaries reject.
+
+Numerical choices: increasing t0/t1,sample_step,method=bdf/adams/erk/esdirk,
+jacobian=analytic/finite_difference,rtol/atol,max_steps,max_samples,max_seconds.
+Sensitivity propagation/event/reset/objective derivatives use native AD even
+when the integrator's state Jacobian is selected as finite_difference. Hybrid
+Arbitrary masses and competing external event/sensitivity callbacks are rejected,
+not silently replaced. Forward/adjoint reuse the same
+immutable algebra gamma throughout.
+
+Event policy: event_direction=-1/0/+1, event_terminal=0/1 and event_priority
+(integer[-1000000,1000000]) each accept one flag or one per root component.
+Smaller priority numbers act first; ties use root index. Components whose
+localized times agree within event_time_tolerance(default1e-8 seconds) form one
+simultaneous group. simultaneous="priority"(default) applies only its first
+reset; simultaneous="all" applies the original active group in priority order
+at that same physical time. Each reset sees the preceding reset's state. Group
+membership is not reevaluated after each reset; a terminal flag on any applied
+component stops after the composed reset. Reset-created events require a later
+root crossing and remain subject to the minimum interval/chattering guard.
+
+Initial states on/too near any root surface are ambiguous and rejected. A
+scale-invariant relative transversality ratio
+|d|/(|g_t|+sum|g_y*f-|) must exceed grazing_tolerance(default1e-10).
+At the rounded localized root, a nearby pre-flow native AD slope also bounds
+transversality: a numerically tiny derivative of a multiple root, such as h^3,
+must not be mistaken for a transverse crossing. The probe spacing is bounded by
+the last native step and epoch distance, and the comparison is invariant under
+constant rescaling of g. If a required nearby callback leaves its finite domain,
+derivative validity cannot be established and the native solve reports failure.
+For simultaneous roots, full normalized event-time gradients
+(g_t,g_y,g_p)/(g_t+g_y*f-) must agree componentwise within the relative
+event_gradient_tolerance(default1e-8,strictly between0 and.01). This permits
+equivalent scaled surfaces and rejects distinct competing crossing-time laws.
+The Jacobian of an all-policy reset is the native AD chain of its component
+resets, including time and parameter terms, followed by one saltation update.
+Both forward and checkpointed reverse paths use that composed jump.
+
+An unequal-gradient/grazing branch rejects requested derivatives. Explicit
+sensitivities="none" permits deterministic value-only execution, marks
+event_info.derivatives_available=0 and leaves all event derivative/jump arrays
+empty; it never invents zero derivatives for a nondifferentiable branch.
+event_info contains component count, one-based winning indices, zero-based
+group_offsets into one-based group_indices, expanded flags/priorities and
+tolerances. Group indices include all initially active roots, including those
+discarded by priority. Numerical policy changes affect request hashes but do
+not recompile unchanged event/reset/RHS bodies.
+Callbacks are assumed locally differentiable at the observed trajectory; native
+AD cannot certify smoothness of every user branch. Grazing/degenerate events fail.
+minimum_event_interval(default1e-8) and max_events(default100,cap10000) guard
+chattering/Zeno accumulation. Fixed-time observation endpoints within this
+interval of a reset are rejected as event-count derivative boundaries.
+
+Budget:1..32 real state and0..64 parameter coordinates; at most128 sensitivity
+directions. max_bytes(default128MiB) forecasts retained states/slopes/sensitivities,
+event/jump arrays, dense Jacobian/LU and vector scratch. Adjoint additionally
+forecasts checkpoint/vector storage from max_steps and the native100-step
+checkpoint interval; reduce max_steps for large-state examples if necessary.
+These are buffer estimates, not exact process-RSS guarantees. Aggregate adjoint
+forward/replay/backward step and wall budgets apply. Native work quotas and
+cancellation are cooperative. The host reserves one shared CPU slot for this
+serial CVODES workflow; threads_used=1 is reported honestly.
+
+Validation: tests/runtime/hybrid_ode_tests.cpp; Windows isolated native83 checks
+pass, including analytic bounce tau/Xi, full-solve finite differences, exact g_t/
+g_p/R_t terms, moving-terminal distinction, genuine adjoint/FD/forward references,
+every Pentarnion coefficient, jump-safe queries, cache reuse, grazing/domain/
+memory/event/step policies and cancellation. Additional vector-root regressions
+check independent exact composite-reset derivatives, true reverse gradients,
+per-root flags, indexed native reset cache reuse, ambiguous crossing gradients
+and full quaternion state coordinates. Integration/platform execution must
+be recorded independently in HANDOFF. General DAE/reset projection derivatives,
+implicit initialization/projection derivatives remain explicit continuation
+work. Cost regressions include independent exact integrals,
+explicit terminal-time dependence and perturbed full-solve references for every
+state/parameter gradient in fixed and moving-stop cases.
+
+ARKODE METHODS
+Forward ERK uses Dormand-Prince5(4); forward ESDIRK uses ESDIRK436L2SA. Forward sensitivities
+integrate y and S together, with at most128 augmented coordinates and simultaneous
+error control. The variational RHS uses generated f_y/f_p, not finite differences.
+An analytic ESDIRK augmented Jacobian additionally uses generated f_yy*S and f_yp
+terms. The complete raw RHS Hessian is bounded to1048576 entries; native callbacks
+and model schemas retain all original ordered algebra coordinates. Finite-
+difference integrator Jacobians remain a selectable integrator option, while the
+variational RHS itself still uses native analytic first derivatives.
+
+ARKODE reverse integration uses the continuous adjoint with the same native
+ERK/ESDIRK family. Reverse ERK retains Dormand-Prince5(4). Reverse implicit
+integration explicitly uses ARK436L2SA_DIRK_6_3_4(order4/embedded3), whose stage
+abscissae lie in[0,1]. The forward ESDIRK436L2SA table has a c=1.04 stage and
+cannot be used across a reverse epoch boundary without unsupported extrapolation.
+reverse_table reports the actual selected table and participates in the request
+hash. This documented continuous-adjoint mapping is independent of the original
+discrete forward step selection. A fresh replay retains the native polynomial at
+EVERY accepted integrator step, independently of requested sample_step. Reverse
+stages use those checked polynomials and resident native Jacobians/parameter/cost
+partials. They never use the coarse user sample grid or sample-based Hermite.
+ESDIRK reverse has an analytic block Jacobian in covectors/parameter quadratures.
+Running integrals are reverse quadrature states with error control. Native dense
+storage exhaustion fails; no silent coarse interpolation fallback is allowed.
+The returned checkpoints count native step polynomials, not CVODES checkpoints;
+status uses fixed_terminal_native_arkode_adjoint or moving_terminal_native_arkode_adjoint.
+Continuous adjoints approximate the continuous model, not the exact derivative
+of an adaptive discrete step selection. Tighten tolerances to verify sensitive
+results. Regressions use exact nonlinear stiff references, independent full-solve
+perturbations, reset/time costs and coarse/fine sample-grid invariance.

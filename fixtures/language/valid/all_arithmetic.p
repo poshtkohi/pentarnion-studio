@@ -1,0 +1,17 @@
+use_algebra("A_gamma", gamma=0.5);
+integer count = 3;
+real strength = 0.1;
+pentarnion p = 1 + i - 2*j + ell;
+pentarnion q = pent([0, 1, -1, 0, 1]);
+pentarnion sum = p+q;
+pentarnion difference = p-q;
+pentarnion product = p*q;
+pentarnion cube = p^count;
+pentarnion reciprocal = p^-1;
+pentarnion scaled = p/2;
+pentarnion quotient = p/q;
+pentarnion leftsolve = p\q;
+real coefficient = coeff(p, 4);
+real n = norm2(p);
+pentarnion normalized = p/sqrt(n);
+pentarnion test_associator = associator(p,q,p);

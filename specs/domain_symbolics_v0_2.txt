@@ -1,0 +1,90 @@
+DOMAIN-AWARE NATIVE SYMBOLICS (LANGUAGE0.2)
+Canonical rule F118; language summary L106. Existing symexpand/sympent* exact
+polynomial/radical APIs remain available with their existing fixed-gamma rules.
+
+1. Values and declared coefficient domains
+cas("expression",options(...)) creates a central scalar expression;
+caspent("algebra_expression",options(...)) expands the published A_gamma table
+into five central real coefficient expressions, preserving explicit grouping;
+casmatrix("a,b;c,d",options(...)) creates a central coefficient matrix.
+These return versioned StudioCAS-v1 records with expression,domain,symbols,
+functions,nonzero,positive,gamma,branch_cuts,rows,columns,data and c0..c4 fields.
+The data field is a validated immutable expression/domain snapshot, not code.
+
+Options: symbols="x,y" (reals is an alias), functions="f,g",
+nonzero="x;y+1", positive="x;1+y", domain="real" or "complex",
+pentarnions="p,q", gamma="exact_rational" or "symbolic".
+Every symbol is explicitly declared; known sin,cos,exp,sinh,cosh,log,sqrt and
+their names cannot be redeclared as formal functions. Arbitrary declared
+central functions f(x,...) retain formal derivative functions f__d1(...), etc.
+Formal functions must be substituted before numeric/native conversion.
+I is the imaginary unit in the explicit complex coefficient domain.
+Published Pentarnion coefficients remain real; a complex scalar/matrix domain
+does not silently redefine the five-dimensional algebra.
+
+2. Arithmetic, domains and derivatives
+Exact rational constants, bounded integer powers[-32,32], sums/products,
+variable denominators, known/formal functions and parentheses are supported.
+Central coefficient products commute and distribute; algebra products retain
+their order and bracketing. Three unparenthesized nonassociative algebra operands
+are rejected. This is a bounded expression engine, not a complete normal-form
+or transcendental-identity theorem prover.
+
+A variable denominator requires an explicit nonzero or proved-positive domain.
+Real log requires positivity; real symbolic sqrt requires a positive assumption
+or the supported proof rule for positive constants plus real squares. Numeric
+zero/negative radicals obey their actual domain. Complex roots/logarithms use
+principal branches. casdiff(value,"coordinate") applies product, quotient and
+chain rules. Differentiating complex sqrt/log retains their argument branch-cut
+conditions; numerical derivative evaluation rejects the nonpositive real cut.
+cassubs(value,"coordinate","expression") transforms both expressions and
+their retained assumptions and rejects a substitution violating a constant domain.
+
+3. Symbolic algebra parameter
+With gamma="symbolic", the actual multiplication-table factors are
+kappa=1/sqrt(1+gamma^2), sigma=gamma*kappa, h=1/sqrt(2).
+The gamma coordinate differentiates through both normalization and mixing.
+casnumeric checks gamma is real in[0,1]. caspentnumeric additionally requires
+the evaluated gamma equal Studio's immutable current algebra context.
+To export fixed-context native Pentarnion code, first specialize gamma with
+cassubs(value,"gamma","exact_rational_in_0_to_1").
+
+4. Central symbolic matrix equations
+casmatmul(A,B) contracts matching central-coefficient matrix dimensions.
+caslinsolve(A,B) performs bounded exact symbolic Gaussian elimination for
+square A and matching B. Its result explicitly includes every conditional
+nonzero pivot assumption. No unconditional uniqueness is claimed outside that
+domain; numeric conversion rechecks all pivot conditions. Domains/declared
+symbols/functions must match; explicit compatible assumptions are merged.
+casdet(A) uses exact signed products for square matrices of order1..6.
+Matrices have1..16 rows/columns and at most256 entries.
+These are central real/complex coefficient equations. Nonassociative matrix
+equations require explicitly chosen left/right real coordinate operators;
+ordinary scalar reciprocal multiplication is not substituted for such a solve.
+
+5. Numeric conversion and cached native code
+casnumeric(value,options(symbol=value,...)) returns kind,rows,columns,real,imag,
+values and gamma. values has one row per scalar coefficient/entry and two columns
+for real/imaginary coordinates. casreal and cascomplex convert one scalar;
+caspentnumeric converts five real coefficients to a legacy Pentarnion.
+Every explicit positivity/nonzero/pivot/branch assumption is checked numerically.
+
+cascode(value[,"function_name"]) emits typed native source through the same
+checked language/compiler backend. It retains runtime domain guards; no raw
+symbolic string is executed. Real scalar, fixed-shape real matrix, specialized
+Pentarnion and supported explicit complex-algebra expressions can be exported.
+Unsupported native whole functions/formal derivatives fail before returning code.
+Exact constants round to checked finite binary64 for numerical generated code;
+the symbolic records retain exact rational constants. Source bodies and shapes
+then use the ordinary cached shared-library and AD rules when run/imported.
+
+6. Native loading, limits and preservation
+The penta_cas DLL/SO loads only on first symbolic use. Its reentrant C ABI has
+per-request state, bounded memory/work, cancellation and Studio CPU reservation.
+Limits include input8 MiB/output4 MiB, expression32768 bytes,65536 AST nodes,
+128 nesting levels,4096-bit exact rationals,64 scalar symbols,32 formal functions,
+128 nonzero/64 positive assumptions and16 MiB aggregate AST key text. Values
+persist through ordinary workspace records; edited/malformed payloads revalidate.
+This implementation does not claim arbitrary nonlinear symbolic equation solving,
+quantifier elimination, a complete assumption-consistency prover, general
+noncommutative symbolic matrix inversion or automatic cross-chart symbolic CAS.

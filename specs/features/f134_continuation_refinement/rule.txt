@@ -1,0 +1,10 @@
+F134 - Automatic sampled-candidate refinement and branch presentation
+Implemented: bounded automatic native equilibrium fold/Hopf and periodic
+period-doubling refinements; immutable source branch/discovery linkage; complete
+attempt/acceptance diagnostics; duplicate-root suppression; branchplot stability
+segments and accepted marker crosses. Failed refinements preserve the branch.
+Existing augmented-corrector limit1..8 coordinates remains explicit. A fold of
+cycles is reported cycle_fold_not_refined, never replaced by equilibrium equations.
+Contract: specs/continuation_refinement_v0_2.txt.
+Examples: examples/native-continuation-refinement/.
+Regression: tests/runtime/continuation_refinement_tests.cpp.

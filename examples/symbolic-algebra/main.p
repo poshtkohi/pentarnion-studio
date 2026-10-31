@@ -1,0 +1,20 @@
+use_algebra("A_gamma", gamma=1);
+clc;
+clear;
+record exact=sym("1/3+1/6");
+assert(symtext(exact)=="(1/2)");
+record left=sym("(a*b)*c");
+record right=sym("a*(b*c)");
+assert(symtext(left)!=symtext(right));
+record polynomial=sym("(x*x)*x+x/3");
+record derivative=symdiff(polynomial,"x");
+real at_two=symnumeric(derivative,options(x=2.0));
+assert(abs(at_two-37/3)<1e-12);
+record substituted=symsubs(left,"b",sym("x+1/2"));
+display("Exact rational sum: ",symtext(exact));
+display("Left grouping: ",symtext(left));
+display("Right grouping: ",symtext(right));
+display("Formal derivative: ",symtext(derivative));
+display("Real derivative at x=2: ",at_two);
+display("Ordered substitution: ",symtext(substituted));
+% Atoms are formal symbols. Basis multiplication rules are not silently applied.

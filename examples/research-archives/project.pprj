@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Research Archives",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "capture-fit-and-query-catalogue.p",
+    "migrate-version-one-bundle.p",
+    "replay-captured-random-and-native-model.p"
+  ]
+}

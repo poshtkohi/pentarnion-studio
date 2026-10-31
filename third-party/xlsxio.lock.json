@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "xlsxio": {
+    "version": "0.2.37",
+    "url": "https://codeload.github.com/brechtsanders/xlsxio/tar.gz/refs/tags/0.2.37",
+    "filename": "xlsxio-0.2.37.tar.gz",
+    "sha256": "b9fcb22e124d178f30d404e5a22ccac594353d71d845035795321cd53d6c4cee",
+    "license": "MIT",
+    "upstream": "https://github.com/brechtsanders/xlsxio",
+    "local_patch": "Windows UTF-8 paths: tools/xlsxio-windows-utf8.h plus three exact source substitutions in bootstrap-xlsxio.ps1. All platforms: tools/patch-xlsxio-styles.cmake emits standard none/gray125 fills and Normal default cell style, preserving numeric style indices."
+  },
+  "minizip_windows": {
+    "version": "1.3.2-2",
+    "filename": "mingw-w64-ucrt-x86_64-minizip-1.3.2-2-any.pkg.tar.zst",
+    "url": "https://repo.msys2.org/mingw/ucrt64/mingw-w64-ucrt-x86_64-minizip-1.3.2-2-any.pkg.tar.zst",
+    "sha256": "607cfd490cd9c47db7381663963d8c7b0152d7b487a391fb3bbc3f09b6e50967",
+    "license": "Zlib"
+  },
+  "patch_sha256": {
+    "windows_utf8_header": "65b5751f3dbf2df64459f34bb2fb96b7094c214a7d8947741fcbad7c67af037c",
+    "styles_cmake": "49bc3b91b80b4de3ed10662247308debd80bd0b9046c5e57cfa7a81f9e5aea4a"
+  },
+  "dependencies": "Reuse project-local Expat, zlib and bzip2. Nothing is installed into C:/msys64."
+}

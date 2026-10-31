@@ -1,0 +1,9 @@
+F95: Native index-one DAEs and resets
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+IDAS residuals and compiler Jacobians, explicit algebraic masks/local rank contract, checked or consistent initials and cached native localized event/reset handlers. General index reduction and saltation/adjoints remain later.
+
+Authority: language.txt L83; specs/research_modules_v0_2.txt.
+Acceptance: examples/implicit-daes-and-hybrid-events/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

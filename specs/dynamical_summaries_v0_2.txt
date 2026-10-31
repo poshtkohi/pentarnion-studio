@@ -1,0 +1,46 @@
+NATIVE DYNAMICAL SUMMARY ADAPTERS - LANGUAGE0.2
+
+modelsensitivity retains its existing final/mean/rms/min/max/spatial_mean/
+field_rms summaries and adds:
+ period: median interval between at least three sampled rising crossings of
+ the selected scalar coefficient through crossing_level(default0), after the
+ transient. Crossings interpolate neighboring stored samples. Units are time
+ for continuous solvers and iterations for maps. A scalar signal's measured
+ return period is not a proof of the full state's fundamental orbit period.
+ largest_lyapunov: native complete-state CVODES variational QR,qr_step(default0.5),
+ max_intervals(default4096),bdf/adams,1..32 real coordinates. The finite-time
+ largest exponent is a summary, not a chaos classifier. ODE mass matrices,
+ events/resets and DAEs require their own correctly differentiated tangent flows;
+ unsupported substitutions are explicitly rejected.
+ event_time: occurrence event_index(default1) of a localized compiled native
+ event; absence is an error, not a substituted final time or zero summary.
+
+Native ODE summaries accept solver.mass=complete constant real n-by-n matrix.
+solver.event is a checked native function(time,all state groups,all original
+model parameters) returning one real root. event_direction=-1/0/1 and
+event_terminal=0/1(default1). Parameter variation is passed to the resident event
+callback at runtime; model/event source structure is not recompiled per sample.
+Ordinary final/temporal summaries continue rejecting early terminal trajectories;
+event_time explicitly interprets the requested event instead.
+
+kind=dae summary adapter
+Pass a checked native residual function beginning(time,complete y groups,
+matching complete yp groups[,trailing parameters]); residual output width=n.
+Use options(initial=...,initial_derivative=...,algebraic=mask,parameters=...).
+All1..32 real coordinates and complete declared algebra/array groups are kept.
+Mask0=differential,1=algebraic. Native IDAS evaluates the generated residual and
+automatic Jy/Jyp; no explicit-ODE tangent approximation is substituted.
+solver.initialization=consistent(default)/check; consistency is recomputed for
+each varied physical parameter vector. Existing local index-one checks apply.
+solver.jacobian=analytic(default)/finite_difference; t0,t1,sample_step,rtol,atol,
+max_steps,max_evaluations,max_seconds,initial_residual_tolerance,index_tolerance,
+transient. Optional event uses the same signature as the residual and returns
+one real root; event_direction,event_terminal,max_events control its localization.
+Final/temporal/period/event summaries are supported; largest_lyapunov for DAEs
+is rejected because constrained variational dynamics require a separate contract.
+State-dependent mass systems can be expressed by the native residual F(t,y,yp).
+
+Every native equation/residual/event is prepared/cached on the owner before
+parallel sensitivity tasks. Each solve owns its integrator scratch and receives
+the shared cancellation/work/CPU budgets. Scientific summary fields,original
+parameter layouts and solver settings remain in the reproducible result record.

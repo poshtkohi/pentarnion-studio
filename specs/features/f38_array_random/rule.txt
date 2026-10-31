@@ -1,0 +1,15 @@
+FEATURE F38: Array constructors and reproducible session random values
+Version: current profile 0.2 extension
+Authority: language.txt L30-L31; user request, 26 October 2026
+Status: implemented; actual validation recorded in docs/VALIDATION.md
+
+F38-R1: zeros/ones/eye, linspace and size/numel/length implement L31 shapes/types.
+F38-R2: rand/randn scalar/dimensioned forms and randi with positive bounded imax
+produce finite values in the documented distributions/ranges and type forms.
+F38-R3: rng(seed)/rng("default") seed a session stream; repeat same Studio calls
+reproducibly without a MATLAB stream-equivalence claim.
+F38-R4: Persist RNG across clear/clc and script runs; reset on Reset Workspace;
+restore pre-request state on cancellation. Checking consumes no random values.
+F38-R5: Validate Integer dimensions/seeds, empty shapes and resource bounds.
+Acceptance: frontend/lexer and deterministic seeded runtime/shape/range/cancel
+regressions. See docs/VALIDATION.md for actual results. No cryptographic RNG is added.

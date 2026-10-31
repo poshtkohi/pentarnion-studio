@@ -1,0 +1,75 @@
+PENTARNION STUDIO LANGUAGE 0.2: FIXED-SHAPE NATIVE ARRAYS
+Canonical rule F113; language summary L101.
+
+1. Types and shape contracts
+matrix<R,C> stores a real matrix, pentarnionmatrix<R,C> stores legacy
+Pentarnion entries, and matrix<A,R,C> stores elements of the earlier immutable
+algebra A. R,C are positive integer literals. A function parameter/result or
+an ODE state using an array must have this fixed shape. Ordinary matrix/vector
+variables remain shape-flexible; assigning a fixed array to an unqualified
+variable does not silently freeze its future shape. Explicit fixed shape and
+entry-algebra contracts persist through workspace save/load and tuple returns.
+
+2. Native callback ABI and caching
+Each array uses row-major cell order, followed by all coefficients of each
+cell. This is a real-coordinate C ABI; MATLAB one-based linear indices traverse
+columns independently of this storage order. The generator retains checked
+shape, entry algebra hash, operator order and explicit grouping in its cache
+key. Runtime points/parameters, source layout and source origins do not change
+the key. Generated functions use per-call stack arrays and support reentrant
+execution; no mutable global array/seeding buffers are introduced.
+
+Native callbacks retain the existing 128-input/128-output coordinate bounds;
+native ODEs retain their 64-state-coordinate bound. A local fixed array has at
+most128 cells and local coordinates are bounded to1024 in total. Dynamic block
+or range expansion is interpreted outside native bodies and is not inferred
+as an unbounded native shape. Unsupported contracts fail before compilation.
+
+3. Expressions
+Native arrays support unary signs, equal-shape addition/subtraction, ordered
+matrix multiplication, entrywise products, real scaling/division, entrywise
+real denominators, transpose/conjugate transpose, literal/end scalar indexing,
+literal/end indexed assignment, and nonnegative square matrix powers0..64.
+Scalar algebra multiplication preserves left/right order. Three unparenthesized
+nonassociative array operands retain E1301; this applies to legacy Pentarnions
+and native definitions without exactly proved associativity. No reassociation
+or power-associativity assumption is introduced by matrix multiplication.
+
+Whole-array equations and negative matrix powers require an explicit solver;
+they are not replaced by entrywise reciprocals. Entrywise elementary functions
+use the same whole-element, unit/property/domain checks as scalar elements.
+sum/mean reduce along a literal dimension, with MATLAB's first non-singleton
+dimension as default. Runtime generic-array reductions retain entry order and
+accumulate every coefficient in wide arithmetic; mean divides before binary64
+conversion to avoid unnecessary overflow or lost subnormal constants.
+norm(A,"fro") uses all real coefficients; a nonscalar
+matrix must request this explicit Frobenius norm in native code.
+
+4. Derivatives and numerical adapters
+jacobian, gradient, hessian, jvp, vjp, hvp, derivative_check and thirdderivative
+use the complete checked real-coordinate layout. Jacobians/Hessians remain real
+coordinate matrices; matching typed-array directions are accepted for JVP/HVP
+and trilinear derivative products. Matrix shape does not change the meaning of
+these derivatives or turn them into algebra-valued derivatives.
+
+5. ODE values and dense evaluation
+A scalar sample of an array-state series reconstructs the checked entry algebra
+and shape. statecoord(s.A,index0) selects a zero-based row-major real coordinate
+as a real series, suitable for time-series plotting. deval(s,t[,"A"]) at one
+real query reconstructs the array; multiple query times produce a real matrix
+with one row per query and one column per complete state coordinate. Complex
+and native scalar-element states use the same complete-coordinate rule.
+Retained polynomial dense output is preferred; retained endpoint slopes provide
+cubic Hermite evaluation when no polynomial segments exist. Queries outside
+the retained interval fail rather than extrapolate silently.
+
+6. Budgets and preservation
+Generic interpreted matrix operations use Studio's shared CPU reservation and
+cancellation. Immutable table snapshots and source-origin text count against
+the existing retained workspace limits. Workers do not mutate VM operation
+counters. Persistence validates dimensions, coefficient count, finite values,
+entry definition and optional fixed-shape constraints before installing data.
+
+This rule does not by itself claim general N-D native array callback signatures,
+sparse derivative operators, arbitrary tensor slicing or complex N-D solves.
+Those require their separate contracts and acceptance tests.

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "Ordered Algebra Networks",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "quaternion-left-and-right-edge-actions.p",
+    "octonion-two-sided-edge-bracketing.p"
+  ]
+}

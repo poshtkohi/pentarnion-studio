@@ -1,0 +1,73 @@
+F150 / L140: NATIVE TRANSIENT HIGH-ORDER FINITE ELEMENTS
+Status: implemented candidate; numerical acceptance is recorded in docs/VALIDATION.md.
+
+record solution=femtime(native_reaction,tagged_mesh[,options]);
+matrix values=femtimecoeff(solution,zero_based_coefficient);
+record field=femtimeslice(solution,one_based_retained_sample[,options]);
+femsystemplot(field[,options(component=0,axes=[1,2,3])]);
+
+The equation is du/dt-div(D grad u)+R(u,t,x)=f(t,x). State packing, ordered
+algebra diffusion and explicit product brackets follow femsystem. Every state
+coefficient is retained; a width of five never identifies an algebra implicitly.
+H1 triangle orders1..4 use a consistent assembled mass matrix. Physical meshes
+have2..5 real embedding coordinates. A native parameter chart and explicit
+parameter_vertices use its full induced metric at quadrature points, including
+curved surfaces. Geometry is fixed in time. All callbacks execute native cached
+code; reaction Jacobians are emitted by the compiler. No user Jacobian is needed.
+
+Reaction callback: complete leading state variables,time,all physical coordinates,
+then explicit runtime parameters. Forcing/initial/exact/diffusion callbacks:
+time,physical coordinates,then runtime parameters. The optional tag_normal
+boundary signature is time,tag,coordinates,conormal,then runtime parameters.
+Native geometry remains (u,v,parameters). Body/table changes invalidate native
+cache identity; changed time,mesh,parameters or tolerances reuse unchanged bodies.
+
+The default boundary is zero Neumann/flux. Per-tag Dirichlet/Neumann/Robin and
+time-dependent values/Robin alpha share femsystem's explicit boundary contract.
+Consistent mass includes contributions of changing Dirichlet values; no spurious
+stationary anchor is imposed on natural-boundary transient problems. Scalar or
+ordered full diffusion may have positive-semidefinite symmetric part, including
+zero diffusion. Elliptic femsystem retains its strictly positive-definite gate.
+Native state-dependent elliptic fluxes and mixed-order R2 H1 spaces are specified
+in fem_mixed_v0_2.txt; transient mixed H(div)/H(curl) spaces remain separate.
+
+Backward Euler uses native sparse Newton/line search and shared-budget parallel
+GMRES/block-Jacobi. adaptive=1 compares one full step with two half steps, uses
+the two-half result, and controls the RMS coordinate-scaled local difference.
+This is first-order time integration; it does not imply a high-order RK method.
+Retained sample times are reached by actual steps. No output interpolation is
+substituted for the integration. Error estimates are numerical local estimates.
+
+Time options: t0=0,t1=1,time_step=.01,sample_step=.05,adaptive=1,rtol=1e-4,
+atol=1e-8,minimum_step=1e-9,maximum_step=max(.1,time_step),max_steps=100000.
+Inner nonlinear options: newton_rtol=1e-10,newton_atol=1e-12; other FEM linear,
+order,visualization_refinement,threads,work/memory/time options follow femsystem.
+threads=0 uses Studio's shared CPU budget. Compilation occurs before numerical
+timing/reservations. max_steps counts accepted plus rejected attempts. Invalid
+native values fail explicitly; only Newton/error-control failures may retry with
+a smaller adaptive step. minimum_step exhaustion is an error, never convergence.
+live_plot accepts Studio's bounded scientific sample-observer options; snapshots
+contain complete retained H1 coordinates and do not interpret user callbacks.
+
+Results retain t,values,points,nodes,components,dimension,mesh,algebra_id/hash,
+basis_labels,value_layout="node_coefficients",accepted/rejected counts,error
+estimate,minimum/maximum step,native work/cache/thread counts and a complete final
+field record. values has samples rows and nodes*components columns in node-major
+coefficient order. field stores all high-order nodal/connectivity and independent
+visualization arrays. residual_semantics identifies the last accepted implicit
+substep; zero-duration solves identify initial_state_no_time_step. Field residuals
+must not be read as a stationary-equilibrium claim.
+
+femtimecoeff selects a zero-based complete coefficient and returns samples-by-
+nodes real data. femtimeslice selects a one-based retained sample, preserves all
+H1 coefficients and evaluates the original H1 basis at the independent plotting
+grid. It never demotes high-order data to piecewise-linear vertex interpolation.
+The returned snapshot clears final-time exact-error/solve-convergence diagnostics.
+Native H1 evaluation options threads,max_work,max_bytes,max_seconds are accepted.
+
+Bounds:50000 scalar DOFs,200000 state coordinates,100000 samples,8000000
+retained time coordinates,explicit conservative memory/work/wall-time/cancellation
+limits. No distributed MPI or automatic moving-mesh/atlas assembly is implied.
+Acceptance:tests/runtime/fem_time_kernel_tests.cpp and fem_time_language_tests.cpp.
+Examples:examples/high-order-finite-elements/transient-stiff-cubic.p and
+transient-curved-surface.p.

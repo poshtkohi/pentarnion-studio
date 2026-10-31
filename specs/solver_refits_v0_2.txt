@@ -1,0 +1,88 @@
+NATIVE PARALLEL ODE/PDE REFITS, PROFILES AND BOOTSTRAP -- language0.2
+27 October2026. F130 / L120. Bounded extension of the existing native inference
+and native Ceres fitting modules; existing curvefit/odefit APIs are preserved.
+
+odemultistartfit(model,starts,times,observations,options(...))
+odeprofilefit(model,theta0,times,observations,index,grid,options(...))
+odefitbootstrap(model,theta0,times,observations,options(...))
+The equivalent PDE commands are pdemultistartfit/pdeprofilefit/pdefitbootstrap.
+ODE models are declared ode bodies; PDE models are typed reaction functions
+(state,time,x[,y],parameters...). Scientific callbacks compile to cached native
+DLL/SO files before worker dispatch. Parameters/initials/tolerances do not rebuild
+unchanged callback bodies. Solver loops execute native SUNDIALS/PDE/Ceres code.
+
+Every command requires options(initial=...,parameters=options(...)). ODE initials
+retain every coefficient and may be typed scalar elements, complete state tuples
+or flat real coordinates. PDE initial fields match explicit options(x=...,y=...).
+kind="pde1" (default) or "pde2" selects the PDE adapter. Fields are real or legacy
+five-coordinate Pentarnion fields, with x-fastest 2D node ordering.
+fit_parameters is "all" (default), "none", a declared parameter name, tuple of
+names, or one-based flat parameter indices. Every named algebra parameter retains
+its complete coefficient block. PDE diffusion parameters use solver.diffusion or
+solver.diffusion_x/solver.diffusion_y names, avoiding reaction-name collisions.
+fit_initial=1 also fits every initial coordinate, or a real index vector selects
+explicit one-based initial coordinates. At most16 total fit coordinates apply.
+theta0 contains those selected physical coordinates in selection order; starts
+has one complete candidate per row. fit_coordinates reports columns(kind,index),
+where kind1 means a parameter and kind2 an initial coordinate.
+
+Observations have one row per time and complete real coordinates in columns.
+observation_coordinates selects one-based flat state/node coefficients; default
+is every coordinate. observations, fitted_shape and observation_coordinates make
+the flattened layout explicit. fitted_curves has one task per row and samples
+ordered(time,selected coordinate). All1..16 fit coordinates and2..4096 scalar
+observations are bounded before native dispatch. Up to4096 independent runs and
+the ordinary configured retained-array/work/time limits apply.
+
+ODE observations use the requested native solver output times. Analytic refit
+Jacobians use compiler AD and CVODES forward sensitivities, including selected
+initial-state seeds; choose BDF/Adams. Finite differences of complete native ODE
+solves are explicit and also permit native ERK/ESDIRK. Constant real mass matrices
+use the existing native ODE contract. Events/DAEs are not silently approximated by
+this adapter. PDE refits explicitly use finite differences of complete native
+solves; no analytic PDE sensitivity claim is made. Current PDE choices are1D FD/
+P1-FE or2D FD, RK4/IMEX, and existing homogeneous/constant boundary contracts.
+PDE times must appear on the retained native sample grid; missing times become
+task-local failures, never invented/interpolated data.
+
+Independent refits use Studio's shared CPU workers with inner_threads=1. Each
+worker owns its solver state and prediction buffers; one complete trajectory and
+Jacobian is cached per physical point/worker and reused across observation rows.
+max_bytes bounds a conservative per-worker solver/cache forecast plus retained
+result buffers; allocator/backend internal RSS is not an exact byte guarantee.
+native_solver_evaluations counts actual native integration attempts, including
+finite-difference probes, rather than scalar observation lookups.
+
+Common fitting controls match the existing inference adapter: method LM/dogleg,
+lower/upper/parameter_scale, max_iterations/max_evaluations/ftol/gtol/xtol,
+fit_wall_seconds, whole-experiment max_wall_seconds, threads/seed/batch_size,
+max_native_operations, and MATLAB-style OutputFcn/OutputEvery. Real solver
+iteration snapshots are observed on the initiating thread using the existing
+bounded queue; no interpreted scientific model executes on pool workers.
+
+Profiles fix one selected fitted coordinate and refit nuisance coordinates.
+objective="sse" returns descriptive delta_sse; gaussian_known_variance requires
+an explicitly positive noise_variance and returns deviance. Baselines are local;
+reference_is_local and baseline_improved qualify that interpretation. Numerical
+convergence does not establish uniqueness. rank_deficient and profile_valid must
+be considered before interpreting results; failed rows retain status/messages.
+
+Bootstrap sampling is pairs, residual (default) or moving_block. These resample
+SCALAR observation coordinates in stored time/coordinate order; simultaneous
+multicomponent/spatial correlation requires a scientifically justified block
+choice or a later structured-noise adapter. Task-specific streams are independent
+of worker scheduling. Only full-rank successful refits contribute to statistics.
+statistics_valid gates parameter_mean/std/correlation and fitted_lower/upper.
+Bands are pointwise fitted-mean percentile bands under the stated resampling
+assumptions, not future noisy-observation intervals or simultaneous coverage.
+
+checkpoint/resume/overwrite_checkpoint/retry_failed reuse the existing hashed,
+atomic completed-task inference ledger. Source/model/backend/settings/data/seeds
+and solver observation selectors participate in identity. Worker count and batch
+size may change. Completed tasks are reused; interrupted Ceres fits restart from
+their recorded initials. Corrupt/incompatible ledgers reject without replacement.
+Checkpoint write failure is reported without discarding numerical results.
+
+Examples: parallel-solver-refits/project.pprj.
+Acceptance: solver_refit_tests.cpp; solver_refit_language_tests.cpp; platform-wide
+test/release evidence is recorded separately by the integration runner.

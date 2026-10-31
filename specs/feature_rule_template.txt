@@ -1,0 +1,15 @@
+FEATURE <ID>: <NAME>
+Version: 0.1
+Status: specified, not implemented
+Implementation stage: S<N>
+Purpose:
+Dependencies:
+Authority: language.txt and/or specs/algebras/A_gamma_v1.txt
+Inputs and outputs:
+Required behaviour (numbered, stable requirement IDs):
+Failure behaviour / edge cases:
+Positive examples:
+Negative examples:
+Acceptance tests (stable test IDs, executable/manual designation):
+Out of scope:
+Change record:

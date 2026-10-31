@@ -1,0 +1,88 @@
+F160 / L150: SHARED NATIVE BLAS CONFIGURATION COORDINATION
+Status: implemented candidate; executed acceptance is recorded in docs/VALIDATION.md.
+
+The lazy penta_blas shared support library supplies one process-wide OpenBLAS
+configuration epoch for penta_linalg and penta_petsc. The application/runtime
+does not link this dependency directly. Loading a feature module loads its
+support dependency; unused features do not initialize PETSc or map BLAS merely
+because their language names exist. The support DLL/SO installs beside the
+executable; numerical modules find it through their normal dependency/RPATH.
+
+Thread selection remains Studio's shared CPU budget's responsibility. Language
+threads=0 is resolved by that host; the coordinator accepts only an explicit
+positive request<=the supplied host grant<=64. It creates no workers and never
+changes a requested CPU budget. Parallel matrix tiles retain one BLAS thread
+per worker; internally threaded factorizations retain their granted count.
+
+Compatible equal-count calls share an immutable configuration epoch concurrently
+on pthread OpenBLAS and the matching GNU OpenMP/libgomp backend. A changed count or exclusive initialization waits
+for active clients to finish. Configuration setters never resize a pool while
+managed incompatible work is active. Sequential vendor builds remain exclusive for independent clients. GNU OpenMP
+builds additionally capture each owner's original max-thread/dynamic ICV, apply
+the granted count and disable dynamic teams on that caller, then restore only
+when that owner's final token ends (including out-of-order nested token ends).
+The OpenBLAS global buffer/count epoch remains protected across all owners;
+per-caller ICVs never replace global synchronization. PETSc exclusive reassertion
+also reapplies the caller ICV before downgrade. Unknown OpenMP runtime closures
+without the matching coordinator adapter reject explicitly. Team-count
+regressions execute actual OpenMP regions under environment counts4 and8; a
+reported vendor getter alone is not accepted as evidence of a capped team. New independent compatible clients yield to pending reconfiguration
+writers. Same-owner nested compatible work remains admissible, avoiding callback
+deadlock behind a waiting writer. Nested upgrades/count changes reject explicitly.
+
+PETSc's first initialization receives an exclusive one-thread epoch: PETSc may
+honor OPENBLAS_NUM_THREADS/OMP_NUM_THREADS and call its global BLAS setter. The
+adapter reasserts one thread before publishing the epoch, then downgrades it so
+compatible linalg operations may overlap the solve. PETSc's own sparse/vector
+work retains the granted host pool. Later PETSc operations use compatible
+one-thread BLAS epochs. PETSc configuration remains serialized separately; a
+reentrant PETSc iteration call rejects explicitly instead of locking itself.
+Its iteration callback may still perform compatible linalg work.
+
+The original backend thread count is restored when the last managed lease ends.
+Vendor globals are not permanently changed. This covers Studio-managed adapters
+using the same linked OpenBLAS instance; arbitrary external libraries that bypass
+the coordinator are outside its authority and must join the C ABI when integrated.
+CPU reservations must be taken before backend/configuration locks. The
+coordinator never acquires Studio's CPU pool while waiting for a BLAS epoch.
+
+Native ABI: modules/blas_coordinator_api.h. begin(host,request,lease) validates
+the host grant and empty output token; reassert requires the exclusive owner;
+downgrade requires a sole exclusive owner with a reasserted live configuration;
+end releases exactly one same-owner live token. status reports active leases/
+owners/waiters,configured/backend counts,epochs,configuration changes,compatible
+overlaps,maximum active owners and aggregate wait nanoseconds. Owners/leases are
+metadata, not a replacement for CPU-worker statistics. Tokens are bounded to4096
+simultaneous leases and4096 waiters; stale,foreign,copied-after-end/cross-thread
+or descriptor-mutated leases reject. Host context is used only while admitting/
+waiting; it is not retained after acquisition. RAII clients release on exceptions.
+Cancellation while waiting is polled at bounded10ms intervals. Failure does not
+publish a token or leak active/waiter accounting. Support-library lifetime follows
+the feature registries; callers must finish leases before unloading their code.
+
+Existing linear-algebra and PETSc module interfaces and mathematical operations
+are unchanged. Factorization/rank/residual semantics are not weakened. Original
+matrix buffers and true-residual checks remain authoritative.
+
+Acceptance:tests/runtime/blas_coordinator_tests.cpp covers actual compatible
+overlap,cancellation,nested callbacks,exclusive reassertion,lifetime/capacity and
+concurrent independent matrix buffers. blas_cross_module_tests.cpp loads the real
+linalg/PETSc DLLs/SOs and uses an existing two-worker CPU reservation. Separate
+fresh processes with OPENBLAS_NUM_THREADS=4 and8 verify initialization waits,
+one-thread capping,post-init compatible overlap,correct BLAS/PETSc results and
+no remaining leases/configuration residue. Performance measurements have no
+hardware-dependent pass/fail speedup threshold.
+
+F161: OPTIONAL NATIVE BLAS OVERLAP BENCHMARK (CLI ONLY)
+tools/benchmark-blas-coordinator.cpp builds penta-blas-benchmark when requested.
+Usage:penta-blas-benchmark [dimension64..1024] [repeats1..20]. Defaults384 and5.
+It measures pairs of serial and shared-budget simultaneous one-thread GEMMs,
+with independent dyadic checksums outside the timed region. CSV reports size,
+repeats,CPU slots,mean serial/parallel pair seconds,speedup,compatible-overlap
+count,maximum active owners and checksum success. It warms the vendor kernels
+and holds one explicit batch configuration epoch in both cases. No language
+keyword is added; results describe this machine/run and are not a general
+performance guarantee. On a single logical CPU the same program reports one slot.
+
+OpenMP vendor audit: OpenBLAS v0.3.34 driver/others/blas_server_omp.c
+https://github.com/OpenMathLib/OpenBLAS/blob/v0.3.34/driver/others/blas_server_omp.c

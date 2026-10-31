@@ -1,0 +1,35 @@
+FEATURE F11: Language help, symbol types and basic completion
+Version: 0.2
+Status: read-only Language Reference, explicit reload and author/contact About
+        implemented; Feature Rules browser, loaded-path display, completion,
+        symbol view and signature hover remain deferred
+Implementation stage: S4
+Dependencies: F07/F09/F10
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F11-R1: Help -> Language Reference opens language.txt read-only. Feature Rules
+         opens the index then the associated rule.txt, with a reload action.
+F11-R2: Show specification version and loaded path. Missing docs produce a
+         clear warning, not an invented substitute language definition.
+F11-R3: Basic completion lists supported types/basis/builtins and visible
+         declared identifiers. No AI service, LSP server or network dependency.
+F11-R4: The deferred symbol view shows declared type and source location only.
+         Actual evaluated values are shown by explicit interpreter/Command
+         Window operations; never fabricate values from static analysis.
+F11-R5: Signature hover is sourced from shared builtin metadata and references
+         relevant rules for reciprocal, powers and division.
+F11-R6: Rule files are documentation, not evaluated programs or runtime plugins.
+
+ACCEPTANCE
+The reference/reload and About behavior is implemented. F11-T2/T3 and the
+Feature Rules browser remain future acceptance work, not completed UI claims.
+F11-T1: Help reload displays a changed documentation file after explicit reload.
+F11-T2: A variable appears with its type after a valid declaration and can be
+         navigated to; a numerical result is never fabricated.
+F11-T3: Completion does not insert unsupported future ODE/search or generic plot commands.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

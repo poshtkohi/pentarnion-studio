@@ -1,0 +1,20 @@
+#include "modules/form_pullback_api.h"
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <vector>
+namespace {
+unsigned checks=0,failures=0;void verify(bool value,const char* text){++checks;if(!value){++failures;std::cerr<<"FAIL "<<text<<'\n';}}
+bool close(double a,double b){return std::abs(a-b)<1e-10*std::max({1.,std::abs(a),std::abs(b)});}
+struct Result{int status;std::vector<double> c,d,h,g,dg,hg;uint64_t work=0;};
+Result run(penta_form_pullback_request_v1 q,bool cancel=false){const auto n=q.domain_dimension;Result out{};out.c.resize(20);out.d.resize(20*n);out.h.resize(20*n*n);out.g.resize(n*n);out.dg.resize(n*n*n);out.hg.resize(n*n*n*n);penta_form_pullback_result_v1 r{};r.struct_size=sizeof(r);r.form.struct_size=sizeof(r.form);r.form.capacity=20;r.form.coefficients=out.c.data();r.form.first=out.d.data();r.form.second=out.h.data();r.metric=out.g.data();r.metric_first=out.dg.data();r.metric_second=out.hg.data();penta_geometry_extra_host_v1 host{sizeof(host),PENTA_GEOMETRY_EXTRA_ABI_V1,&cancel,+[](void* p){return *static_cast<bool*>(p)?1:0;},nullptr,nullptr};char error[1024]{};out.status=penta_form_pullback_query_v1(PENTA_FORM_PULLBACK_ABI_V1)->compute(&host,&q,&r,error,sizeof(error));out.work=r.form.work_units;if(out.status!=0&&out.status!=1&&out.status!=3&&out.status!=7)std::cerr<<error<<'\n';return out;}
+}
+int main(){
+    penta_form_pullback_request_v1 q{};q.struct_size=sizeof(q);q.domain_dimension=1;q.max_work=1000000000;q.tolerance=1e-12;const double a[]{64},da[]{16},ha[]{2},g[]{1},j[]{12},h[]{12},t[]{6};q.source={1,1,2,0,1,0,a,da,ha,g};q.map_first=j;q.map_second=h;q.map_third=t;const auto cubic=run(q);verify(cubic.status==0,"Cubic native map pullback computes complete second jets");verify(close(cubic.c[0],768)&&close(cubic.d[0],3072)&&close(cubic.h[0],10752),"Independent 3*x^8 one-form and its two derivatives");verify(close(cubic.g[0],144)&&close(cubic.dg[0],288)&&close(cubic.hg[0],432),"Third map derivatives retained in induced metric Hessian");
+    q.domain_dimension=2;const double polarA[]{0,2},polarD[]{0,-1,1,0},polarH[8]{},identity[]{1,0,0,1},polarJ[]{1,0,0,2},polarSecond[]{0,0,0,-2,0,1,1,0},polarThird[]{0,0,0,-1,0,-1,-1,0,0,0,0,0,0,0,0,-2};q.source={2,1,2,0,1,0,polarA,polarD,polarH,identity};q.map_first=polarJ;q.map_second=polarSecond;q.map_third=polarThird;const auto polar=run(q);verify(polar.status==0,"Polar chart pullback accepts analytic symmetric third tensor");verify(close(polar.c[0],0)&&close(polar.c[1],4)&&close(polar.d[2],4)&&close(polar.h[4],2),"Cartesian rotation one-form pulls back to r^2*dtheta with correct jets");verify(close(polar.g[0],1)&&close(polar.g[3],4)&&close(polar.dg[6],4)&&close(polar.hg[12],2),"Euclidean metric pulls back to polar metric through second order");
+    const double targetA[]{1,0,0},targetD[9]{},targetH[27]{},targetG[]{1,0,0,0,1,0,0,0,1},surfaceJ[]{1,0,0,1,0,0},surfaceH[]{0,0,0,0,0,0,0,0,2,0,0,2},surfaceT[24]{};q.source={3,2,2,0,1,0,targetA,targetD,targetH,targetG};q.map_first=surfaceJ;q.map_second=surfaceH;q.map_third=surfaceT;const auto surface=run(q);verify(surface.status==0&&close(surface.c[0],1),"Immersed R2-to-R3 surface pulls back a two-form");verify(close(surface.hg[0],8)&&close(surface.hg[5],4)&&close(surface.hg[6],4)&&close(surface.hg[15],8),"Induced paraboloid metric Hessian has independent analytic entries");
+    double singularJ[6]{};q.map_first=singularJ;verify(run(q).status==1,"Rank-deficient maps reject the singular pullback metric");q.map_first=surfaceJ;q.max_work=1;verify(run(q).status==7,"Native pullback work budget is enforced");q.max_work=1000000000;verify(run(q,true).status==3,"Native pullback cancellation is cooperative");double asymmetricT[24]{};asymmetricT[1]=1;q.map_third=asymmetricT;verify(run(q).status==1,"Inconsistent third tensor cannot masquerade as analytic jets");q.map_third=surfaceT;q.source.derivative_order=1;verify(run(q).status==1,"Unknown source Hessians are rejected instead of fabricated");
+    std::cout<<checks<<" form pullback checks, "<<failures<<" failures\n";return failures?1:0;
+}

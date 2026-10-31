@@ -1,0 +1,74 @@
+F128 / L118: NATIVE NONLINEAR/VECTOR/ALGEBRA HIGH-ORDER H1 FEM
+
+femsystem(reaction,mesh[,options]) solves -div(D grad u)+R(u,x)=f(x)
+with continuous nodal H1 elements of order1..4 on tagged triangle meshes.
+The reaction begins with complete state arguments followed by every2..5 real
+embedding coordinate; it returns those same state types/order. The compiler
+emits its analytic local state Jacobian in a cached DLL/SO. Real vectors,
+complex values, Pentarnions and immutable algebra elements/fixed arrays retain
+all1..64 real state coordinates. No width5 inference or associative regrouping
+is introduced. The sparse global Jacobian is assembled from those local jets.
+
+Options: order=2,visualization_refinement=max(4,order),forcing=0,initial=0,
+exact(optional),diffusion=1,diffusion_side="left",boundary="dirichlet",
+boundary_value=0,robin_alpha=0,rtol=1e-10,atol=1e-12,
+linear_tolerance=1e-10,max_newton=30,max_linear=1000,gmres_restart=40,
+max_work=(execution allowance),max_bytes=536870912,max_seconds=120,threads=0.
+Every callback has its separate trailing parameter record: parameters(for
+reaction),forcing_parameters,initial_parameters,exact_parameters,
+diffusion_parameters,boundary_parameters,geometry_parameters.
+
+Forcing/initial/exact fields return every complete state and consume the physical
+coordinates. Uniform values may be typed scalars/tuples or explicit complete
+real coordinate vectors. Zero means the coordinate zero, even without a unit.
+Diffusion is a positive real scalar, full real components-by-components block,
+or exact state-algebra element with explicitly ordered left/right action.
+Spatial native diffusion callbacks return the same forms. The symmetric part
+must be positive definite/resolved at every sampled quadrature point. This is
+not a global positivity proof for arbitrary supplied coefficient functions.
+
+Boundary types:dirichlet,neumann/flux,robin. Natural/Robin data mean outward
+conormal D*grad(u).n+alpha*u=g on the physical manifold. A boundaries record is
+keyed tag1,tag2,...; each entry may set type,value,alpha,parameters,
+alpha_parameters,signature. Default signature="coordinates" consumes physical
+coordinates. signature="tag_normal" consumes real tag,all coordinates,all
+outward tangent-conormal coordinates. Value/alpha callbacks are cached native
+functions. Conflicting Dirichlet data at a common DOF reject. By default each
+connected component needs a Dirichlet anchor; allow_unanchored=1 permits an
+explicitly intended reaction/Robin-constrained problem. It does not invent a
+gauge for a singular pure-Neumann system (use mean-constrained femsolve for
+that established scalar linear capability).
+
+Native curved geometry:options(geometry=map,parameter_vertices=UV) supplies
+two parameter coordinates for each physical mesh vertex. The native map
+returns every2..5 embedding coordinate and its compiler-generated Jacobian.
+It must match the supplied physical vertices and shared H1 nodes. Physical
+metrics, gradients, quadrature weights and boundary conormals are evaluated
+from the actual native chart at quadrature, rather than flattening a curved
+surface or truncating beyond three coordinates. Without this option, geometry
+is the complete piecewise-affine triangle surface. Immersion/finite checks
+reject degenerate charts. A single supplied chart is not a global atlas solve.
+
+MFEM4.10 supplies reference H1 bases/topology. Its configuration and reference
+preparation are serialized under the existing shared reservation/reentry guard.
+Immutable physical quadrature, nonlinear assembly, block-Jacobi preconditioning,
+GMRES matrix products/reductions and field sampling use Studio's shared CPU
+pool. Native callers may request threads=0(auto) or1..64; nested work remains
+inside the granted budget. There is no private OpenMP pool. Damped Newton and
+restarted two-pass GMRES verify the final original free-DOF residual. An
+iteration limit/stalled line search is reported without false convergence.
+
+Maximum50000 scalar DOFs,200000 state coordinates,64 state coefficients,
+100000 triangles,order<=4,explicit conservative sparse/quadrature/Krylov/output
+storage and work/time/cancellation bounds. The final report retains full
+dof_coordinates,dof_values,one-based vertex_dofs,independent sampled
+visualization_vertices/values/triangles,all callback identities,algebra hash/
+basis metadata,Newton/linear/Jacobian counts,verified residuals and optional
+quadrature-based exact-solution L2 error. The latter is Euclidean in the
+declared real state coordinates; no composition norm is assumed.
+
+femsystemplot(field[,options(component=0,axes=[...])]) selects a zero-based
+state coefficient for color/height. Four/five-dimensional physical geometry
+requires explicit2D/3D one-based axes. The full field remains retained.
+Mixed finite-element spaces, general state-dependent diffusion, automatic
+global atlas domain assembly and distributed MPI are separate capabilities.

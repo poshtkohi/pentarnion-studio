@@ -1,0 +1,9 @@
+F93: Profiles, bootstrap and multistart refits
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Cached Ceres curve models, nuisance refits, explicit known-variance deviance or descriptive SSE, dependency-aware bootstrap, rank/failure masks and pointwise fitted-mean bands. Shared workers and completed-task checkpoints apply.
+
+Authority: language.txt L81; specs/research_modules_v0_2.txt.
+Acceptance: examples/native-inference-and-refits/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

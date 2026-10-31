@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "Implicit Pdes",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "adaptive-stiff-reaction.p",
+    "implicit-pentarnion-surface.p",
+    "mixed-time-dependent-boundaries.p",
+    "ordered-quaternion-diffusion.p",
+    "spatial-convergence-and-refinement.p"
+  ]
+}

@@ -1,0 +1,38 @@
+FEATURE F15: Equation division with numerical status
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S6
+Dependencies: F13/F14; Eigen adapter
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F15-R1: Right divide(p,q): solve R_q*x=p. Left divide(p,q): solve L_p*x=q.
+         Do not implement them by multiplying canonical reciprocals.
+F15-R2: Use a documented rank-revealing Eigen decomposition, such as JacobiSVD
+         for 5x5 matrices. Do not form an explicit matrix inverse as the solve.
+F15-R3: Return status, estimated numerical rank, scaled residual, conditioning
+         and optional unique solution. Distinguish unique, ill-conditioned,
+         singular-consistent/nonunique, singular-inconsistent and nonfinite.
+F15-R4: Rank tolerance is scale-relative and documented, e.g. rtol*sigma_max
+         with a stated default tied to double precision; no arbitrary absolute
+         threshold that changes rank merely under scalar rescaling.
+F15-R5: A strict quotient requires an accepted unique result. No silently
+         accepted pseudoinverse or least-squares answer. Exact singularity is
+         not proved by a floating numerical rank estimate.
+F15-R6: No source expression is executed by the static checker to test rank.
+         Explicit interpreter execution invokes the same tested C++ operations;
+         checking/opening/saving source never evaluates a solve.
+
+ACCEPTANCE
+F15-T1: With gamma=1, right_divide(i,j)*j approximately equals i, unlike the
+         canonical reciprocal multiplication example in F14.
+F15-T2: Known paper zero divisor produces a numerical nonunique consistent solve
+         for zero RHS, and an inconsistent test RHS is distinguished correctly.
+F15-T3: Verify left vs right ordering and residuals for mixed coefficients.
+F15-T4: Scaling a linear system does not spuriously change a well-resolved rank;
+         near-singular input reports conditioning rather than a fabricated proof.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

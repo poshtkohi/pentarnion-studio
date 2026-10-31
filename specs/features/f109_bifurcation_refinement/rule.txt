@@ -1,0 +1,6 @@
+F109: Native fold, Hopf and period-doubling refinement
+Authorized second-roadmap extension,27 October2026.
+refinebifurcation corrects augmented equilibrium or periodic equations with explicit parameter coordinates and full1..8 real state coordinates. Equilibrium correctors use native AD2; period-doubling correctors explicitly use centered differences of native first-variation flow. Simple-mode, transversality, phase, closure and refinement checks produce numerical candidate evidence. Hopf/flip cubic criticality and certified bifurcations are not inferred.
+Authority: language.txt L97; specs/bifurcation_refinement_v0_2.txt.
+Acceptance: examples/bifurcation-point-refinement/project.pprj and independent native/runtime checks.
+Actual platform and integration evidence belongs in docs/VALIDATION.md.

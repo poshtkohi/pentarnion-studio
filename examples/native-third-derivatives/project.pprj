@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Native analytic third directional derivatives",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "real-trilinear-derivative.p",
+    "one-element-calculus-at-the-origin.p",
+    "ordered-pentarnion-products.p"
+  ]
+}

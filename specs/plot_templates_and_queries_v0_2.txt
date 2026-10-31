@@ -1,0 +1,39 @@
+F142 / L132: REUSABLE STYLES, LINKED CAMERAS AND NATIVE VECTOR OUTPUT
+
+saveplottemplate(path[,options(overwrite=0)]) serializes the active subplot's
+complete style plus title/x/y/z/caption and individual LaTeX flags. Version1
+PentarnionPlotTemplate is bounded, strict data-only JSON; no code, image URLs,
+fonts from files or external assets are loaded. Existing files require explicit
+overwrite. loadplottemplate(path) validates the entire template and all labels
+before applying it, preserving the original plot's data and other subplots.
+The Figures toolbar exposes the same Save Style / Load Style operations.
+
+linkcamera([subplot_ids]) links2..64 allocated3D panels in the current figure.
+Rotating, panning, zooming or resetting one copies its native camera to the linked
+panels. Empty IDs unlink. Invalid/non3D/duplicate selections preserve prior links.
+This is independent of linkaxes for2D numeric limits. The Link3DViews toolbar
+provides the corresponding GUI operation.
+
+exportgraphics(path[,options(...)]) supports native headless PNG/SVG/PDF through
+the same scene/projection/layout. SVG and PDF require the optional lazy native
+penta_vector_plot module. The runtime/core link neither Qt nor VTK. The module
+uses the same bounded JKQTMathText mathematical renderer as Studio. SVG text is
+outlined to glyph paths with accessible source labels; PDF embeds fonts. There
+is no embedded raster plot, web renderer or recipient font dependency for SVG.
+All complete vector coefficients, algebra hashes/basis labels and source labels
+remain in metadata. Whole figure/subplot, explicit pixel size/DPI/overwrite,
+layout/point/output/cancellation limits and atomic publication apply. Unsupported
+mathematics/labels or missing capabilities fail before replacing output files.
+
+fieldprobe(field,points) spatially interpolates retained structured FD fields at
+explicit1D/2D points, at every stored time. fieldslice(field,"x"/"y",position)
+returns a directly animatable1D slice of a retained2D field. Coordinates must lie
+inside the saved domain; no extrapolation, time interpolation or PDE solve occurs.
+Linear/bilinear interpolation retains all1..64 entry coefficients and immutable
+algebra/basis metadata. Raw fields declare components and node_coefficients layout.
+Animation's coefficient selector/ranges cover every retained coefficient,
+including16-coordinate sedenions. Mesh probing/slicing has separate meshquery APIs.
+
+Examples: examples/reusable-plot-styles-and-probes/project.pprj.
+Acceptance: plot_template_roundtrip, native_vector_exports, spatial_field_queries,
+publication_plot_controls, native_math_annotations and exposed3D camera checks.

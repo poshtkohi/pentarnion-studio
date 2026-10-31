@@ -1,0 +1,35 @@
+FEATURE F04: Editor tabs and syntax presentation
+Version: 0.1
+Status: editing and shared-lexer colouring implemented; explicit checking and
+        interpreter integration are covered by F10/F17/F21. Bracket matching,
+        completion, symbol view and signature hover remain deferred.
+Implementation stage: S1/S2/S4
+Dependencies: F03/F05
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F04-R1: QPlainTextEdit-based source tabs with line numbers, dirty markers,
+         current-line indication, undo/redo and standard clipboard operations.
+F04-R2: Four-space indentation by default; preserve imported tabs, do not
+         silently reformat files. Comment toggle inserts/removes '%' predictably.
+F04-R3: Find/replace within the current file; replacements remain one undoable
+         action where practical. No regex replace requirement in v0.1.
+F04-R4: Syntax highlighting uses token categories from the shared lexer. Qt's
+         QSyntaxHighlighter is a display adapter, not a competing parser.
+F04-R5: Recognise types, immutable bases, numbers, strings, comments, operators,
+         user identifiers and supported built-ins. No fake future features.
+F04-R6: Bracket matching excludes comments/strings. Keep mismatched source
+         editable and saveable. Invalid code never prevents saving.
+F04-R7: A minimal neutral UI; readable default theme; configurable font size.
+         No custom logo, diagram or elaborate source-editor theme engine required.
+
+ACCEPTANCE
+F04-T1: Editing/undo/redo leaves exact source bytes as intended.
+F04-T2: '%' and parentheses in strings/comments do not confuse the highlighter.
+F04-T3: Incomplete p=(i* is highlightable; typing remains responsive.
+F04-T4: Language-aware tokens match the CLI lexer on the same source.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

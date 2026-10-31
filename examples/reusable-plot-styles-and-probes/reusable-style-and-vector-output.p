@@ -1,0 +1,14 @@
+clc; clear; close("all");
+matrix time=linspace(0,6.283185307179586,201);
+figure(1,"Name","Reusable styles and linked cameras","NumberTitle","off");
+subplot(1,2,1);plot3(cos(time),sin(time),time/6.283185307179586);
+plotstyle(options(font_family="serif",font_size=15,line_width=2));
+title("$\\alpha$: retained helical samples");xlabel("$x$");ylabel("$y$");zlabel("$z$");
+saveplottemplate("helix-style.json",options(overwrite=1));
+subplot(1,2,2);plot3(2*cos(time),sin(time),time/6.283185307179586);
+loadplottemplate("helix-style.json");
+linkcamera([1,2]);
+caption("Rotate either3D panel: linked cameras retain distinct data.");
+exportgraphics("linked-helices.svg",options(width_cm=24,height_cm=12,overwrite=1));
+exportgraphics("linked-helices.pdf",options(width_cm=24,height_cm=12,overwrite=1));
+display("Saved reusable data-only style and outlined/native mathematical vector figures.");

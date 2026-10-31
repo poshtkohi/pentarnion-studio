@@ -1,0 +1,8 @@
+F76: Dynamical metrics and local stability
+Authorized extension,26October2026.
+
+Native ODE/map Lyapunov QR spectra and histories, localized Poincare sections, residual-checked local stability and bounded recurrence. Shooting/Floquet/true continuation and proof claims remain outside the implemented subset.
+
+Authority: language.txt L64; specs/chaos_v0_2.txt.
+Acceptance: examples/chaos-analysis/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

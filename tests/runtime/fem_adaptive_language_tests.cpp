@@ -1,0 +1,15 @@
+#include "runtime/interpreter.hpp"
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <string>
+int main(){using namespace penta;unsigned checks=0,failures=0;runtime::ExecutionOptions options;options.dataDirectory=std::filesystem::temp_directory_path()/("penta-adaptive-fem-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));options.odeCacheDirectory=options.dataDirectory/"cache/odes";options.maxOperations=100000000;std::filesystem::create_directories(options.dataDirectory);auto run=[&](const std::string& source){++checks;const auto result=runtime::execute(source,{},options);if(!result.ok()){++failures;for(const auto& d:result.analysis.diagnostics)std::cerr<<d.code<<" @"<<d.span.offset<<": "<<d.message<<'\n';for(const auto& d:result.runtimeDiagnostics)std::cerr<<d.code<<" @"<<d.span.offset<<": "<<d.message<<'\n';}};
+run("record mesh=trimesh([0,0;1,0;1,1;0,1],[1,2,3;1,3,4],options(boundary_tags=[1,2,1;2,3,2;3,4,3;4,1,4]));record refined=meshadapt(mesh,[1]);record info=meshinfo(refined.mesh);assert(info.triangles==6);assert(info.vertices==7);assert(info.boundary_edges==6);assert(abs(info.area-1)<1e-12);assert(length(refined.parent_faces)==6);record unchanged=meshadapt(mesh,[]);assert(meshinfo(unchanged.mesh).triangles==2);");
+for(const auto* face:{"1,2,3","2,3,1","3,1,2"})run(std::string("record mesh=trimesh([0,0;1,0;0,1;0,-1;1,1],[")+face+";2,1,4;3,2,5],options(boundary_tags=[1,3,1;1,4,2;4,2,3;2,5,4;5,3,5]));record refined=meshadapt(mesh,[2,3]);record info=meshinfo(refined.mesh);assert(info.triangles==11);assert(info.vertices==11);assert(info.boundary_edges==9);assert(abs(info.area-1.5)<1e-12);");
+run("native function [real x,real y] plane(real u,real v){return u,v;}native function [real x,real y,real z] curved(real u,real v){return u,v,u*u+v*v;}record mesh=paramesh(curved,[0,1],[0,1]);record parameters=paramesh(plane,[0,1],[0,1]);record refined=meshadapt(mesh,[1],options(geometry=curved,parameter_vertices=parameters.vertices));matrix p=refined.mesh.vertices;matrix uv=refined.parameter_vertices;assert(norm(p(:,3)-uv(:,1).^2-uv(:,2).^2,\"fro\")<1e-12);");
+run("native function [real x,real y] plane(real u,real v){return u,v;}native function real reaction(real u,real x,real y){return u;}record mesh=paramesh(plane,[0,1],[0,1]);record report=femadapt(reaction,mesh,options(order=2,forcing=1.0,boundary_value=1.0,spatial_levels=2,spatial_rtol=.001));assert(report.converged);assert(report.levels==1);assert(report.scaled_difference<1e-8);assert(report.refinement==\"conforming_red_green\");assert(report.field.cache_hit);record evaluated=femevaluate(report.field,[1,2],[.2,.3;.1,.2]);assert(norm(evaluated.values-1,\"fro\")<1e-10);");
+#ifdef PENTA_SOURCE_DIR
+std::ifstream input(std::filesystem::path(PENTA_SOURCE_DIR)/"examples/high-order-finite-elements/local-adaptive-h1.p");run(std::string((std::istreambuf_iterator<char>(input)),{}));
+#endif
+std::error_code ignored;std::filesystem::remove_all(options.dataDirectory,ignored);std::cout<<checks<<" adaptive FEM language checks, "<<failures<<" failures\n";return failures?1:0;}

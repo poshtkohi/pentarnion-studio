@@ -1,0 +1,18 @@
+FEATURE F32: Monotonic tic/toc elapsed timing
+Version: additive profile0.2 extension
+Authority: language.txt L27
+Status: implemented; actual verification recorded in docs/VALIDATION.md
+
+F32-R1: tic[/()] starts/restarts a single steady wall-clock session timer.
+F32-R2: bare/standalone toc prints seconds; expression toc() returns Real silently.
+F32-R3: Missing tic is R1811; no timer handles or arguments are admitted.
+F32-R4: Preserve timer across console commands/clear/clc; reset on fresh file or
+Reset Workspace; cancellation restores previous timer ownership with workspace.
+F32-R5: Checking does not execute/read clocks; native RHS timing is unsupported.
+Acceptance: parser_and_types, shared_lexer, interpreter_and_workspace timer cases;
+actual first-paper GUI example times compiled/cached odesolve.
+
+F32-R6: Exclude actual native compiler process wall time, including on first solve,
+failure or cancellation. Keep the cumulative exclusion clock across cancellation
+rollback so a restored earlier timer still excludes time spent compiling. Native
+cache checking, model preparation and integration remain included.

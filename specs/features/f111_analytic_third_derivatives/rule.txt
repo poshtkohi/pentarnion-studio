@@ -1,0 +1,6 @@
+F111: Cached analytic trilinear third derivatives
+Authorized second-roadmap extension,27 October2026.
+thirdderivative(function,point,u,v,w[,options(parameters=...)]) evaluates analytic D3f[u,v,w] in one native hyperdual call. All five Pentarnion coefficients and explicit product groups survive. Directions, points, gamma and fixed parameters are runtime data. The optional versioned AD3 entry/cache is distinct from unchanged AD1/AD2. Nonsmooth/domain boundaries reject; no dense third tensor or finite-difference substitution is implied.
+Authority: language.txt L99; specs/third_derivatives_v0_2.txt.
+Acceptance: examples/native-third-derivatives/project.pprj and independent native/runtime checks.
+Actual platform and integration evidence belongs in docs/VALIDATION.md.

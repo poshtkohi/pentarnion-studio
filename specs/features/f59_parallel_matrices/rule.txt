@@ -1,0 +1,32 @@
+F59: Parallel dense matrix products and batches
+Authorized extension, 26 October 2026.
+
+Implement native real/Pentarnion dense matrix-matrix, row/column/vector and
+tuple-batched products. matmul(A,B[,options]) and ordinary A*B preserve existing
+shape rules; batchmul accepts1..16 ordered pairs. Uniform batches share a packed
+native tiled request; other shapes remain bounded independent pairs. OpenBLAS
+CBLAS supplies real32x32 tiles with one BLAS thread per host tile. Pentarnion
+entries use the published binary product and increasing inner-index order.
+Entrywise/transformation/reduction output lines may run independently. Never
+reassociate Pentarnion chains. Small work stays serial, shared CPU budget and
+cancellation apply, and failures do not commit partial arrays. No universal
+speedup or cross-platform bit identity is asserted.
+Acceptance: linalg_kernel_tests, advanced_linalg_tests and parallel-matrices project.
+
+Authority: language.txt L47; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.
+
+LINEAR ALGEBRA SHARED-EPOCH PERFORMANCE CLARIFICATION — 26 OCTOBER2026
+The host top-level CPU reservation remains unchanged. Only independent calls
+already granted a serial inner BLAS slot may share one immutable OpenBLAS epoch;
+this does not make unrelated public top-level calls execute in parallel. Setters
+and global-buffer changes occur with no managed BLAS calls active. Different
+settings/internally threaded calls remain exclusive; sequential builds keep the
+safe fallback. Pentarnion-only kernels avoid unnecessary BLAS state changes.
+SVD output and SVD solves reuse their singular values. Old opcodes keep SVD-based
+2-norm diagnostics and inverse/solve guards. Additive capability0x80/value-only
+opcodes22/23 serve language det/chol without unused metadata, with old-module
+fallback; original ABI structs/enum meanings remain. Their zero rank/rcond fields
+mean unavailable, not rank0. See specs/research_v0_2.txt and F60 for exact rules.

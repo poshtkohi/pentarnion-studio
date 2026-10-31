@@ -1,0 +1,115 @@
+name: Source build checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      full_build:
+        description: Explicitly prepare pinned dependencies and build Studio
+        type: choice
+        default: none
+        options: [none, windows, linux, both]
+permissions:
+  contents: read
+
+jobs:
+  algebra-linux:
+    name: Existing algebra tests / Ubuntu 24.04
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      # Official v4 tag identity checked 31 October 2026.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install runner-only algebra build prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ cmake ninja-build libeigen3-dev nlohmann-json3-dev libboost-dev
+          g++ --version
+          cmake --version
+          dpkg-query -W libeigen3-dev nlohmann-json3-dev libboost-dev
+      - name: Check shell/Python syntax
+        run: |
+          for script in tools/*.sh third-party/build-petsc-linux.sh; do bash -n "$script"; done
+          python3 -m compileall -q tools
+          bash tools/build-linux.sh --help
+      - name: Build and run existing algebra suites
+        run: bash tools/build-linux.sh --algebra-only --configuration Release --jobs 1 --test
+
+  powershell-syntax:
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Parse PowerShell and check build help
+        shell: powershell
+        run: |
+          Get-ChildItem tools -Filter *.ps1 | ForEach-Object {
+            $tokens=$null; $errors=$null
+            [Management.Automation.Language.Parser]::ParseFile($_.FullName,[ref]$tokens,[ref]$errors) | Out-Null
+            if($errors.Count){throw ($errors -join "`n")}
+          }
+          ./tools/build-windows.ps1 -Help
+
+  full-windows:
+    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.full_build == 'windows' || inputs.full_build == 'both') }}
+    runs-on: windows-2022
+    timeout-minutes: 300
+    env:
+      PENTA_BUILD_JOBS: 1
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      # Official v2 tag identity checked 31 October 2026. Installs only on the
+      # disposable runner; local developer wrappers never install global tools.
+      - uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e
+        id: msys2
+        with:
+          msystem: UCRT64
+          update: false
+          install: mingw-w64-ucrt-x86_64-gcc
+      - name: Explicitly prepare pinned project-local dependencies
+        shell: powershell
+        env:
+          PENTA_MSYS2_ROOT: ${{ steps.msys2.outputs.msys2-location }}
+        run: ./tools/bootstrap-windows.ps1
+      - name: Build Studio and run serial offscreen checks
+        shell: powershell
+        env:
+          PENTA_MSYS2_ROOT: ${{ steps.msys2.outputs.msys2-location }}
+        run: ./tools/build-windows.ps1 -Configuration Release -Jobs 1 -Test -Offscreen
+
+  full-linux:
+    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.full_build == 'linux' || inputs.full_build == 'both') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    env:
+      PENTA_BUILD_JOBS: 1
+      JOBS: 1
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install disposable-runner development prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ cmake ninja-build curl unzip python3 pkg-config \
+            libeigen3-dev nlohmann-json3-dev libboost-dev libboost-serialization-dev \
+            libtbb-dev libopenblas-dev liblapacke-dev libexpat1-dev libminizip-dev \
+            zlib1g-dev libbz2-dev libfreetype6-dev libgl1-mesa-dev libx11-dev libxt-dev \
+            qt6-base-dev qt6-base-dev-tools qt6-svg-dev libqt6opengl6-dev
+      - name: Explicitly build pinned project-local dependencies
+        run: bash tools/linux-acceptance-dependencies.sh
+      - name: Build Studio and run serial offscreen checks
+        env:
+          PKG_CONFIG_PATH: ${{ github.workspace }}/third-party/petsc-linux-install/lib/pkgconfig
+          LD_LIBRARY_PATH: ${{ github.workspace }}/third-party/petsc-linux-install/lib
+        run: bash tools/build-linux.sh --configuration Release --jobs 1 --test --offscreen -- -DPENTA_BUILD_PETSC=ON

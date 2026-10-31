@@ -1,0 +1,106 @@
+FULLY IMPLICIT PDE LANGUAGE CAPABILITY
+
+pdeimplicit(reaction,domain,initial[,options]) returns PDEImplicit-v1.
+pdeimplicitcoeff(field,index0) returns samples-by-nodes real coefficients.
+pdeimplicitslice(field,time_index[,index0]) returns a selected sampled field;
+FD2 results reshape to ny-by-nx. Sample indices are one based, coefficients zero based.
+
+The equation is u_t = div(D grad(u) - v*u) + R(u,t,x).
+State order and every real coefficient are retained, including native algebra
+elements. R is compiled to a cached DLL/SO, together with its analytic local
+real-coordinate Jacobian. The global sparse block Jacobian is assembled by the
+PDE module. Users do not supply a Jacobian. Parameter/time/tolerance/domain-size
+changes do not change the native callback body identity.
+
+Reaction arguments begin with complete scalar/algebra states in output order,
+then real time, then every real embedding coordinate, then named fixed parameters.
+A reaction returns the same state types/immutable algebra definitions, as one
+state or a tuple. Integer evolution states are rejected. Full width is1..64.
+Examples: R(real u,real t,real x), R(pentarnion u,real t,real x,real y),
+R(element<H> u,real t,real x), or R(real u,real v,real t,real x).
+
+Domains: a uniform real axis (FD1); options(x=x,y=y) (uniform FD2);
+or an existing tagged triangle mesh (P1 embedded in2..5 real coordinates).
+P1 uses lumped mass and affine triangles, with conservative Galerkin advection
+and streamline diffusion stabilization. It is not a high-order manifold method.
+Initial values are uniform scalar/algebra states, legacy/native matrices with
+one complete state per node, or a raw real node-major array containing all
+coordinates. A declared initial callback(time,coordinates...,parameters...) is
+also compiled natively and sampled at every node; initial_parameters binds its
+trailing arguments. Its state types match the reaction. Raw values in results
+are always samples-by-(nodes*components).
+
+Options:
+  parameters: named trailing reaction parameters.
+  diffusion: nonnegative real scalar, complete real block, same-algebra element,
+    or compiled callback(time,coordinates...,parameters...). Callback result is
+    a scalar, full block tuple, or the same algebra type. diffusion_parameters
+    binds its trailing values. diffusion_side="left"|"right" controls ordered
+    multiplication, via the actual real-coordinate multiplication operator.
+    The symmetric part must be positive semidefinite within numerical tolerance.
+    No division/composition-norm identity is assumed.
+  velocity: real coordinate vector or compiled callback(time,coordinates...)
+    returning that real vector as a tuple. velocity_parameters binds parameters.
+  boundary="neumann"|"flux"|"dirichlet"|"robin"|"periodic".
+    Periodic applies to complete opposing FD sides. P1 periodic identifications
+    are not inferred. Default is homogeneous outward total flux.
+  boundary_value: complete state/real coordinate vector or compiled callback
+    (time,real tag,coordinates...,outward_conormal...,parameters...).
+    boundary_parameters binds trailing values. Boundary callback result types
+    and algebra definitions match the state. P1 conormals are tangent to faces.
+  robin_alpha: finite nonnegative scalar or real callback with the same prefix;
+    alpha_parameters binds trailing values. Robin means total outward flux +
+    alpha*u = boundary_value, and is assembled at the implicit time level.
+  boundaries: per-side record (left/right/bottom/top) for FD, or tag1/tag2/etc
+    for meshes. Each entry is options(type=...,value=...,alpha=...,
+    parameters=...,alpha_parameters=...). Unused tags and conflicting corner
+    Dirichlet values are rejected. Initial Dirichlet nodes are enforced at t0.
+  t0=0,t1=1,time_step=.01,sample_step=.05,minimum_step=1e-10,
+    maximum_step=max(.1,time_step),adaptive=1,rtol=1e-4,atol=1e-8.
+  newton_tolerance=.01,linear_tolerance=1e-9,max_steps=100000,
+    max_newton=16,max_linear=400,gmres_restart=30,max_work<=execution allowance,
+    max_bytes=256MiB,max_seconds=120,threads=shared language setting.
+
+Backward Euler fully includes nonlinear reaction, diffusion, transport and
+boundary data. Adaptive control compares one full step with two half steps,
+accepts the two-half result and uses a scaled RMS local error estimate. This
+is a first-order integrator with error control, not a higher-order BDF method.
+Newton uses damping and a compiler-generated sparse block Jacobian. Restarted
+GMRES has two-pass orthogonalization and verifies the true linear residual.
+Block-Jacobi setup/solves, sparse matvecs, reaction/Jacobian evaluation, spatial
+assembly and sizeable dot reductions use the shared CPU budget. No private pool
+is created. Nested calls obey the host's granted CPU reservation.
+
+Reports include accepted/rejected steps, Newton/Krylov iterations, reaction and
+Jacobian counts, maximum nonzeros, observed steps/error, native work, cache keys,
+and requested/granted/observed threads. Explicit resource/cancellation checks
+bound storage, callbacks, Krylov work, steps and wall time. A failed solve does
+not create a successful result record. tic/toc excludes native compilation.
+
+This capability does not by itself finish all spatial adaptivity, higher-order
+mixed FEM, PETSc or atlas/manifold items in the roadmap. Separate numerical
+acceptance is required for those extensions.
+
+SUCCESSIVE-GRID SPATIAL REFINEMENT
+
+pdeconverge(reaction,domain,initial[,options]) runs a bounded sequence of
+pdeimplicit solves on uniformly refined FD1/FD2 or conforming triangle P1 meshes.
+It retains the finest successful field, a seven-column history and per-node
+indicators on indicator_domain. Additional options are spatial_levels=3 (2..6),
+spatial_rtol=.01,spatial_atol=1e-6,spatial_max_nodes=16384. FD1 is capped at4096
+nodes, FD2 at256 per axis. max_work and max_seconds bound the entire sequence.
+Native callbacks retain their cached body identity across every grid level.
+
+The estimator compares successive solutions at common nodes and all stored
+times, using max(|fine-coarse|/(spatial_atol+spatial_rtol*max(|fine|,|coarse|))).
+It is an empirical inter-grid difference, not a rigorous a-posteriori bound.
+When the initial condition is sampled data, refinement preserves its piecewise
+linear/bilinear interpolant. A native initial callback is resampled on each grid.
+P1 refinement preserves the original piecewise-affine surface; it does not infer
+an unknown curved geometry. Boundary tags are retained and split conformingly.
+
+Report: field, history, indicator, indicator_domain, levels, converged,
+scaled_difference,absolute_difference,native_work,elapsed_seconds,status,estimator.
+history columns: level,nodes,native_work,elapsed_seconds,has_estimate,
+scaled_difference,absolute_difference. Explicit node/level/work/time limits return
+converged=0 and a reason; they never turn a finite-grid estimate into a proof.

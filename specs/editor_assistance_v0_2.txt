@@ -1,0 +1,55 @@
+EDITOR ASSISTANCE, SOURCE FRAMES AND MODULE MANAGEMENT (F140/L130)
+
+Ctrl+Space offers builtin names/signatures and symbols from the current checked
+source. Local names respect their checked source scopes. Typed record/module
+members and immutable algebra basis names are included. Enter/Tab accept Qt's
+completion; Escape dismisses it. Completion only edits the selected word.
+Hover shows a builtin signature/help summary or a checked symbol's type and
+location. Ctrl+Shift+I opens the nonmodal Symbol Inspector. F12 navigates to the
+declaration; imported functions retain their defining source identity.
+
+Check/Run publishes immutable analysis snapshots. Assistance rejects stale
+positions and requests a static Check when necessary; it never runs source or
+compiles a native callback to obtain completion/type information. A static error
+keeps builtin help available and asks the user to fix diagnostics for verified
+symbol navigation. Completion/inspection do not alter source or save files.
+
+Runtime function failures preserve the primary invocation location and up to32
+innermost-to-outermost callee frames. Each retained frame includes function name,
+source identity, exact immutable source bytes, source hash and original byte span.
+Frames from an earlier console submission are not relocated into the new command.
+The Command Window prints clickable frame locations. File frames navigate only
+when saved/open text still matches; changed files keep the current editor intact.
+Retained source definitions share one origin per analysis. Workspace accounting
+bounds their total storage; source functions remain saved as .p source, not code
+inside a data-only workspace file.
+
+Help > Feature Rules and Native Modules opens a nonmodal reference browser.
+It displays the compiled language version, actual reference root and SHA256 of
+language.txt. Reload References refreshes documentation only; reference text is
+never executed and does not dynamically change parser rules. At most4096 files,
+512KiB per reference and16MiB aggregate are read. Canonical paths must remain under
+the selected reference root. Source editing remains available beside the browser.
+
+record all=module_info();
+record one=module_info("linalg");
+record prepared=module_load("linalg");
+
+module_info() returns a typed record keyed by the built-in module catalogue.
+module_info(name) and module_load(name) return name,path,available,loaded,abi,status.
+available means that a module file exists; loaded observes the current process.
+abi=65536 denotes ABI1.0,0 means no compatible loaded query was observed.
+Statuses are available,missing,loaded,incompatible_abi. Inspection never loads a
+library. module_load accepts catalogue names only and uses the host-controlled
+absolute module directory; arbitrary source-supplied paths are not accepted.
+It validates the ABI prefix. Each numerical operation still validates the full
+operation-specific API/capabilities through its existing lazy native loader.
+
+The Native Modules tab can refresh this inventory or prepare a selected module
+while Studio is idle. Libraries remain resident until process exit so retained
+native callback pointers stay valid. CPU settings remain per numerical call;
+0 means runtime automatic selection and nested calls share the Studio CPU budget.
+No global OpenBLAS or thread setting is changed by inspection or preparation.
+
+Acceptance: source_assistance_and_modules; retained_source_frames.
+Example: examples/editor-and-module-tools/project.pprj.

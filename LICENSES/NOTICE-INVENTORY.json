@@ -1,0 +1,1665 @@
+{
+  "format": "Retained verbatim upstream licence texts; not first-party licence selection",
+  "files": [
+    {
+      "file": "dependencies/boost/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+    },
+    {
+      "file": "dependencies/brotli/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+    },
+    {
+      "file": "dependencies/bzip2/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c6dbbf828498be844a89eaa3b84adbab3199e342eb5cb2ed2f0d4ba7ec0f38a3"
+    },
+    {
+      "file": "dependencies/c-ares/LICENSE.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "460f5e768fda3752ca2169a95df062578a10fb126bfd65f3b9b1a1bed2f84807"
+    },
+    {
+      "file": "dependencies/ceres-solver/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "765fd9eac4cb827fa5de4304d1f81f4f2c5c332a3f1d6f0f3f7a69a33156729b"
+    },
+    {
+      "file": "dependencies/cppdap/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+    },
+    {
+      "file": "dependencies/curl/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "82f2f4427d6545ee5aaac4f0b80428da6cc8ba41c2cf5da3a03680ec327b9681"
+    },
+    {
+      "file": "dependencies/dbus/AFL-2.1.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "93bb4f7417aa775bab9026cc3d0af28aeb64451fc5a8ec651876785edd8eaf9b"
+    },
+    {
+      "file": "dependencies/dbus/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "150e5d08e1cb5e62b65967d7931acad2c42d98ec1bbb584bebb01921cbc853c2"
+    },
+    {
+      "file": "dependencies/dbus/GPL-2.0-or-later.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "aaf135472f81c5b4a0dca9367e5bb5e9750032b5bebe5442b36e4c0a47430df3"
+    },
+    {
+      "file": "dependencies/double-conversion/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "4af93c12062c58058378de2397dc1c92bbff9ddfb1d583a01c84127557ce97ca"
+    },
+    {
+      "file": "dependencies/eigen/COPYING.APACHE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "03379001a7b12a2ec997a25554247d985270b353c10d5bafee9ac8d6519820b7"
+    },
+    {
+      "file": "dependencies/eigen/COPYING.BSD",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "51928dce36213c5333ba3172e847d735d4c6e9b7ff2722a326c49067155b82eb"
+    },
+    {
+      "file": "dependencies/eigen/COPYING.MINPACK",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c87b7f8ee88f6195e91743820c00354833583aef091b72e2d4a49c8e28e798a0"
+    },
+    {
+      "file": "dependencies/eigen/COPYING.MPL2",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "66a3107d5ad6a058aab753eaac2047ccb2ed0e39465dd0fe5844da3e300d5172"
+    },
+    {
+      "file": "dependencies/eigen/COPYING.README",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "db640ff2bd90c6abd6a4d3fbb351e0ee4d555417cf840492054d1cbb2ea85644"
+    },
+    {
+      "file": "dependencies/expat/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87"
+    },
+    {
+      "file": "dependencies/exprtk/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "195cbc4d3705eb043fbbf53dd4a4d48a516cd3acdf3759a40a418d56a59813cd"
+    },
+    {
+      "file": "dependencies/fast_float/LICENSE-APACHE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "097a889aa954d04e088b790b10a4014d6189561d0a6013935a73ce3d4ddaaf06"
+    },
+    {
+      "file": "dependencies/fast_float/LICENSE-BOOST",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8d8291caf1cee26d23acf3eb67c9f9a2d58f1c681b16a4fbe8cbfb9e3c0b5a9b"
+    },
+    {
+      "file": "dependencies/fast_float/LICENSE-MIT",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "e562f3f974ced7e69dd1db77b820b36bcf8f30377f1aa105723fba449c53c4e6"
+    },
+    {
+      "file": "dependencies/fmt/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "a65fcc5a1095fc33cc37e4fff69366e49d7e92f613558a2b95ed1b70e33758b4"
+    },
+    {
+      "file": "dependencies/freetype/FTL.TXT",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "5a5ee54c5001bbad1cdc1a57cc3dd4c42199b2da09d39c7ee41fab002d02967f"
+    },
+    {
+      "file": "dependencies/freetype/GPLv2.TXT",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c4120c6752c910c299e3bd9cb3a46ff262c268303ca2069b61f92f10a5656c18"
+    },
+    {
+      "file": "dependencies/gettext-runtime/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "7ef2cdfe58e0c0460657b6598b49af29d4e03c1e41cbaf0e1da1eb8ad74b95d0"
+    },
+    {
+      "file": "dependencies/gettext-runtime/intl/COPYING.LIB",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "dependencies/gettext-runtime/libasprintf/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "03133addae5b99a6148c538300e6d97074453089be1423b741bd081f18e2b298"
+    },
+    {
+      "file": "dependencies/gettext-runtime/libasprintf/COPYING.LIB",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "dependencies/glew/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8991cd11befec7c6a63662700f03c0cc42e864b6e77c7e70b80297c951a7f0ff"
+    },
+    {
+      "file": "dependencies/glib2/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "fa6f36630bb1e0c571d34b2bbdf188d08495c9dbf58f28cac112f303fc1f58fb"
+    },
+    {
+      "file": "dependencies/graphite2/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "2c272829ff23f182c8bf7ea12fedea69b0ae148663123ed5240c117cb129c9c1"
+    },
+    {
+      "file": "dependencies/graphite2/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "cab46cd45adbfea4b1d0f14b033c70062c73074fa0b56532c2f351576ddf455e"
+    },
+    {
+      "file": "dependencies/harfbuzz/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "ba8f810f2455c2f08e2d56bb49b72f37fcf68f1f4fade38977cfd7372050ad64"
+    },
+    {
+      "file": "dependencies/hdf5/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "b384492d25c6e4a49f371b646d9a81bc0a4b97cf0c66c2f3ed1b35f78a148732"
+    },
+    {
+      "file": "dependencies/hwloc/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "a7e03d1ccef79f9a6369f7b7385231e1656339e3292bbac1b7113782d0d384f4"
+    },
+    {
+      "file": "dependencies/jbigkit/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "91df39d1816bfb17a4dda2d3d2c83b1f6f2d38d53e53e41e8f97ad5ac46a0cad"
+    },
+    {
+      "file": "dependencies/json/LICENSE.MIT",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603"
+    },
+    {
+      "file": "dependencies/jsoncpp/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "cec0db5f6d7ed6b3a72647bd50aed02e13c3377fd44382b96dc2915534c042ad"
+    },
+    {
+      "file": "dependencies/lerc/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "77a8b761727c75e2167b15bfdf61b2c0bcf8792271228bebe80779106ad00671"
+    },
+    {
+      "file": "dependencies/libaec/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9fdabba96fbc46af0ca018f86329f1e06e873b25801732001128d5afca265e36"
+    },
+    {
+      "file": "dependencies/libarchive/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "30e556b3959e3985d66efefec5eaac51d4995053caa1d3cffe6eb916f146f229"
+    },
+    {
+      "file": "dependencies/libb2/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "6a1ee543e5282cd9061881edf462e6fdab181f328da71fc2c9a6950a80e94d01"
+    },
+    {
+      "file": "dependencies/libdeflate/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a"
+    },
+    {
+      "file": "dependencies/libffi/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "17b64dc60f3b6897a60f971e288b973f655c2edcdf08b25f3c3dd5549857881c"
+    },
+    {
+      "file": "dependencies/libgcc/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "dependencies/libgcc/COPYING3",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/libgfortran/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "dependencies/libgfortran/COPYING3",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/libgomp/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "dependencies/libgomp/COPYING3",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/libharu/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "860e4e6f467a9c02298e36382a581a2fa31b2d1e7755da08f8cc0f2036b6857d"
+    },
+    {
+      "file": "dependencies/libiconv/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/libiconv/COPYING.LIB",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "dependencies/libiconv/README",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "4ae66e61d1c6593c84c47105b368d579bcee1af566dbb959ec63a0c48425dcf4"
+    },
+    {
+      "file": "dependencies/libiconv/libcharset/COPYING.LIB",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "dependencies/libjpeg-turbo/LICENSE.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "ba6bceebcba0fdd35488477c2cca8c4632ce82c74dbfbc87d886ce6fc4433579"
+    },
+    {
+      "file": "dependencies/libjpeg-turbo/README.ijg",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "75815e3bf6484201a3c3d17a1bbf10f2e8e3237f84df10a2357ea896db2a81d6"
+    },
+    {
+      "file": "dependencies/libjpeg-turbo/README.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "a44ba17ac66c57edaf0ea7c6e4b31358f08322c780e4e6af092082abb3e20793"
+    },
+    {
+      "file": "dependencies/libjpeg-turbo/simd/jsimdext.inc",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "68c5d236785edf75344cebe8b9bec36568bd35c96eb72cc67ffecd66c17dbd74"
+    },
+    {
+      "file": "dependencies/libltdl/COPYING.LIB",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "dependencies/libpng/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526"
+    },
+    {
+      "file": "dependencies/libpsl/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "322392e6001b2b3b0fca705dc9f11f26e12441188ecde50eb1d22909980b2925"
+    },
+    {
+      "file": "dependencies/libquadmath/COPYING.LIB",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "32434afcc8666ba060e111d715bfdb6c2d5dd8a35fa4d3ab8ad67d8f850d2f2b"
+    },
+    {
+      "file": "dependencies/libssh2/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "f7f9633cf9ff2f1333f3d7ce46973a8716a4d2a2815ad56f30d437d5fea7bafe"
+    },
+    {
+      "file": "dependencies/libstdc++/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "dependencies/libstdc++/COPYING3",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/libsystre/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3200024286eb0a33c22da3a31c470df07c7b8cfbead2b9528195d67d107264ec"
+    },
+    {
+      "file": "dependencies/libtasn1/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "file": "dependencies/libtasn1/COPYING.LESSERv2",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "dependencies/libtiff/LICENSE.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0e27c2382d7b8147972bbb746e04059a1152c8d0fda9d03ef1399d1a433c4ade"
+    },
+    {
+      "file": "dependencies/libtre/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "6a50ab50d856b30c965cf2dd899e577ec108c938242fd3a2e7a7a25eed996200"
+    },
+    {
+      "file": "dependencies/libunistring/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "file": "dependencies/libunistring/LICENSE.LIB",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "a853c2ffec17057872340eee242ae4d96cbf2b520ae27d903e1b2fef1a5f9d1c"
+    },
+    {
+      "file": "dependencies/libuv/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "16de0c32b265cb7d46a6d3bd614f259dd4d693a5e26b3407b04aae8d73041f0c"
+    },
+    {
+      "file": "dependencies/libwebp/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf"
+    },
+    {
+      "file": "dependencies/libwinpthread/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "63263614cdd29f2f93cba85e992f041b31f9fc7b4033692f31269489a8a1b177"
+    },
+    {
+      "file": "dependencies/md4c/LICENSE.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "e547c9a66c120b19f9838a1f7c2f51137f5c71ba27b70c3611b673f2cdb4e02e"
+    },
+    {
+      "file": "dependencies/minizip/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2"
+    },
+    {
+      "file": "dependencies/mpdecimal/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "dba079e24a0286052f9f36a5e0b4f6cc95bc83ada657eb26bef8c0b6473f6512"
+    },
+    {
+      "file": "dependencies/ncurses/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "708999f95527e1ffa670c6fce288c6c600cb477dd04afcc1171422b3dd4ee226"
+    },
+    {
+      "file": "dependencies/nghttp2/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a"
+    },
+    {
+      "file": "dependencies/nghttp3/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "58cc3fc8c6d6cb2485ab35eb5918e849b5bf1e56522974e106d7a39a88d61dcd"
+    },
+    {
+      "file": "dependencies/ngtcp2/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "542dd526d2ea23565f0571cc68df6f05ed11248a90ff0f32de19d8ba589db513"
+    },
+    {
+      "file": "dependencies/ninja/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "eb7e9ab9690124c5c9f42bdc81383d886a3dede26345b6ed15bbad7caf81f7ea"
+    },
+    {
+      "file": "dependencies/nlopt/AUTHORS",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "4a946463bfa57e018f908a4e20cdc03f073d0403ae8ea3592ecb5fafb6608e99"
+    },
+    {
+      "file": "dependencies/nlopt/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "44039a06cc56e0e29e5c8563502ba143bd12bcd9163c00ffa2e1f15a7462cd07"
+    },
+    {
+      "file": "dependencies/nlopt/COPYRIGHT",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "613d6203d16d81a7e0cef29fb83189e667f896ba8239f8cebfd120104c1484c6"
+    },
+    {
+      "file": "dependencies/oneTBB/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "file": "dependencies/OpenBLAS/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "190b5a9c8d9723fe958ad33916bd7346d96fab3c5ea90832bb02d854f620fcff"
+    },
+    {
+      "file": "dependencies/OpenBLAS/LICENSE-lapack",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "978539245c405775bf347b1256c36df4daf8b69a64b099e94b1d53742201621e"
+    },
+    {
+      "file": "dependencies/openssl/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+    },
+    {
+      "file": "dependencies/openxr-sdk/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "file": "dependencies/pcre2/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "99272c55f3dcfa07a8a7e15a5c1a33096e4727de74241d65fa049fccfdd59507"
+    },
+    {
+      "file": "dependencies/pcre2/LICENCE.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "197d8a73ffee0d6b09adba2f9c677b5f5aede24edf89258a68e48248d010d811"
+    },
+    {
+      "file": "dependencies/pugixml/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "90974fbb120e966b452654eaae3ba6ee55f3647db3b28918a7649733ee99da97"
+    },
+    {
+      "file": "dependencies/python-packaging/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+    },
+    {
+      "file": "dependencies/python-packaging/LICENSE.APACHE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "file": "dependencies/python-packaging/LICENSE.BSD",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+    },
+    {
+      "file": "dependencies/python3.14/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231"
+    },
+    {
+      "file": "dependencies/qt6-base/AFL-2.1.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "93bb4f7417aa775bab9026cc3d0af28aeb64451fc5a8ec651876785edd8eaf9b"
+    },
+    {
+      "file": "dependencies/qt6-base/Apache-2.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "e3ba223bb1423f0aad8c3dfce0fe3148db48926d41e6fbc3afbbf5ff9e1c89cb"
+    },
+    {
+      "file": "dependencies/qt6-base/Bitstream-Vera.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
+    },
+    {
+      "file": "dependencies/qt6-base/blessing.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "592db1199aab67aafe4515db9808b420db122083807c5329b2f061951e79acbe"
+    },
+    {
+      "file": "dependencies/qt6-base/BSD-2-Clause.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8fda146749ca071ac9cdce2e24d25444676ea48d1f9dccc2b7c15c054b717db8"
+    },
+    {
+      "file": "dependencies/qt6-base/BSD-3-Clause.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9f0490f18656c6f2435bd14f603ef0c96434d1825615363dce43abb42ed1dcce"
+    },
+    {
+      "file": "dependencies/qt6-base/BSD-4-Clause.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "83faa0d205c316ce3efeafee465b6a165914fb29595968c08dc6437021b7b6fd"
+    },
+    {
+      "file": "dependencies/qt6-base/BSL-1.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3abd6471b9a9a08d65ce771143f8e278bb4c1aeb10c1c2d476935a6b049653f5"
+    },
+    {
+      "file": "dependencies/qt6-base/CC0-1.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    {
+      "file": "dependencies/qt6-base/FTL.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "08c135755dd589039470f1fdbb400daaabaaa50d0b366d19cebff4d22986baa1"
+    },
+    {
+      "file": "dependencies/qt6-base/GFDL-1.3-no-invariants-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "110535522396708cea37c72a802c5e7e81391139f5f7985631c93ef242b206a4"
+    },
+    {
+      "file": "dependencies/qt6-base/GPL-2.0-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    {
+      "file": "dependencies/qt6-base/GPL-2.0-or-later.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    {
+      "file": "dependencies/qt6-base/GPL-3.0-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/qt6-base/HPND.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "67ac968431270291f5e9cd3ed76705e1169f57082ee102093b2543b28cef63cf"
+    },
+    {
+      "file": "dependencies/qt6-base/IJG.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "1cb448f5e2e6d3aca60943f4eee1a04675628dc0266a074a42bc1560ebc28d61"
+    },
+    {
+      "file": "dependencies/qt6-base/Imlib2.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8846f2baba1a7f4c36f7ca19a923a000d8a21afa37cf0fe006f6ce88a6058a89"
+    },
+    {
+      "file": "dependencies/qt6-base/IPL-1.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "d5328e672fb1bff47ee18e890784541453380081cf3771bb7b3c06fc19c7d503"
+    },
+    {
+      "file": "dependencies/qt6-base/LGPL-2.1-or-later.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "1ccf09bf2f598308df4bed9cd8e9657dc5cd0973d2800318f2e241486e2edf3f"
+    },
+    {
+      "file": "dependencies/qt6-base/LGPL-3.0-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "file": "dependencies/qt6-base/libpng-2.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "7317e078e2d3b5d7ba5a6159e650945153262b44b76f6700f8e9edb261c5143e"
+    },
+    {
+      "file": "dependencies/qt6-base/Libpng.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "58fe669792f9b4e0740bf75ecfe90b5326128bb2ce7e27e1c342abd9db4d8ea6"
+    },
+    {
+      "file": "dependencies/qt6-base/LicenseRef-BSD-3-Clause-with-PCRE2-Binary-Like-Packages-Exception.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0526625fcc746a42d3f19a0ab357d3dc8479fdbe3bfd168825498f50215c7a63"
+    },
+    {
+      "file": "dependencies/qt6-base/LicenseRef-ICC-License.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9e34ff47b3a44814e183342e7e198d127a6740e29d20e8381fba7688dafc79dd"
+    },
+    {
+      "file": "dependencies/qt6-base/LicenseRef-Lcs-Telegraphics.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c10225ebbd5191bfdd761b0d7752c785f2453ab665d6c454473fb12d254668aa"
+    },
+    {
+      "file": "dependencies/qt6-base/LicenseRef-Qt-Commercial.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9b1f50aae6267f9d5e0ceb6775ee86450262c25ec7c0573e151fe5d3f18a4700"
+    },
+    {
+      "file": "dependencies/qt6-base/LicenseRef-SHA1-Public-Domain.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "65d86b8ec6b1cd8b8f6e64fd8710274ba00d6a3c520e00dfdcd1c3d2071f3305"
+    },
+    {
+      "file": "dependencies/qt6-base/Linux-syscall-note.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3f9e477523febab58de8b716ccfbcf02e6ef1c8e7728953905e8558637abe2a9"
+    },
+    {
+      "file": "dependencies/qt6-base/MIT-Khronos-old.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3c58021633974f9ed3c3d445a374240a5244fd039628f4d7f6f3e674bc8e6694"
+    },
+    {
+      "file": "dependencies/qt6-base/MIT-open-group.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c55d2ab72d8a4f9e9cd8fbd1379268e575e8cfa16874affa5899b75a6d754514"
+    },
+    {
+      "file": "dependencies/qt6-base/MIT.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "d040359701c01996a017d5c515678929cd1b0625e64cb86db44025fbb6cdf1fc"
+    },
+    {
+      "file": "dependencies/qt6-base/MPL-2.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04"
+    },
+    {
+      "file": "dependencies/qt6-base/Qt-GPL-exception-1.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "40678d338ce53cd93f8b22b281a2ecbcaa3ee65ce60b25ffb0c462b0530846b2"
+    },
+    {
+      "file": "dependencies/qt6-base/SPL-1.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "f58f2f30909982445f97f1a61667261920a7caeab21ef5bea1b740f5b144d141"
+    },
+    {
+      "file": "dependencies/qt6-base/Unicode-3.0.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "80bb6294022d8764adb36a9d65ebb6bd94efb1865918a71e31e6c247607d7634"
+    },
+    {
+      "file": "dependencies/qt6-base/X11.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "e2936c6509784b4f0ec27bac74182393866fad9422b29a70e085ff14aba87193"
+    },
+    {
+      "file": "dependencies/qt6-base/Xerox.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "b6bc52205d01e10cf43dbb7b8aec06dcaa3b21d1486e7c9c0bec329ee8244d8d"
+    },
+    {
+      "file": "dependencies/qt6-base/Zlib.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "d7e3139972874dc8abdbbfce27ec1e6f942b28279dd7d27453630a8b4610e080"
+    },
+    {
+      "file": "dependencies/qt6-svg/BSD-3-Clause.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9f0490f18656c6f2435bd14f603ef0c96434d1825615363dce43abb42ed1dcce"
+    },
+    {
+      "file": "dependencies/qt6-svg/GFDL-1.3-no-invariants-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "110535522396708cea37c72a802c5e7e81391139f5f7985631c93ef242b206a4"
+    },
+    {
+      "file": "dependencies/qt6-svg/GPL-2.0-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    {
+      "file": "dependencies/qt6-svg/GPL-3.0-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/qt6-svg/HPND-sell-variant.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3a946598a9f674d44df764279ca0b85b5d6faba08f3bc75d8e0fcf6cd729a9bd"
+    },
+    {
+      "file": "dependencies/qt6-svg/LGPL-3.0-only.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "file": "dependencies/qt6-svg/LicenseRef-Qt-Commercial.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9b1f50aae6267f9d5e0ceb6775ee86450262c25ec7c0573e151fe5d3f18a4700"
+    },
+    {
+      "file": "dependencies/readline/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "dependencies/rhash/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "953e55838353335148c90b5a38a4894292680b1d4c37228ffddddbf18ce54bf5"
+    },
+    {
+      "file": "dependencies/scnlib/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "file": "dependencies/sqlite3/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0b76663a90e034f3d7f2af5bfada4cedec5ebc275361899eccc5c18e6f01ff1f"
+    },
+    {
+      "file": "dependencies/termcap/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "32b1062f7da84967e7019d01ab805935caa7ab7321a7ced0e30ebe75e5df1670"
+    },
+    {
+      "file": "dependencies/tzdata/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0613408568889f5739e5ae252b722a2659c02002839ad970a63dc5e9174b27cf"
+    },
+    {
+      "file": "dependencies/utf8cpp/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+    },
+    {
+      "file": "dependencies/verdict/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "697863f577faaaa5d6500637a95b329c9bfbf3d2f1500deefc5c052616971811"
+    },
+    {
+      "file": "dependencies/viskores/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "fb1c45714d4979e5843cfe5a0c78224d661a0039b65ee224e6019224e85d5f1a"
+    },
+    {
+      "file": "dependencies/vtk/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "11232448be82e0ea2c2c66219c2e36389f42249894070ee10c549ff182fc08b6"
+    },
+    {
+      "file": "dependencies/vtk/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "11232448be82e0ea2c2c66219c2e36389f42249894070ee10c549ff182fc08b6"
+    },
+    {
+      "file": "dependencies/vtk/vtkAcceleratorsVTKmCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "376f7f507577786a6415abbcf0d98e64e755194051366266af4621fc4fcb4333"
+    },
+    {
+      "file": "dependencies/vtk/vtkAcceleratorsVTKmDataModel/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "376f7f507577786a6415abbcf0d98e64e755194051366266af4621fc4fcb4333"
+    },
+    {
+      "file": "dependencies/vtk/vtkAcceleratorsVTKmFilters/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkCommonCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkCommonDataModel/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkCommonExecutionModel/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkCommonMath/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkDICOMParser/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "207ac5fbf0e944b6dc725b1ff9182ef2402763bb39e00f9a7e3bfc90bfb1c2ca"
+    },
+    {
+      "file": "dependencies/vtk/vtkdiy2/LEGAL.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "db26f00306300a38f343aa377a23f571622ce493e3cb23ef98918fc28e2e47d6"
+    },
+    {
+      "file": "dependencies/vtk/vtkdiy2/LICENSE.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "728b467c7bd03d90a106d036a65724e52959db853e4eefb65c4fbf3e7ac10816"
+    },
+    {
+      "file": "dependencies/vtk/vtkexodusII/COPYRIGHT",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "d5256febd35b763a6f4b96829a6f84da2ca121967ce336142dfe5dc97c567d17"
+    },
+    {
+      "file": "dependencies/vtk/vtkfides/LICENSE.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "69ff14d6186884b61812e2c51c0329f7f59ffc5f55a007fa11682603485451d8"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersExtraction/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersGeneral/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3b611790735500dff353f358cc97b283521bb334f5404cd6240d7fea315950fa"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersGeometry/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersHybrid/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersImaging/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersParallelImaging/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersParallelStatistics/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersSources/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersStatistics/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkFiltersVerdict/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkGeovisCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkglad/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "cbb325cd4ac5bd06717ffa34a322b984f9d285e4c67c8ca1b7380d6ef08c2a77"
+    },
+    {
+      "file": "dependencies/vtk/vtkGUISupportQt/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkGUISupportQtSQL/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkh5hut/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "479eb2ffa04d8702392ef502dc3a248a34da5169d63ffa9c7c301ec53214f0a2"
+    },
+    {
+      "file": "dependencies/vtk/vtkImagingCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkInfovisBoost/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkInfovisBoostGraphAlgorithms/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkInfovisCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkInfovisLayout/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkInteractionStyle/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkInteractionWidgets/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOADIOS2/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOExport/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "27f537cfa93d17a11939834d98e5dd91ed61ad8583b054f1bb6bdcd28f3ae290"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOInfovis/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOLANLX3D/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0ddd251503507a152197e515e2e55cc8d7089c93c52d4b6160fcf2f35c821a93"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOMINC/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "cc52791b4ea851ff1fccae1c315fd2a843d4c15ed07bf4ee55454056ce0de611"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOMySQL/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIONetCDF/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "53b4cbb06188bf11b6b5d9c936513c262aa38ac6b96c9c8aed62781859a9f947"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOOCCT/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "f7aa19ccc27c0aca1a462fb651cfc8e181a23d6dda2c25d8349dbaada40c31a8"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOODBC/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOParallelLSDyna/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOPIO/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9c7c8dc10168d317e46fa96f1fe1ed1e418b4ea05d783971930f7116e1ef5d62"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOPLY/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "f986802c1b8a0498fdf559c65877b760422468c1bf9ca8243ae959e97f7530c1"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOPostgreSQL/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOSQL/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkIOXdmf2/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "6eb134f3c1426a4432ddbf34f81fcad2536234142f15b71306a726a796cf580a"
+    },
+    {
+      "file": "dependencies/vtk/vtkkissfft/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "a2840585f8411be8e6826a31ef15ae65c950bd74a2437a73b013398a934ad0c6"
+    },
+    {
+      "file": "dependencies/vtk/vtkkwiml/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "2c1b4faf0e1f1a23a56c657959eb138add74e175b8c8949275f9f54d3a376365"
+    },
+    {
+      "file": "dependencies/vtk/vtkloguru/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "55e2d7d11d3125e5881f5024d533e45ef39f5ffb15b37bdcafa2cbc909714af7"
+    },
+    {
+      "file": "dependencies/vtk/vtkmetaio/License.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "de2b1b69404af9ca85e649957a57ea0b0cd2fa89c90ca999954d8ca9fae0c09b"
+    },
+    {
+      "file": "dependencies/vtk/vtkpegtl/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "8dd848eff55d8f925ad676daf6cba065c4ef7b85698ae1fbdc6603ae4fa32cba"
+    },
+    {
+      "file": "dependencies/vtk/vtkRenderingCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkRenderingLabel/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkRenderingOpenXR/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0f24371c7bb1743dda4be65130f132fb20b55ed43970f2e9fd04d35b4a4c5f7f"
+    },
+    {
+      "file": "dependencies/vtk/vtkRenderingParallel/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkRenderingQt/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkRenderingVolume/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtksys/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "7aa92ae0b86f73f81947d177639556fe7f8ea42a74762ecdf563e3daf7106a40"
+    },
+    {
+      "file": "dependencies/vtk/vtktoken/license.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "2153f6031e7beb4a69eaf701c061187f134281ef1b52b63eddfaf3c1498e91d2"
+    },
+    {
+      "file": "dependencies/vtk/vtkViewsCore/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkViewsInfovis/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkViewsQt/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "79e00eba197fb5baa8e5d1d76a8bbc7509be8ea07e1e6e11386778ff2cf4c8ba"
+    },
+    {
+      "file": "dependencies/vtk/vtkvpic/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "27f537cfa93d17a11939834d98e5dd91ed61ad8583b054f1bb6bdcd28f3ae290"
+    },
+    {
+      "file": "dependencies/vtk/vtkxdmf2/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "a83401d8e4e4e8da2d6901f0c85480f9ca2007d9f4eeb12fc0143e6fda165d47"
+    },
+    {
+      "file": "dependencies/vtk/vtkxdmf3/Copyright.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "486d69367fa9db177f07fdca375ab79fa46c8d2b7b0844feae588f08939ecfa3"
+    },
+    {
+      "file": "dependencies/vulkan-headers/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "95ad366d23fadf701d355bc45fb8b82ae2d700239471d35d41286ac3b08ff903"
+    },
+    {
+      "file": "dependencies/vulkan-loader/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "43c0a37e6a0fa7ff3c843b3ec5a4fac84b712558ddac103fbd4c1649662a9ece"
+    },
+    {
+      "file": "dependencies/wineditline/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "e1a9520a9b3143ad64adb356c5d2fca6bb09a3ad3950cf1f7213946543582440"
+    },
+    {
+      "file": "dependencies/xlsxio/LICENSE.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "9fb1b0e76f1639e42069dbfe2aadc9ce8c840977e967e5175d69b9077499f2ca"
+    },
+    {
+      "file": "dependencies/xlsxio/PENTARNION_PATCH.txt",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "61d15be89cf6da719db9e28c053ab6526243e77615343c60a8e5f6fcf9a4443c"
+    },
+    {
+      "file": "dependencies/xlsxio/SOURCE_PROVENANCE.json",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "82d16857e26d639fa475e28c7210c07cc08288020e75bbecea2c7d95217fc406"
+    },
+    {
+      "file": "dependencies/xxhash/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "6ffedbc0f7878612d2b23589f1ff2ab15633e1df7963a5d9fc750ec5500c7e7a"
+    },
+    {
+      "file": "dependencies/xz/COPYING",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "616a3ad264ce29b8f1cb97e53037b139d406899ca8d1f799651e17bfa09830b8"
+    },
+    {
+      "file": "dependencies/xz/COPYING.0BSD",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "0b01625d853911cd0e2e088dcfb743261034a091bb379246cb25a14cc4c74bf1"
+    },
+    {
+      "file": "dependencies/xz/COPYING.GPLv2",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+    },
+    {
+      "file": "dependencies/xz/COPYING.GPLv3",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "file": "dependencies/xz/COPYING.LGPLv2.1",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "dependencies/zlib/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2"
+    },
+    {
+      "file": "dependencies/zlib-ng/LICENSE.md",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "6c9f0d975b41afaa34d22f55bb8986ce69e5cb7ad327cb2b28820cd425edf5ee"
+    },
+    {
+      "file": "dependencies/zstd/LICENSE",
+      "source_role": "Retained original component notice: dependencies",
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8"
+    },
+    {
+      "file": "project-dependencies/OpenSSL-3-LICENSE.txt",
+      "source_role": "Retained original component notice: project-dependencies",
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+    },
+    {
+      "file": "project-dependencies/mfem-4.10/LICENSE",
+      "source_role": "Retained original component notice: project-dependencies",
+      "sha256": "e02fd5c34566e96888009d27c4ea0e70fe8cf72f9793fdc1d9272f20f1f05b64"
+    },
+    {
+      "file": "project-dependencies/mfem-4.10/NOTICE",
+      "source_role": "Retained original component notice: project-dependencies",
+      "sha256": "df7ef1fe8eb77b53a3148485de43e8454d3a262d9e2620666775baca4cbf18af"
+    },
+    {
+      "file": "project-dependencies/petsc-3.25.1/LICENSE",
+      "source_role": "Retained original component notice: project-dependencies",
+      "sha256": "efc206ebe66fda24a32ebe69e81caa2c5595e093626170e57fbeff522507cc54"
+    },
+    {
+      "file": "JKQTPlotter/JKQTCommon6_Readme.txt",
+      "source_role": "Retained original component notice: JKQTPlotter",
+      "sha256": "0040a081020e7000be43d16c9ed8a0050928f5d2f01a12de8d9b06aa04fde5de"
+    },
+    {
+      "file": "JKQTPlotter/JKQTMathText6_Readme.txt",
+      "source_role": "Retained original component notice: JKQTPlotter",
+      "sha256": "7f4f8741300858ec5a78a0c93c890472d42da821dc2f750ef6c4a3670eddbab1"
+    },
+    {
+      "file": "JKQTPlotter/JKQTMathText6_XITS_LICENSE.txt",
+      "source_role": "Retained original component notice: JKQTPlotter",
+      "sha256": "10c83acb7bf240c6e263906e0905c8e419f3483c89141e83243465c221d322ad"
+    },
+    {
+      "file": "JKQTPlotter/LICENSE",
+      "source_role": "Retained original component notice: JKQTPlotter",
+      "sha256": "5525fbd0911b8dcbdc6f0c081ac27fd55b75d6d261c62fa05b9bdc0b72b481f6"
+    },
+    {
+      "file": "sundials/LICENSE",
+      "source_role": "Retained original component notice: sundials",
+      "sha256": "d83f244e1bef3d00a88d043d37d9cd2493c7aa19c9fbf35a837b310e867897a6"
+    },
+    {
+      "file": "separate-sdks/idas/LICENSE",
+      "source_role": "Retained original component notice: separate-sdks",
+      "sha256": "d83f244e1bef3d00a88d043d37d9cd2493c7aa19c9fbf35a837b310e867897a6"
+    },
+    {
+      "file": "separate-sdks/idas/NOTICE",
+      "source_role": "Retained original component notice: separate-sdks",
+      "sha256": "5cb9c6b0ca7c09b26fe2d1f9ef45231086c9ea2cdb32eb5f9dce7012e2364bc2"
+    },
+    {
+      "file": "separate-sdks/pagmo-sdk/pagmo2/COPYING.gpl3",
+      "source_role": "Retained original component notice: separate-sdks",
+      "sha256": "e6037104443f9a7829b2aa7c5370d0789a7bda3ca65a0b904cdc0c2e285d9195"
+    },
+    {
+      "file": "separate-sdks/pagmo-sdk/pagmo2/COPYING.lgpl3",
+      "source_role": "Retained original component notice: separate-sdks",
+      "sha256": "a853c2ffec17057872340eee242ae4d96cbf2b520ae27d903e1b2fef1a5f9d1c"
+    },
+    {
+      "file": "toolchain/binutils/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "231f7edcc7352d7734a96eef0b8030f77982678c516876fcb81e25b32d68564c"
+    },
+    {
+      "file": "toolchain/binutils/COPYING.LIB",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "56bdea73b6145ef6ac5259b3da390b981d840c24cb03b8e1cbc678de7ecfa18d"
+    },
+    {
+      "file": "toolchain/binutils/COPYING3",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "toolchain/binutils/COPYING3.LIB",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "a853c2ffec17057872340eee242ae4d96cbf2b520ae27d903e1b2fef1a5f9d1c"
+    },
+    {
+      "file": "toolchain/boost/LICENSE",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+    },
+    {
+      "file": "toolchain/boost-libs/LICENSE",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+    },
+    {
+      "file": "toolchain/bzip2/LICENSE",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "c6dbbf828498be844a89eaa3b84adbab3199e342eb5cb2ed2f0d4ba7ec0f38a3"
+    },
+    {
+      "file": "toolchain/crt/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "99a69660981156c21336fdb5661f89341b013c94e4bf9e1c7467b4745718397f"
+    },
+    {
+      "file": "toolchain/crt/COPYING.MinGW-w64-runtime.txt",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "1db8da07b436c68833c0673ffee3d9fcb2526047f3820b81661865dfedc79a1f"
+    },
+    {
+      "file": "toolchain/crt/COPYING.MinGW-w64.txt",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "f38e6194bd3bfa1b654f118e5acefe0aead437bbe669eee43957ccc65a7127f1"
+    },
+    {
+      "file": "toolchain/gcc/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "toolchain/gcc/COPYING3",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "toolchain/gettext-runtime/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "7ef2cdfe58e0c0460657b6598b49af29d4e03c1e41cbaf0e1da1eb8ad74b95d0"
+    },
+    {
+      "file": "toolchain/gettext-runtime/intl/COPYING.LIB",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "toolchain/gettext-runtime/libasprintf/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "03133addae5b99a6148c538300e6d97074453089be1423b741bd081f18e2b298"
+    },
+    {
+      "file": "toolchain/gettext-runtime/libasprintf/COPYING.LIB",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "toolchain/headers/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "99a69660981156c21336fdb5661f89341b013c94e4bf9e1c7467b4745718397f"
+    },
+    {
+      "file": "toolchain/headers/COPYING.MinGW-w64-runtime.txt",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "1db8da07b436c68833c0673ffee3d9fcb2526047f3820b81661865dfedc79a1f"
+    },
+    {
+      "file": "toolchain/headers/COPYING.MinGW-w64.txt",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "f38e6194bd3bfa1b654f118e5acefe0aead437bbe669eee43957ccc65a7127f1"
+    },
+    {
+      "file": "toolchain/headers/ddk-readme.txt",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8d8f9924e4ea5466932000bdb9a4104da1d8ca3e4c979bb8207225522ba63826"
+    },
+    {
+      "file": "toolchain/libatomic/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "toolchain/libatomic/COPYING3",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "toolchain/libgcc/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "toolchain/libgcc/COPYING3",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "toolchain/libgomp/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "toolchain/libgomp/COPYING3",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "toolchain/libiconv/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "toolchain/libiconv/COPYING.LIB",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "toolchain/libiconv/README",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "4ae66e61d1c6593c84c47105b368d579bcee1af566dbb959ec63a0c48425dcf4"
+    },
+    {
+      "file": "toolchain/libiconv/libcharset/COPYING.LIB",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "toolchain/libquadmath/COPYING.LIB",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "32434afcc8666ba060e111d715bfdb6c2d5dd8a35fa4d3ab8ad67d8f850d2f2b"
+    },
+    {
+      "file": "toolchain/libstdc++/COPYING.RUNTIME",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "toolchain/libstdc++/COPYING3",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "toolchain/libwinpthread/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "63263614cdd29f2f93cba85e992f041b31f9fc7b4033692f31269489a8a1b177"
+    },
+    {
+      "file": "toolchain/tzdata/LICENSE",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "0613408568889f5739e5ae252b722a2659c02002839ad970a63dc5e9174b27cf"
+    },
+    {
+      "file": "toolchain/winpthreads/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "63263614cdd29f2f93cba85e992f041b31f9fc7b4033692f31269489a8a1b177"
+    },
+    {
+      "file": "toolchain/xz/COPYING",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "616a3ad264ce29b8f1cb97e53037b139d406899ca8d1f799651e17bfa09830b8"
+    },
+    {
+      "file": "toolchain/xz/COPYING.0BSD",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "0b01625d853911cd0e2e088dcfb743261034a091bb379246cb25a14cc4c74bf1"
+    },
+    {
+      "file": "toolchain/xz/COPYING.GPLv2",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+    },
+    {
+      "file": "toolchain/xz/COPYING.GPLv3",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "file": "toolchain/xz/COPYING.LGPLv2.1",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "file": "toolchain/zlib/LICENSE",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2"
+    },
+    {
+      "file": "toolchain/zstd/LICENSE",
+      "source_role": "Retained original component notice: toolchain",
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8"
+    },
+    {
+      "file": "Cython/Cython-COPYING.txt",
+      "source_role": "Retained original component notice: Cython",
+      "sha256": "e1eb1c49a8508e8173dac30157e4a6439a44ad8846194746c424fbc3fc2b95d7"
+    },
+    {
+      "file": "Cython/Cython-LICENSE.txt",
+      "source_role": "Retained original component notice: Cython",
+      "sha256": "9568a2b155e66ac3e0ba1fd80b52b827b9460e6cf6f233125e7cbca8e206ddc3"
+    },
+    {
+      "file": "python/LICENSE.txt",
+      "source_role": "Official Python Windows distribution, including Microsoft additional conditions",
+      "sha256": "935cf13e19f8c31b497d20b05d73623431a226b230c3599bc30fa3348979bc68"
+    },
+    {
+      "file": "python-wheels/contourpy-1.4.0.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "0e55e86a8fbf3e9b482ae8dc9e111e1b0dc09a7d300e7f480dda68c1125ed614"
+    },
+    {
+      "file": "python-wheels/cycler-0.12.1.dist-info/LICENSE",
+      "source_role": "Original wheel licence notice",
+      "sha256": "f1218143d766da3fea66f13396b7f15df46a83303f29bf96ba6e98eb4d42f408"
+    },
+    {
+      "file": "python-wheels/fonttools-4.68.0.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "22bef80697ecfaa17f97e62b9a26dfa12820be05583e8dd12ad169b241274c99"
+    },
+    {
+      "file": "python-wheels/fonttools-4.68.0.dist-info/LICENSE.external",
+      "source_role": "Original wheel licence directory",
+      "sha256": "b082a5f86775b2641f01bccb8b9c82908481de5f502bb254b1e13bfc2a9f303d"
+    },
+    {
+      "file": "python-wheels/kiwisolver-1.5.1.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "b24c2bf6185f31a124ad6bacccae3071bdc7ad7882de00b00110aa62abb76a15"
+    },
+    {
+      "file": "python-wheels/matplotlib-3.11.2.dist-info/LICENSE",
+      "source_role": "Original wheel licence notice",
+      "sha256": "822e8e528147569a41975592aee19c11992ab667ba50451cd929031d5fc74491"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/LICENSE.txt",
+      "source_role": "Original wheel licence directory",
+      "sha256": "a804dff0ead9fadc5293456410bcbfc32bf024be9c4513459663fb7b442d2341"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/fft/pocketfft/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "8db000e158c162e7249787852d8c69764706502ccee725c06641b31c1e95c8af"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/linalg/lapack_lite/LICENSE.txt",
+      "source_role": "Original wheel licence directory",
+      "sha256": "19060ef465e1797d682ee0fc3081bd25ab1395e995e43d25c9d13c95d9a3cd6b"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/ma/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/random/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/random/src/distributions/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "cf5619f25b112d5ce7c896efffc8e610bcb345dfadcc19f2c1460aa48fff2c9e"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/random/src/mt19937/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "92c10699884321f1c2947fe2a70ab23b0fbf1507f756d89dd08f38c61fc3d4fa"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/random/src/pcg64/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "41190663b77bee5302386495a07b7eabfbfa571aa0ae2f11da6764162062fc4f"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/random/src/philox/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "322ac46d870c8aeead6c53adcccc839296fb3c8e456eae155081297daf7f8013"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/random/src/sfc64/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "28cad82ce1379dc529df30da78ec012d7d0d1d576b03ddcb93388aee53659f59"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/random/src/splitmix64/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "454ec7350e478e037061850b67395753b425b1cb0a34bbc26290b020bf89d763"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+      "source_role": "Original wheel licence directory",
+      "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/_core/src/common/pythoncapi-compat/COPYING",
+      "source_role": "Original wheel licence directory",
+      "sha256": "aea41976c720f91bd19725c16916a1ace40eb1ea42620d340e587a5de4bbcea0"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/_core/src/highway/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "d208152e2777ffd0126eacc1bd21c0320d69e4e6b622d21a2a12a47e8ef73763"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+      "source_role": "Original wheel licence directory",
+      "sha256": "b0fd592d4ead563148e3977e7b589169d46a5ef2ff133c755a81af880a3fc919"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+      "source_role": "Original wheel licence directory",
+      "sha256": "a732977853530066790c42817087f4829b518dd98d340c916acbfd227e39d3cb"
+    },
+    {
+      "file": "python-wheels/numpy-2.5.4.dist-info/numpy/_core/src/umath/svml/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "585483905b13d4b42f800c55ba99e89d6e2e33ccd5f503e201c07531d148ff41"
+    },
+    {
+      "file": "python-wheels/packaging-26.3.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+    },
+    {
+      "file": "python-wheels/packaging-26.3.dist-info/LICENSE.APACHE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "file": "python-wheels/packaging-26.3.dist-info/LICENSE.BSD",
+      "source_role": "Original wheel licence directory",
+      "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+    },
+    {
+      "file": "python-wheels/pillow-13.0.0.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "988ffe8ab3480b0f4e9a0ab2702bffd73d9fb6b47198043fb3ba101a62fac236"
+    },
+    {
+      "file": "python-wheels/pyparsing-3.3.3.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "a5425f9dc14ac74d4c5f0b679e941f2442e32cca7452a4418d5b1a49893ebe4e"
+    },
+    {
+      "file": "python-wheels/python_dateutil-3.0.0.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "ba00f51a0d92823b5a1cde27d8b5b9d2321e67ed8da9bc163eff96d5e17e577e"
+    },
+    {
+      "file": "python-wheels/scipy-1.18.1.dist-info/LICENSE.txt",
+      "source_role": "Original wheel licence notice",
+      "sha256": "f0f5c56b298ec9795df1199edc328a987242716d14a1bde6813112e22dc15f99"
+    },
+    {
+      "file": "python-wheels/six-1.17.0.dist-info/LICENSE",
+      "source_role": "Original wheel licence notice",
+      "sha256": "4375ba20e2b9c6c4e7cad2940a628fd90e95cc3d50ee92aae755715d8ba1fbd0"
+    },
+    {
+      "file": "python-wheels/tzdata-2026.6.dist-info/LICENSE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "df58f69ea88683035d720b5375bcef0cf5aeaa98a1d098d572e0992c378deb46"
+    },
+    {
+      "file": "python-wheels/tzdata-2026.6.dist-info/licenses/LICENSE_APACHE",
+      "source_role": "Original wheel licence directory",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  ]
+}

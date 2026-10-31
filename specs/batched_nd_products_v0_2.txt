@@ -1,0 +1,20 @@
+BATCHED N-D MATRIX PRODUCTS (LANGUAGE0.2)
+Canonical rule F117; language summary L105.
+
+ndmatmul(A,B) accepts real, explicit complex or legacy Pentarnion ND records
+of rank2..8. The first two axes are matrix rows/columns, with A.shape(2) equal
+to B.shape(1). Output matrix axes are [A.shape(1),B.shape(2)]. Axes3..8 select
+independent matrix pages. Each pair of batch extents must match or one must be1;
+missing batch axes have extent1. The output uses the nonsingleton extent.
+
+Storage remains documented column-major page order with complete coefficients
+per element. Every output cell is sum_k A(row,k,pageA)*B(k,column,pageB), in
+that explicit left/right order. No associativity or noncommutative operand
+reordering is assumed. Complex and Pentarnion domains remain distinct.
+
+Contracted physical matrix axes retain existing coordinate/name/transform checks.
+Nonsingleton batch axes must also have matching names, coordinates and transform
+domains. A named singleton cannot silently broadcast across another domain.
+Row metadata comes from A, column metadata from B, and batch metadata from the
+selected nonsingleton source. Existing rank2 behavior and record ABI are retained.
+Output size/work, shared CPU thread reservations and cancellation remain bounded.

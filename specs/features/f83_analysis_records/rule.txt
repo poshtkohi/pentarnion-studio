@@ -1,0 +1,8 @@
+F83: Reproducible data-only analysis records
+Authorized extension,26October2026.
+
+Versioned typed records,explicitsettings/sourceidentity,cache metadata and canonicaldataSHA256 support safe atomic export/import. Hashes are integrity evidence,not signatures or mathematical validation.
+
+Authority: language.txt L71; specs/science_data_v0_2.txt.
+Acceptance: examples/reproducible-analysis/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

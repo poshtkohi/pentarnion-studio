@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "Compiled Newtonian, Lagrangian and Hamiltonian mechanics",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "newton_kepler_verlet.p",
+    "lagrangian_pendulum.p",
+    "hamiltonian_midpoint.p",
+    "pentarnion_ordered_force.p"
+  ]
+}

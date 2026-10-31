@@ -1,0 +1,6 @@
+F162: jacobianpattern computes conservative complete real-coordinate CSR from a
+checked native-compatible AST, including branch controls and explicit fixed2D
+array/rank1..8 tensor indexing. jacobiansparse adds cached native AD values without dropping
+numeric zeros or guessing structure from samples. Inputs/outputs are bounded to
+128 coordinates. No compressed AD coloring or dynamic native shape/slice
+specialization is claimed. See structural_derivatives_and_dae_v0_2.txt.

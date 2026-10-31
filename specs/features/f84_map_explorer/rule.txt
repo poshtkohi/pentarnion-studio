@@ -1,0 +1,8 @@
+F84: No-scripting Map Explorer
+Authorized extension,26October2026.
+
+One docked panel validates a single next-state expression,typedparameters/initials/algebra/projections; compiles cached map bodies and submits through the existing execution worker. Preserve allcoefficients; inspect/save script and exportdata.
+
+Authority: language.txt L72; specs/map_explorer_v0_2.txt.
+Acceptance: examples/map-explorer/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

@@ -1,0 +1,38 @@
+AUTOMATIC CONTINUATION REFINEMENT - LANGUAGE0.2
+
+continueequilibrium/continueperiodic accept auto_refine=0(default)/1 and optional
+refinement=options(max_candidates=16,max_seconds=120,max_iterations=25,
+tolerance=1e-7,spectral_tolerance=1e-5,transversality_tolerance=1e-6,
+fd_step=1e-4,parameter_step=1e-4,fd_agreement=1e-3,max_bytes=67108864).
+Each sampled equilibrium fold/Hopf and periodic period-doubling flag starts the
+existing native augmented corrector from the source interval midpoint. All RHS,
+Jacobian/Hessian/variational callbacks are cached generated native code.
+Maximum64 candidate attempts; complete augmented correctors support1..8 real
+coordinates. Omitted and unsupported candidates are explicitly reported.
+
+The nested markers report contains kind_codes(0fold,1Hopf,2period_doubling),x,
+parameter,frequency_or_period,residuals,accepted,candidate_rows,bracket_first,
+bracket_last,statuses,messages,request_hashes,source_cache_key,accepted_count,
+omitted,requested,rows,notice. Row/bracket identities are one-based and reference
+the original branch, not a reordered branch. Existing sample flags remain intact.
+Optional source_experiment=executed_discovery_report,source_run=one_based_id
+bind the branch seed parameters and gamma to an original discovery identity.
+Model structural key, complete parameter vector and gamma must match. Markers
+then retain source_request_hash and source_run_id for reproducible cross-links.
+bifurcation_refined counts accepted markers. Adjacent detections of one refined
+root are deduplicated while retaining each candidate's diagnostics.
+
+Accepted means converged augmented residual, simple isolated critical mode,
+transversality and finite-difference refinement checks; folds additionally need
+a nonzero quadratic coefficient. No Hopf criticality or fundamental orbit period
+is inferred. A fold of cycles requires a different augmented system and is
+explicitly cycle_fold_not_refined; equilibrium-fold equations are never applied
+to a periodic branch. Refinement failure preserves the completed branch.
+
+branchplot(branch[,options(coordinate=1,quantity="coordinate",markers=1,
+marker_size=0.015)])
+quantity=coordinate/measure/period. The original parameter order is preserved.
+Stable segments are green, unstable red, inconclusive grey. Accepted markers
+overlay labelled crosses; unaccepted candidates are not presented as refined.
+Coordinate selects a one-based full real state coefficient. marker_size is a
+fractional display size(0,0.2]. Plots use existing dock/subplot/export controls.

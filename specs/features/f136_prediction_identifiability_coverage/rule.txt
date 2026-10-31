@@ -1,0 +1,13 @@
+F136 - Prediction uncertainty, identifiability and coverage
+Implemented: native parameter-ensemble propagation; fitted/future observation
+pointwise and finite-grid simultaneous bands; explicit sampled profile regions;
+multistart practical-ambiguity clusters; independent Gaussian/lognormal dataset
+coverage studies with conditional/unconditional interval coverage and Monte Carlo
+SE/bias/RMSE. Cached native curves/Ceres remain the numerical callback path.
+Also an exact structural theorem for affine-in-parameter polynomial real curves,
+with rational coefficient-rank/nullspace certificates and explicit unsupported
+status outside its bounded model class. General nonlinear structural proofs and
+global continuous-domain coverage are not claimed.
+Contract: specs/inference_uncertainty_v0_2.txt.
+Examples: examples/native-uncertainty/.
+Regression: tests/runtime/inference_uncertainty_tests.cpp.

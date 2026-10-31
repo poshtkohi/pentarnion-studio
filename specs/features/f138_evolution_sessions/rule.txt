@@ -1,0 +1,10 @@
+F138 Evolution sessions and native finishing
+evolve accepts version2 session options for atomic numeric-only Pagmo state,
+deterministic islands, shared-budget execution, real callback integer lattices,
+single-objective nonlinear constraints, distinct-basin native local solves and
+explicit supplied high-fidelity finalist verification. Preserve original bounds,
+constraints, algebra/shape metadata and compiler-generated analytic gradients.
+Version1 requests/ABI remain unchanged. Unsupported constrained NSGA-II is an
+explicit diagnostic. Native source/fixed settings identify durable state; changed
+state or malformed bounded arrays/RNG are rejected without overwriting files.
+See specs/evolution_sessions_v0_2.txt and examples/native-evolution-sessions.

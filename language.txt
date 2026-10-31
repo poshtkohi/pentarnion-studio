@@ -1,0 +1,1968 @@
+PENTARNION LANGUAGE 0.2 — NORMATIVE LANGUAGE SPECIFICATION
+Status: checked interpreter, cached native scalar/ODE kernels and lazy numerical module.
+Explicit Run File/Command Window executes source. Scientific foundations: L39-L46.
+File extension: .p. Encoding: UTF-8. Case-sensitive identifiers.
+This document defines implemented syntax, arithmetic semantics and execution
+contracts. Deferred capabilities are explicitly identified.
+
+L01. PROGRAM STRUCTURE
+One file is one independent top-level scope. Each executable-looking
+statement ends with ';', except braced ode/function/control definitions.
+A line break is whitespace, not a statement end; inside a matrix literal it can
+separate rows (L30).
+Empty statements are permitted. Multiple statements per line are permitted.
+Forward references and implicit variable declarations are not permitted.
+Language 0.2 supports conditions, loops and typed functions (L35), callbacks,
+records, source imports and a restricted native scalar subset (L39-L42).
+Dedicated ode blocks define pure native ODE models (L23-L26). Execution is explicit.
+
+Examples:
+  real m = 1.0;
+  integer count = 10;
+  pentarnion p = 1 + i - j + ell;
+  p = p + 2;
+  p * i;       % Evaluated and discarded in a script; use display(p*i) for output.
+
+L02. LEXICAL RULES
+ASCII identifiers: [A-Za-z_][A-Za-z0-9_]*. Unicode is allowed in comments,
+strings and filesystem names, but not identifiers in versions 0.1/0.2.
+Integer literals: decimal digits, no base prefixes or digit separators.
+Real literals: decimal point and/or exponent, e.g. 1.0, .5, 1., 2e-3.
+Leading +/- are operators, not part of the number token.
+An integer literal must fit signed 64-bit, including the special directly
+negated minimum value -9223372036854775808. No wraparound or modulo parsing.
+A real literal must be representable as a finite binary64 value.
+No implicit multiplication: 2i is an error; write 2*i.
+% begins a line comment. %{ and %} on otherwise-whitespace lines delimit a
+non-nesting block comment. Inside a block comment all characters are comment
+text until a closing-delimiter line. Delimiters in strings have no effect.
+Double-quoted strings support \\, \", \n, \r, \t only. In v0.1 strings occur
+in use_algebra, display, quoted clear targets and plotting metadata; there is no declared string type.
+In profile 0.2, single quote denotes a time derivative on the left side of an
+ODE equation (L23), or postfix conjugate transpose in an expression (L30).
+The two-character operator .' is plain transpose. No single-quoted strings exist.
+
+L03. RESERVED NAMES
+Keywords: integer, real, pentarnion, range, use_algebra; profile 0.2 adds ode,
+solution, matrix, vector, realmatrix, pentarnionmatrix, logicalmatrix, string,
+void, if, else, for, while, break, continue, return, function, true, false, end,
+callback, options, record, tuple, complex, import, as and native.
+algebra and element are contextual type words (L100); existing identifiers and
+functions named algebra/element remain usable outside the declaration syntax.
+Read-only basis names: i, j, k, ell.
+Built-in function names (including display in 0.2) are protected from redeclaration.
+No numerical constant named e is introduced. '1' is the integer literal,
+embedded as the algebra identity when a Pentarnion is required.
+Future constructs such as search/simulate are unsupported and must not be
+styled or accepted as implemented keywords. New 0.2 names retain their previous
+identifier meaning when checking existing language 0.1 documents.
+
+L04. ALGEBRA CONTEXT
+Optional first nonempty/noncomment statement:
+  use_algebra("A_gamma", gamma=1);
+Exactly one is allowed. gamma is a signed numeric literal in [0,1], not a
+variable or time-dependent expression. Only the stated algebra alias is
+accepted in v0.1; it resolves to versioned ID A_gamma_v1.
+Without a directive, use the project's algebra/gamma. Without a project,
+use A_gamma_v1, gamma=1. A file directive explicitly overrides the project
+default for that file only. The effective context appears in the status bar.
+Context is immutable during a document analysis. No variable from another
+file enters the scope. All legacy Pentarnion elements in one file use this
+context; L100's explicitly typed native algebra definitions may coexist.
+
+L05. DECLARATIONS AND ASSIGNMENT
+  integer n = 10;
+  real x = 0.25;
+  pentarnion p = pent([1, 0, -1, 0, 1]);
+Declarations require initialisers. Reassignment preserves the declared type.
+Duplicate declarations, use before declaration and basis-name assignment
+are errors. There are no implicit 'ans' values or dynamically changing types.
+
+Value types:
+ integer: signed 64-bit integer.
+ real: IEEE-754 binary64 approximation.
+ pentarnion: five real coefficients tied to an immutable algebra context.
+ integer range, real range: separate finite-range descriptor types.
+ realmatrix, pentarnionmatrix: dense array types, distinct from scalar values.
+ logicalmatrix: dense logical array, distinct from numeric index vectors.
+ complex: explicit two-real scalar, distinct from Pentarnion basis i.
+ string, callback, tuple and immutable options/record: see L35 and L39-L42.
+
+Implicit widening: integer -> real; integer/real -> scalar Pentarnion.
+Integer/real values also embed into Complex. No implicit real -> integer,
+Pentarnion -> real/integer, or Complex/Pentarnion mixing.
+Known integer-to-real loss of exactness may produce a warning; unknown
+values cannot be certified lossless by the editor.
+A pentarnion variable may have zero scalar part, but is never forced pure.
+
+L06. CONSTRUCTORS AND BASIC EXPRESSIONS
+  pent([e0, e1, e2, e3, e4])
+Exactly five scalar expressions; basis order is (1,i,j,k,ell). Values are
+widened to real coefficients. This scalar constructor remains distinct from
+the dense matrix/vector array literals added by L30-L31.
+Equivalent mathematical representations include:
+  pentarnion p = 1 - j + ell;
+  pentarnion q = pent([1, 0, -1, 0, 1]);
+
+L07. OPERATORS AND TYPES
++, - : integer/integer -> integer; mixed scalar -> real;
+       at least one Pentarnion -> Pentarnion by scalar embedding.
+unary +/-: preserves type for the three scalar/element types.
+* : integer/integer -> integer; mixed scalar -> real;
+    scalar/element -> real scaling; element/element -> ordered full product.
+/ : scalar/scalar -> real (never truncating integer division);
+    element/scalar -> coefficient scaling by the scalar reciprocal;
+    scalar/element or element/element -> right division after embedding.
+\ : scalar/scalar means RHS/LHS as real;
+    scalar\element -> scaling the element by inverse scalar;
+    element\scalar or element\element -> left division after embedding.
+^ : scalar base and scalar exponent -> real; runtime rejects
+    out-of-real-domain cases. Pentarnion base requires an integer exponent,
+    returning a Pentarnion. Negative integer exponents use canonical inverse.
+No range participates implicitly in arithmetic; using one as a scalar is
+an error. No comparisons, boolean type or elementwise operators in v0.1.
+
+L08. NONASSOCIATIVE GROUPING
+Multiplication/division parse left to right, but an unparenthesised
+multiplicative chain containing >=3 Pentarnion-valued operands is rejected.
+A grouped subexpression counts as one operand at the enclosing chain.
+Scalar operands do not count toward this Pentarnion count.
+Examples:
+  (B*q)*q             valid
+  B*(q*q)             valid and distinct
+  a*(B*(q*q))         valid
+  a*B*q               valid if a is scalar: two element operands
+  B*q*q               E1301: require explicit grouping
+  p/q*r               E1301: require explicit grouping
+Keep Group nodes/source spans in the AST. Never flatten, commute, reassociate,
+cancel inverses, or use norm composition without a documented valid identity.
+Powers of one element are unambiguous for A_gamma_v1 (power associativity).
+This does NOT authorize replacing (B*q)*q by B*(q*q).
+
+L09. PRECEDENCE
+High to low: primary/group/call with postfix indexing/transpose; exponentiation
+(^ and .^); unary sign; * / \ .* ./; + -.
+Exponentiation is right-associative. Unary sign binds below exponentiation,
+while a signed exponent is allowed: -q^2 means -(q^2); q^-1 means q^(-1).
+A Pentarnion exponent must type-check as integer; scalar ^ returns real.
+Thus q^(2^3) is a type error in v0.1, while q^8 is valid. No hidden real-to-
+integer coercion is introduced to make that case work.
+
+L10. CANONICAL RECIPROCAL AND EQUATION DIVISION
+For nonzero Pentarnion q:
+  inv(q) = q^(-1) = conj(q)/norm2(q).
+This is the canonical reciprocal in the one-element subalgebra.
+  p/q   means the unique x with x*q = p.
+  p\q   means the unique x with p*x = q.
+In general p/q is NOT p*inv(q), and p\q is NOT inv(p)*q.
+With a real nonzero denominator these coincide with real coefficient scaling.
+Division by zero, singular nonunique solves, inconsistent equations and
+unacceptable ill-conditioning are runtime/core errors, not automatic
+least-squares results. Static validation normally cannot decide solvability.
+The C++ library must expose richer solve status and numerical residuals.
+Do not claim q*inv(q)=1 supplies cancellation across arbitrary third factors.
+
+L11. BUILT-IN SIGNATURES
+sqrt(integer|real) -> real; real nonnegative domain (runtime condition).
+
+sin/cos/exp/sinh/cosh(integer|real) -> real.
+sin/cos/exp/sinh/cosh(pentarnion) -> pentarnion using L18 one-element calculus.
+tan/asin/acos/atan/tanh/asinh/acosh/atanh/log/log10/log2/abs/floor/ceil/round(integer|real) -> real.
+atan2(integer|real, integer|real) -> real, argument order atan2(y,x).
+These additional functions are protected names in profile0.2. They do not have
+Pentarnion overloads except for the five explicitly listed above. No componentwise
+extension is implied. Existing sqrt remains real-only.
+
+pent([scalar,scalar,scalar,scalar,scalar]) -> pentarnion.
+conj(pentarnion) -> pentarnion.
+scalar(pentarnion) -> real.
+pure(pentarnion) -> pentarnion with coefficient 0 equal to zero.
+norm2(pentarnion) -> real, N(q)=sum(q_r^2), not its square root.
+inv(pentarnion) -> pentarnion; nonzero domain (runtime condition).
+coeff(pentarnion,integer) -> real; zero-based index in 0..4.
+commutator(pentarnion,pentarnion) -> pentarnion, p*q-q*p.
+associator(pentarnion,pentarnion,pentarnion) -> pentarnion,
+  (p*q)*r-p*(q*r).
+display(expr[,expr...]); prints one or more scalar, Pentarnion, range-descriptor
+ or string-literal arguments, separated by spaces, followed by a newline.
+Display is a top-level statement, not a value-returning expression.
+clc; clears the visible/output transcript, preserving variables/context/history.
+clear; and clear all; remove all user variables, preserving algebra context.
+clear p q; removes named variables; unknown names are a no-op. Protected bases
+and names cannot be cleared. A cleared variable may be redeclared with a new type.
+The names disp/print/solveODE/search remain unsupported. plot(xSeries,ySeries)
+is a profile0.2 curve statement; odesolve is spelled in lowercase (L23-L26).
+Explicit plot2/plot3 and figure commands are defined in L17.
+The checker validates without evaluating. Explicit Run invokes these operations.
+
+L12. FINITE RANGE DECLARATIONS
+  integer range orders = 1:1:5;
+  real range strengths = 0.05:0.05:0.50;
+The three-part form start:step:stop is required in v0.1. All components are
+scalar expressions; integer range requires integer components. real range
+allows integer-to-real widening. Optional ordinary reassignment must use a
+range descriptor of the same type, never a scalar.
+  orders = 2:2:10;
+  integer range copy = orders;
+Zero literal step is a static error. Computed steps are checked at runtime;
+static checking never evaluates them. Direction inconsistent
+with the endpoints denotes an empty finite range (not an infinite loop).
+If start==stop and step!=0, the range contains that one value.
+Ranges are not continuous intervals and do not imply sampling/optimisation.
+The interpreter computes and validates range fields but never materialises/enumerates them.
+
+Future enumeration contract, recorded to avoid ambiguity:
+ integer: use checked integer arithmetic; include x=start+k*step while it is
+ inside the closed interval in the step direction. Stop before overflow.
+ real: use specified binary64 non-fused multiply then add for each k (not
+ repeated accumulation); include only generated points satisfying x<=stop
+ for positive step, x>=stop for negative step. Do not force a nominal
+ endpoint or silently apply an epsilon. Log actual values when execution is
+ introduced. Enforce a finite count budget and error on non-progress/overflow.
+
+L13. EBNF (COMMENTS REMOVED; MATRIX SEPARATORS USE ORIGINAL SOURCE GAPS)
+program       = {";"}, [directive], {statement}, EOF ;
+directive     = "use_algebra", "(", string, ",", "gamma", "=",
+                signed_number, ")", ";" ;
+statement     = timer_stmt | ode_def | subplot_stmt | xy_plot_stmt | declaration | indexed_assignment | assignment | display_stmt | clear_stmt | clc_stmt | plot_stmt | figure_stmt | clf_stmt | close_stmt | dock_stmt | tile_stmt | figure_text_stmt | expression, ";" | ";" ;
+display_stmt  = "display", "(", display_arg, {",",display_arg}, ")", ";" ;
+display_arg   = expression | string ;
+clear_stmt    = "clear", [clear_names | "(",[clear_args],")"], ";" ;
+clear_names   = identifier,{identifier} ;
+clear_args    = string,{",",string} ;
+clc_stmt      = "clc", ["(",")"], ";" ;
+plot_stmt     = ("plot2"|"plot3"), "(", axis, ",", axis, [",",axis], ",", expression, {",",expression}, ")", ";" ;
+axis          = string ; (* literal distinct axis names; exactly 2 for plot2, 3 for plot3 *)
+figure_stmt   = "figure", "(", [figure_args], ")", ";" ;
+figure_args   = expression, [",",figure_properties] | figure_properties ;
+figure_properties = string, ",", string, {",",string,",",string} ;
+dock_stmt     = ("dock"|"undock"), "(", expression, ")", ";" ;
+tile_stmt     = "tilefigures", "(", [string,[",",expression,",",expression]], ")", ";" ;
+figure_text_stmt = ("title"|"xlabel"|"ylabel"|"zlabel"|"caption"), "(", string, [",",string,",",string], ")", ";" ;
+clf_stmt      = "clf", ["(",")"], ";" ;
+close_stmt    = "close", "(", (expression|string), ")", ";" ;
+declaration   = ("integer"|"real"), ["range"], identifier, "=",
+                initializer, ";"
+              | ("pentarnion"|"solution"|"matrix"|"vector"|"realmatrix"|"pentarnionmatrix"), identifier, "=", expression, ";" ;
+assignment    = identifier, "=", initializer, ";" ;
+indexed_assignment = identifier, "(", expression, [",",expression], ")", "=", expression, ";" ;
+initializer   = expression, [":", expression, ":", expression] ;
+expression    = product, {("+"|"-"), product} ;
+product       = unary, {("*"|"/"|"\\"|".*"|"./"), unary} ;
+unary         = ("+"|"-"), unary | power ;
+power         = primary, [("^"|".^"), unary] ;
+primary       = atom,{".",identifier | "(",expression,[",",expression],")" | "'" | ".'"} ;
+atom          = number | identifier | basis | group | call | pent_ctor | ode_solve | matrix_literal ;
+matrix_literal = "[", [matrix_row,{(";"|matrix_newline),matrix_row}], "]" ;
+matrix_row    = expression,{(","|matrix_space),expression} ;
+(* matrix_space/newline are source gaps between tokens; signed-entry ambiguity
+   follows L30. Scalar entries only; no nested array concatenation. *)
+group         = "(", expression, ")" ;
+call          = builtin_name, "(", [call_arg,{",",call_arg}], ")" ;
+call_arg      = expression | string ; (* strings only for explicitly allowed options *)
+pent_ctor     = "pent", "(", "[", expression, {",",expression}, "]", ")" ;
+signed_number = ["+"|"-"], number ;
+Type checking, rather than grammar alone, enforces constructor length,
+range/scalar assignment, protected names, power types and association rules.
+In the EBNF the escaped display "\\" denotes one backslash token.
+
+L14. STATIC ANALYSIS DOES NOT EXECUTE
+Diagnose literal overflow, a literal zero divisor, wrong arity/types, missing
+semicolons, unknown names, illegal range use and unsafe unparenthesised chains.
+Do not evaluate p, q, a function call or an assignment to discover its value.
+Limited signed-literal recognition is allowed; it is not a general constant
+folder. Computation-dependent errors remain documented potential runtime
+conditions. 'Syntax valid' is never an assertion of numerical invertibility.
+
+L15. OUT-OF-SCOPE SYNTAX
+No loops, conditionals, general user functions, imports, namespaces, higher-dimensional arrays,
+surface/mesh calls, research-search commands, shell commands, arbitrary source file I/O,
+comparison operators, mutable gamma, compiler directives or auto-execution.
+Unsupported constructs produce a precise unsupported-feature diagnostic.
+
+L16. INTERPRETER AND COMMAND WINDOW PROFILE0.2
+New projects/standalone source default to0.2. Projects marked0.1 remain editable
+and checkable; explicitly upgrade their metadata to execute scripts. display,
+clear and clc are protected builtins only in0.2, preserving old0.1 identifiers.
+The checker parses/types the entire source without evaluation before execution.
+Explicit Run File starts a fresh independent scope, then retains its completed
+variables for console inspection. Direct console commands share typed bindings.
+Static errors preserve the workspace; runtime errors stop with earlier completed
+statements/output retained. Cancellation rolls back the request's workspace.
+No command runs automatically when opening/saving/typing/checking source.
+
+In the Command Window only, the final semicolon is optional. Without it, the
+last expression/assignment/declaration value echoes; with it, no automatic echo.
+display always prints. Scripts still require semicolons. clc clears output and
+keeps command history/variables; clear keeps algebra context. Changing gamma with
+existing variables is rejected until clear in an earlier command. Reset Workspace
+is a separate UI action that also restores current project context defaults.
+
+Console-only run("path.p") opens/focuses and executes that .p buffer. Relative
+paths use project root, active-source directory or current directory in that
+order; absolute paths are accepted. This complete console command invokes no
+shell command and is not a script import. Native ODE compilation is restricted
+to the checked compiler backend in L23-L24. Project-tree right-click Run
+and Run File use the same execution path. External penta-run executes files too.
+
+Integer arithmetic is checked signed64; real arithmetic is finite binary64.
+Powers and sqrt enforce real-domain rules. Division distinguishes strict unique
+operator solves from canonical reciprocal multiplication. Display uses locale-
+independent15 significant digits and does not erase tiny nonzero coefficients.
+Ranges compute fields and reject zero steps but are never enumerated here.
+
+Resource defaults:4MiB source,200000 tokens/nodes,50000 statements,128 AST depth,
+128 static diagnostics,1000000 evaluation operations,1MiB output/request and
+50000 workspace variables. Long flat chains are depth-bounded too. Console history
+holds200 commands; the transcript is bounded8MiB and scrollable. No runtime
+filesystem/network/process capability, except explicit GUI/CLI source-file loading
+and the bounded native ODE compiler/cache backend in L23-L24. General native .p
+compilation, PDEs, parallel work and research search remain future work.
+
+L17. VECTOR FIGURES (ADDITIVE PROFILE0.2 EXTENSION)
+plot2("i","j",p[,q...]); selects two distinct displayed coefficients.
+plot3("i","j","k",p[,q...]); selects three distinct displayed coefficients.
+Axes are literal strings from "1","i","j","k","ell"; "1" means scalar coefficient.
+There must be at least one Pentarnion-valued expression after the axes. Scalars,
+ranges and strings are not vector arguments; use an explicit pent constructor
+when representing a scalar-axis vector. At most256 vectors occur in one call.
+Expressions retain ordinary typing, operand order and explicit grouping rules.
+No implicit sampling, field/mesh/PDE plotting or backend-specific names. L30 adds
+real coordinate vector plots separately from these canonical projections.
+
+figure(); creates/selects the lowest available positive figure number.
+figure(n); selects figure n, creating it if absent. n has Integer type,1..64.
+plot2/plot3 with no selected figure creates/selects figure1. Every plot call
+replaces only the selected figure's active panel. Multiple vector arguments overlay
+in one call. Figure commands have Void type and cannot be assigned as handles.
+clf; or clf(); clears only the selected figure (no-op when none is selected).
+close(n); closes figure n (absent valid numbers are a no-op).
+close("all"); closes every plot figure. No other close string is accepted.
+clear/clc/Reset Workspace preserve figures. No hold command is supported yet.
+
+Each vector is an arrow from the origin to its selected-coordinate endpoint,
+with an arrowhead at that endpoint and equal axis scaling. An exactly zero
+projection is shown as a point, even if omitted coefficients are nonzero.
+The view labels projection axes/context and retains all five coefficients for
+inspection. Display projection never modifies the algebra value or gamma.
+Figures start as tabs inside Studio; explicit undock/tiling commands may create
+owned figure-only windows (L20). The Command Window remains unified. Export Image
+exports the selected figure to PNG, JPEG or SVG through the GUI. Each subplot's
+Save icon exports just that panel in the same formats (L29). Source scripts have
+no arbitrary filesystem-writing/export function in this revision.
+
+Plot/figure statements always act when executed; semicolons suppress neither
+plots nor display. Static checking never creates figures. Ordered figure actions
+are emitted only during explicit execution; cancellation discards those actions.
+Ordinary runtime failures retain preceding completed figure actions. Resource
+limits include256 figure actions per request and64 live figure numbers.
+penta-check accepts this syntax without Qt/VTK. penta-run diagnoses that figure
+commands require Studio instead of silently ignoring requested plots.
+
+L18. ELEMENTARY FUNCTIONS AND REAL DOMAINS
+Authority: the project's original algebra research and public algebra contract.
+The implemented one-element slice formulas below preserve that convention.
+For p=a+u, r=hypot(u1,u2,u3,u4), the associative one-element slice gives:
+ exp(p)  = exp(a)*(cos(r)+(u/r)*sin(r))
+ sin(p)  = sin(a)*cosh(r)+(u/r)*cos(a)*sinh(r)
+ cos(p)  = cos(a)*cosh(r)-(u/r)*sin(a)*sinh(r)
+ sinh(p) = sinh(a)*cos(r)+(u/r)*cosh(a)*sin(r)
+ cosh(p) = cosh(a)*cos(r)+(u/r)*sinh(a)*sin(r)
+At r=0, use the real scalar result and zero pure coefficients. Pure-direction
+ratios use the continuous limits; tiny nonzero components are retained when
+representable. These are whole-element functions, never coefficientwise maps.
+Context/gamma is preserved. No multielement identities such as exp(p+q)=exp(p)exp(q)
+are assumed. Standard floating approximations, checked finite results and their
+normal representability limits apply; tests are not a symbolic proof.
+
+Real trig angles are radians. asin/acos require -1<=x<=1; acosh requires x>=1;
+atanh requires -1<x<1; sqrt requires x>=0; logarithms require x>0. exp/hyperbolic
+overflow and nonfinite results are explicit runtime failures. floor/ceil/round
+return Real values; round uses nearest integer with halfway cases away from0.
+atan2 uses the host standard math convention, including signed-zero cases.
+
+L19. SOURCE AUTOSAVING AND CONSOLE INTERACTION (EDITOR, NOT SOURCE SYNTAX)
+The Command Window is one text document containing protected history/output and
+one editable >> input region while ready. During work the prompt/input is hidden
+and a protected Running status appears; Stopping appears after cancellation is
+requested. The ready prompt returns only after the worker finishes. Transcript
+scrolling, selection and context-menu Copy remain available. Enter submits; Shift+Enter inserts a newline;
+Up/Down recalls history. clc leaves one fresh prompt, retaining history/variables.
+Output, errors and commands occupy that same surface. Problems is optional.
+Named modified sources autosave after the mouse leaves the source viewport,
+even when keyboard focus remains inside it, after a short debounce (~500ms).
+Focus/tab changes and configurable periodic saving (default60s) also trigger
+safe saves. Untitled buffers use owned recovery snapshots until explicitly named.
+Autosave uses the same atomic save/external-change protection as manual Save,
+does not execute source, and does not open blocking save dialogs on conflicts.
+
+L20. FIGURE WINDOWS, NAMES AND TILING
+These are additional Void statements in profile0.2; old0.1 identifier compatibility
+is preserved. No assignable graphics-handle/object type is introduced.
+figure(1,"Name","Vector addition"); selects/creates1 and changes its display name.
+figure("Name","A new figure"); creates/selects the lowest available figure ID.
+The optional property pairs Name and NumberTitle may occur in either order.
+Property keys and on/off values are case-insensitive; unknown/duplicate properties
+are errors. NumberTitle is "on" by default; "off" suppresses the numeric prefix
+when a custom name is present. Name is literal plain text, not interpreted math.
+figure(1) without properties preserves the existing name/NumberTitle. clf retains
+figure identity/name but clears plot contents and annotations.
+
+undock(n); places an existing figure in its own owned figure-only window.
+dock(n); returns an existing figure to Studio. n has Integer type in1..64;
+the target must already be open. Data, context, labels, colours and camera remain
+with the same figure. Closing an undocked window closes that figure, not Studio.
+All owned floating windows close when Studio/FigureManager is destroyed.
+
+tilefigures(); or tilefigures("studio"); docks and tiles all open figures in Studio
+using an automatic grid. tilefigures("desktop"); undocks and tiles them on the
+current available monitor. Optional rows/columns choose a grid:
+tilefigures("studio",1,2); or tilefigures("desktop",2,2);
+Dimensions have Integer type in1..64; product<=64 and grid capacity must fit all
+currently open figures. Capacity/display errors leave the current arrangement
+unchanged. No figures is a no-op. Desktop cells must fit the available display.
+The UI provides Dock, Undock, Tile in Studio, Tile on Desktop, Tabs, camera reset
+and image export. Tile dropdowns offer Automatic, preset grids and Custom rows/
+columns with the same capacity/64-cell validation. Explicit unused grid cells keep
+their space; Cancel preserves the layout. Floating figures expose the same choices.
+Tabs returns docked figures to tabbed view. Tiling arranges
+existing figures; it does not create subplots within one figure.
+
+L21. TITLES, AXIS LABELS, CAPTIONS AND LATEX MATH
+title("$p+q$"); xlabel("$i$"); ylabel("$j$"); zlabel("$k$");
+caption("$p+q=2+2j$");
+These affect the selected figure (create/select figure1 when none is active).
+The optional pair "Interpreter","latex" or "Interpreter","none" selects math
+rendering or literal text. Default is latex, supporting mixed plain text and
+$...$ mathematical spans. Empty text clears the corresponding annotation.
+Plot replacement preserves annotation overrides; clf clears them. Axis projection
+metadata remains available separately, so a custom label never changes which
+coefficient is plotted. Labels/captions appear in the actual image export.
+
+The renderer supports a documented mathematical subset through native
+JKQTMathText, including Greek symbols, sub/superscripts, fractions, roots, sums,
+integrals, standard operators and selected matrix environments. It is not a TeX
+document engine: file/package/macro execution and numeric font/dimension controls
+are unavailable. Unsupported/malformed math produces a clear figure error and
+retains the previous valid annotation. No TeX/Python executable is launched.
+Font resources are bundled XITS. A literal source string must escape a backslash:
+title("$p\\star q$"); caption("$(p\\star q)_k=2\\sqrt{2}$");
+After source decoding, the renderer receives ordinary LaTeX backslashes.
+Each text literal is limited to4096UTF8bytes; native labels enforce64group levels,
+bounded command/script complexity and a maximum2048x1024-pixel label image.
+Rendered labels are positioned inside the VTK view and survive resizing,
+rotation, docking/undocking, tiling and PNG/JPEG/SVG export.
+
+L22. SAVE BEFORE SCRIPT RUN
+Run File/F5, project-tree Run and console run("file.p") use one save-before-run
+path. A modified named script is safely saved before the execution snapshot.
+An unnamed script opens normal Save As first. Cancellation or any save failure,
+external disk conflict/unavailability, or changed project metadata stops the run
+before worker submission; no script statements or plot actions execute.
+Execution captures the saved source/profile only after successful persistence.
+Checking still uses unsaved buffer snapshots without mandatory saving, and never
+executes source. Independent autosave remains governed by L19. Interactive direct
+commands do not require a source-file save.
+
+
+L23. NATIVE ODE MODELS AND SOLUTIONS (ADDITIVE PROFILE0.2 EXTENSION)
+ode flow(t, pentarnion p; real a, pentarnion b) {
+    p' = b*p-a*p;
+}
+solution s = odesolve(flow, p=p0, a=damping, b=B,
+    t0=0,t1=20,sample_step=0.01,method="bdf",
+    jacobian="analytic",rtol=1e-8,atol=1e-10);
+
+Time is the first untyped identifier and has real type inside the block. Each
+state before ';' and parameter after ';' has an explicit real/pentarnion type.
+The parameter section may be omitted or empty. There must be at least one state.
+Every state has exactly one derivative assignment; equation order is immaterial.
+No local declarations, loops, branches, calls to user code, nested solves or side
+effects occur in an ODE body. No workspace values are implicitly captured: only
+time, declared states/parameters and read-only basis names are visible. Local
+names are unique and cannot collide with protected names. State/parameter names
+also cannot collide with solver option names.
+A state named t is disallowed because s.t is reserved for sampled output times.
+ODE model names cannot be reassigned. A solution variable may receive a later
+solution, with its checked named-state schema updated to match.
+
+odesolve names an earlier ODE model, then explicitly supplies every state initial
+value, parameter value and t0/t1 using unique named arguments. Type widening is
+integer->real->scalar Pentarnion; no implicit narrowing. All supplied values are
+evaluated once before integration and remain fixed throughout that solve. Time
+arguments may appear within the RHS. The immutable A_gamma_v1 context applies.
+
+Options: t0,t1 required finite reals with t1>=t0; equality returns the initial
+state only. sample_step positive (default.01);
+method is a literal "bdf" (default), "adams", "erk" or "esdirk";
+jacobian is a literal "analytic" (default) or "finite_difference";
+rtol in (0,1), default 1e-7; atol>0, default 1e-9. Absolute tolerance is a scalar
+applied to every real coordinate. All methods use native SUNDIALS integration:
+  "bdf": CVODE backward differentiation, variable order 1-5, for stiff systems.
+  "adams": CVODE Adams-Moulton, variable order 1-12, for nonstiff systems.
+  "erk": ARKODE Dormand-Prince 5(4), seven-stage explicit Runge-Kutta.
+  "esdirk": ARKODE ESDIRK4(3)6L[2]SA, six-stage implicit Runge-Kutta.
+The embedded pairs use adaptive step sizes; the principal solution orders are
+5 for erk and 4 for esdirk. Explicit erk is intended for nonstiff systems;
+esdirk is intended for stiff systems. There is no automatic method switching.
+Solver settings never select an interpreted model fallback.
+sample_step controls returned samples, not adaptive internal timesteps. Include
+t0 and the exact final endpoint t1 even when the interval is not a multiple of
+sample_step. Reject spacing that cannot produce distinct finite binary64 times.
+
+Optional resource limits: max_steps positive integer<=100000000 (default1000000),
+max_samples positive integer<=1000000 (default1000000), max_seconds in (0,3600]
+(default60, integration only). All failures stop the request with a diagnostic;
+no partial trajectory is published as a complete solution. Stop cancellation
+terminates compilation/integration and preserves the pre-request workspace.
+
+Supported RHS subset: ordered +,-,*, unary signs, explicit groups; division by
+real scalar only; ^ with a literal integer exponent0..64; pent constructors;
+conj,scalar,pure,norm2,coeff with literal index0..4; commutator,associator; real
+sin,cos,tan,exp,log,sqrt,sinh,cosh,tanh. Reject unsupported calls/operations before
+compilation. Whole-Pentarnion elementary functions and equation division retain
+their ordinary interpreter meanings outside ODEs but are not native RHS features
+yet. Domain failures and nonsmooth/undefined derivatives are errors, not guessed
+Jacobians. Gamma stays in [0,1]. Preserve all multiplication order and Group nodes.
+
+Limits:64 real state coordinates,128 real parameter coordinates,20000 RHS nodes.
+One real state occupies1 coordinate, one Pentarnion5. Bound each solution to8m
+sampled state coordinates. Bound unique retained solution data across the command
+workspace to8m state coordinates, counting aliases once; at most64 solves/request.
+Project schema_version remains1. Checking, opening, editing and saving do not
+compile or run equations. Only explicit execution invokes the native backend.
+
+L24. COMPILER-EMITTED JACOBIANS AND STRUCTURAL NATIVE CACHE
+The compiler always generates native RHS and full real-coordinate Jacobian
+entry points. Analytic mode uses forward automatic differentiation of the same
+grouping-preserving real coordinate computation, with no finite differences.
+For n Pentarnion states, the Jacobian has5n rows/columns (plus any real states).
+No user-written Jacobian is accepted or required. This is the state Jacobian
+df/dy; automatic parameter sensitivity trajectories are a future feature.
+For bdf/adams/esdirk, finite_difference mode requests the selected SUNDIALS
+integrator's dense difference-quotient Jacobian. The explicit erk method accepts
+either jacobian option for source compatibility, but does not evaluate a Jacobian;
+its solution summary reports jacobian=not_used. The compiler still emits the same
+RHS/Jacobian entry points. Changing method or Jacobian mode does not recompile the
+generated native model.
+
+Compile standalone C++20 model code into DLL on Windows/shared library on Linux.
+Use the configured CMake compiler directly with argument lists and cancellation/
+timeout handling, never a user-provided shell command. Both model functions have
+a narrow C ABI; Qt/Eigen/SUNDIALS do not cross the generated-model interface.
+Store generated source, atomic manifest and compiled artifact in an ignored
+.penta-cache/odes directory beside the project manifest, or beside a standalone
+source. The bare projectless console uses application-local storage. No project
+manifest rewrite is required, and cache entries are platform/toolchain specific.
+
+Fingerprint the typed ordered model, state/parameter layout, generated support
+code, algebra/backend identity, configured compiler identity and target ABI.
+Exclude source spans/comments/whitespace, external parameter values, initial
+values, gamma values and integrator/output settings. Changing an embedded literal
+or equation structure generates a new kernel. Source/binary hashes and ABI are
+checked on reuse; incomplete/corrupted artifacts are regenerated under a
+cross-process lock. Never reuse a stale incompatible artifact on compiler error.
+display(s) reports sample/coordinate counts, cache hit/miss/key, Jacobian mode and
+step count. First execution compiles; later executions reuse valid binaries.
+
+L25. SAMPLED SOLUTIONS AND CURVE PLOTS
+solution is an immutable sampled ODE result, distinct from a Pentarnion scalar.
+s.t is a real-valued time series. s.<state> is a real or full five-coefficient
+Pentarnion series according to the declared state type. Unknown members fail
+static checking. Members are read-only views sharing the result data. There are
+no indexing into solution series or declared general series types in this
+extension. Separate dense arrays and their scalar indexing are defined in L30.
+coeff(s.p,k), k integer0..4, extracts a real series from a Pentarnion series.
+display(s) gives a compact summary; it does not dump millions of sample values.
+
+plot(xSeries,ySeries); requires two real series with equal sample counts and
+draws their paired coordinates as a connected 2D curve with generic x/y axes.
+plot2("i","j",s.p); plot3("1","i","j",s.p); project complete Pentarnion
+samples into connected curves. Existing individual Pentarnion arguments remain
+origin-to-endpoint arrows. Canonical projections preserve equal coordinate units;
+generic x/y plots scale each axis independently and use a bottom/left frame. Preserve requested sample order
+and points; no automatic point thinning, smoothing, arrows at every point, or
+interpolation of mismatched series. At most256 curves and1m curve points/request;
+the GUI additionally bounds retained curves to2m points and128 allocated
+subplot panels across all figures. Plot replacement affects only the
+active subplot, preserving its annotation overrides and all other panels.
+
+L26. MATLAB-STYLE SUBPLOTS
+subplot(rows,columns,index); uses positive Integer dimensions and a1-based
+row-major index: subplot(2,2,3) selects the bottom-left panel. At most64 cells in
+one grid. It operates inside the current figure, creating one if needed, and is
+distinct from tilefigures, which arranges entire figures. Re-selecting a panel
+preserves its data, labels and camera. Title/xlabel/ylabel/zlabel/caption target
+the active panel. Figure Name/NumberTitle and docking remain figure properties.
+Changing grid dimensions repositions retained numeric panels; a smaller grid
+that would discard populated panels fails without mutation (use clf first).
+clf clears all panels and returns to one empty1x1 canvas while retaining figure
+identity/name. close removes the entire figure. Figure export captures all
+allocated panels and their labels in PNG, JPEG or SVG. The Save icon in an
+individual subplot exports only that panel. Export behavior is defined in L29.
+Scalar-only three-argument subplot is supported; spanning indices, compact
+subplot(221), subplot handles, hold and general graphics-object APIs are deferred.
+
+EBNF ADDITIONS (replace the corresponding primary/declaration forms in L13)
+ode_def       = "ode",identifier,"(",identifier,",",ode_vars,
+                [";",[ode_vars]],")","{",{ode_equation},"}",[";"] ;
+ode_vars      = ode_var,{",",ode_var} ;
+ode_var       = ("real"|"pentarnion"),identifier ;
+ode_equation  = identifier,"'","=",expression,";" ;
+ode_solve     = "odesolve","(",identifier,{",",identifier,"=",ode_binding_value},")" ;
+ode_binding_value = expression | string ;
+primary       = atom,{".",identifier | "(",expression,[",",expression],")" | "'" | ".'"} ;
+atom          = number | identifier | basis | group | call | pent_ctor | ode_solve | matrix_literal ;
+subplot_stmt  = "subplot","(",expression,",",expression,",",expression,
+                ")",";" ;
+xy_plot_stmt  = "plot","(",expression,",",expression,")",";"
+              | "plot3","(",expression,",",expression,",",expression,")",";" ;
+
+Strings are accepted as literal method/Jacobian options; type checking enforces
+all binding names, state schemas and supported native expressions.
+
+L27. MONOTONIC ELAPSED-TIME MEASUREMENT
+tic; and tic(); start/restart the execution session's default timer.
+toc; and standalone toc(); print "Elapsed time is <seconds> seconds." without
+resetting it. toc() within an expression returns a nonnegative real elapsed
+time, without printing itself, for example real elapsed=toc(); display(elapsed);
+Use steady monotonic wall-clock time, in seconds; no calendar-clock subtraction.
+The most recent tic wins. There are no timer handles, nested stacks or arguments.
+Calling toc before tic is a runtime error R1811, never a fabricated zero.
+
+The timer persists across direct Command Window submissions. clear/clc preserve
+it; Reset Workspace and fresh Run File reset it. Cancellation rolls timer state
+back together with workspace state. Static checking, opening/saving/editing do
+not start/read timers. tic/toc are protected builtins only in profile0.2;
+legacy0.1 identifier compatibility is preserved. Timing inside ODE bodies is
+unsupported, so RHS/Jacobians stay pure and reproducible.
+
+tic around odesolve measures execution wall time after subtracting time spent
+in the native compiler process, even on a first cache miss. Cache lookup, model
+preparation and integration remain included. GUI drawing occurs after worker
+evaluation and is not included in a timer stopped inside the script. Across
+console commands, elapsed wall time includes pauses at the prompt.
+
+timer_stmt = ("tic"|"toc"),["(",")"],";" ;
+call additionally admits toc() as a zero-argument Real-returning builtin outside
+ODE bodies. Bare toc is a command, not a value-expression form.
+
+L28. INTERACTIVE PLOT TOOLS AND DISPLAY QUALITY
+This is a GUI extension. No new .p grammar, smoothing function or numeric type is
+introduced. Existing plot/plot2/plot3/subplot statements keep their mathematical
+meaning. The data renderer uses anti-aliasing to improve raster line edges;
+stored sample values, sample order, finite extrema and polyline vertices are
+preserved. Curves remain connected stored samples, without fitted splines,
+averaging, discarded peaks, resampling or changes to ODE tolerances.
+
+Each allocated subplot has an icon toolbar with tooltips and accessible button
+names. Zoom in/out select a click mode; click the canvas to zoom around that
+position. Wheel zoom is available. Pan uses a left-button drag. Rotate is enabled
+only in 3D. Reset/Fit restores the full finite data range and refreshes camera
+clipping. View tools and sample-marker visibility belong to each subplot and
+survive subplot selection, resizing, docking and figure tiling. Toolbar actions
+activate their own subplot. Interaction does not mutate the command workspace.
+
+Data Cursor snaps to the nearest visible original stored sample in screen space,
+within a bounded logical-pixel radius. The selected tip shows its curve label,
+one-based sample index and original x/y(/z) numeric coordinates, independent of
+render normalization. It never reports an interpolated point along a segment as
+a saved sample. Show Points toggles markers at the actual curve vertices and
+does not change the connected line or sample count. Replacing/clearing the plot
+clears the selection; Escape clears a tip without changing samples. One selection
+per subplot is retained. Large coordinates
+remain numerical values, not raw GPU-world normalized numbers.
+
+PNG/JPEG exports include the anti-aliased native plot, mathematical labels and
+visible data annotations. SVG is also supported, as defined in L29. Subplot
+controls themselves are not part of the exported image.
+Zoom/pan may intentionally move data outside the plot rectangle; Reset/Fit
+recovers the complete view. These are view controls, not data correction tools.
+
+L29. SVG AND INDIVIDUAL SUBPLOT EXPORT
+The figure toolbar's Export Image command saves the entire selected figure,
+including every allocated panel. Each subplot has its own Save icon with the
+tooltip "Save subplot..."; it activates that figure/panel and opens a Save dialog
+for only that panel. Both routes support .png, .jpg, .jpeg and .svg. No new .p
+export statement or general filesystem-writing capability is introduced.
+
+PNG/JPEG use the native framebuffer. SVG exports projected vector curves,
+arrow geometry, axes, sample markers and text/math glyph paths. It preserves the
+current camera, viewport, clipping, labels, legend and visible data annotations;
+it is not a whole-scene raster image embedded in an SVG wrapper. Subplot toolbar
+icons are omitted. Individual-panel export contains no neighboring panel or
+figure toolbar. Dense sampled curves can produce large SVG files because their
+computed vertices are retained. Export never changes the numerical samples.
+
+SVG uses painter depth ordering for projected 3D geometry; it is not an OpenGL
+depth-buffer capture. PNG/JPEG remain available when an exact rasterized view
+is wanted. No general transparent 3D scene-export API is introduced.
+
+Export is explicit and requires a usable native view. It works for docked,
+tiled and floating figures. Cancel/invalid targets/unavailable contexts or
+encoding/write failures do not replace an existing destination. Unicode paths
+and QSaveFile atomic writes apply to every format. Reset/Fit before saving when
+the complete data range is wanted; zoom/pan intentionally affect the saved view.
+
+L30. REAL AND PENTARNION MATRICES AND VECTORS
+This additive language 0.2 extension provides dense two-dimensional arrays.
+Scalars and arrays remain distinct types, even for a 1-by-1 matrix. A Pentarnion
+scalar is still one algebra element with five coefficients; a vector declaration
+below means a row or column array of real or Pentarnion elements.
+
+matrix A = [1,2;3,4];          % infer realmatrix from scalar entries
+vector v = [1;2];             % row/column shape checked at runtime
+matrix y = A*v;               % matrix by column vector
+matrix P = [i,j;k,ell];       % infer pentarnionmatrix
+realmatrix R = zeros(2,3);    % explicit real element type
+pentarnionmatrix Q = [1,i];   % real entries embed into Pentarnion scalars
+
+matrix/vector declarations infer the array element type from the initializer.
+realmatrix and pentarnionmatrix are explicit aliases. Assignment preserves that
+declared element type; real arrays may widen when assigned to a Pentarnion array. A scalar
+initializer cannot silently become a 1-by-1 matrix; write [value] explicitly.
+vector validates row/column orientation when declared; it uses the same matrix
+value type and operations thereafter. A vector-valued result of * remains an
+array, including a 1-by-1 result from a row-vector/column-vector product.
+
+Literal columns are separated by commas or whitespace, and rows by semicolons
+or newlines. All rows must have the same length and entries must be numeric
+scalars. L34 extends numeric block concatenation and range expansion. String/object
+entries and implicit multiplication remain unsupported. [] is the 0-by-0 real matrix. In a
+literal, [1 -2] has two entries; [1 - 2] has one subtraction expression. Group
+expressions when spacing could be ambiguous. Existing pent([a,b,c,d,e]) remains
+the five-coefficient scalar constructor, not a matrix constructor.
+
+A(row,column) and A(index) use positive Integer indices starting at 1. Linear
+indexing is column-major: for A=[1,2;3,4], A(2) is 3. Bounds are checked at runtime.
+A(1,2)=value; assigns one compatible scalar element without changing the shape.
+Indexed writes preserve aliases as immutable prior values. L34 extends colon/range/vector indexing and end. Logical indexing and array
+resizing/deletion remain deferred.
+
+Operators:
+  A+B, A-B: equal-size arrays, or a scalar broadcast over every array entry.
+  A*B: matrix product when both operands are arrays; columns(A)==rows(B).
+       Compatible matrix/vector, row/column and outer products use this same rule.
+       If one operand is scalar, * applies it on that same side of each entry.
+  A.*B: elementwise ordered products; equal array shapes or one scalar broadcast.
+  A./B: elementwise division; divisor entries must be real, with nonzero values.
+  A/realScalar: real scaling. Matrix right/left division and equation solves are deferred.
+  A.^B: elementwise powers; real scalar/matrix exponents. Pentarnion bases need
+        integer exponents (Integer scalar, or checked integer-valued real entries),
+        within this array extension's bound -100,000..100,000.
+        Matrix ^ is not supported. The existing scalar ^ rule remains unchanged.
+  +A, -A: entrywise signs.
+
+Binary matrix products use sum_k A(row,k)*B(k,column), preserving operand order.
+No associativity is assumed for Pentarnion matrices. Parenthesize chains with
+three or more Pentarnion operands, e.g. (P*Q)*R or P*(Q*R), as for scalar products.
+No determinant, matrix inverse, dot/linear solve or spectral operation is added;
+inv(p) keeps its existing scalar Pentarnion meaning.
+
+transpose(A) and A.' transpose without conjugation. A' transposes and conjugates
+each Pentarnion entry. Real conjugation leaves values unchanged. conj(A),
+scalar(A), pure(A), norm2(A) and coeff(P,k) operate entrywise; coefficient k is
+still 0..4 and coeff returns a real matrix with the same shape. The five whole
+Pentarnion functions sin/cos/exp/sinh/cosh also apply entrywise to arrays. The
+remaining one-argument real functions (sqrt, tan, asin, acos, atan, tanh, asinh,
+acosh, atanh, log, log10, log2, abs, floor, ceil, round) accept real arrays only.
+Their existing domain/finite checks apply to every entry. atan2 arrays are deferred.
+
+plot(x,y) and plot3(x,y,z) accept real row/column vectors or sampled real series.
+Coordinate arguments must have equal element counts; full 2D matrices are not
+flattened into curves. Existing plot2/plot3 with literal canonical axis names
+still projects individual Pentarnion scalars or sampled Pentarnion trajectories.
+General matrix-based Pentarnion projection plotting is deferred.
+
+Matrices/random constructors cannot occur in native ODE bodies or as ODE
+states/parameters. Existing real/Pentarnion native models remain unchanged.
+Default bounds: 100,000 entries per dense array, dimensions in 0..100,000,
+1,000,000 unique retained real coordinates across matrix variables, with five
+coordinates counted per Pentarnion entry. Aliases count once. Runtime operation,
+cancellation, source/AST and finite-result bounds also apply to matrix operations.
+display/workspace snapshots print all entries for arrays up to 1,024 entries;
+larger arrays show their dimensions and a bounded 6-by-6 preview, retaining every
+numerical entry for computation.
+
+L31. ARRAY CONSTRUCTORS AND REPRODUCIBLE RANDOM VALUES
+zeros(n), ones(n), eye(n) create n-by-n real matrices. Two arguments specify
+rows and columns: zeros(rows,columns), ones(rows,columns), eye(rows,columns).
+eye uses ones on the main diagonal and zeros elsewhere, including rectangular
+shapes. Dimension expressions have Integer type and may be zero, within L30's
+allocation bounds. Constructors with dimensions return arrays even when 1-by-1.
+
+linspace(start,stop[,count]) returns a real row vector, default count=100.
+Endpoints are real scalars, count is a nonnegative Integer. count=0 returns a
+1-by-0 array; count=1 returns stop. Both endpoints are included when count>=2.
+Use linspace or the bounded a:b / a:step:b expansion defined in L34.
+
+rand() returns one uniform real sample in [0,1); randn() returns one standard
+normal real sample. rand(n)/randn(n) create n-by-n arrays; rand(rows,columns)
+and randn(rows,columns) use the specified shape. randi(imax) returns an Integer
+uniformly in 1..imax; randi(imax,n) and randi(imax,rows,columns) return real arrays
+whose entries are integer-valued. imax is an Integer in 1..2^53-1.
+
+rng(seed); resets the Studio stream to a nonnegative signed 64-bit Integer seed.
+rng("default"); resets the default seed, 5489. These are Void calls, not values.
+The stream uses mt19937_64, a 53-bit uniform conversion, Box-Muller normal samples
+and unbiased bounded integer sampling. The same seed and sequence of Studio
+calls reproduce the same stream within the same build/platform. Normal samples
+may differ in their last bits across math libraries. This is not a promise of
+MATLAB-identical random values. A session shares its stream across console commands and script runs;
+clear/clc do not reset it. Reset Workspace restores the default stream. Checking
+does not draw samples, and cancellation restores the pre-request RNG state.
+
+size(A) returns the real row vector [rows,columns]. size(A,dimension) returns an
+Integer; dimensions above 2 return 1. numel(A) returns the total entry count.
+length(A) returns the largest dimension, or 0 for an empty array. Numeric scalars
+are treated as 1-by-1 by these size queries. No higher-dimensional arrays exist.
+
+New declaration/function names are protected in language 0.2. Existing 0.1 files
+may retain variables with these names; they are not silently reinterpreted.
+
+L32. COPY SOURCE WITH SYNTAX FORMATTING
+This editor feature adds no .p syntax and never checks or executes source.
+Normal Copy/Ctrl+C and Cut/Ctrl+X provide both Qt's original plain-text selection
+and a portable HTML representation. Rich-text destinations such as Word and
+browser editors can retain the source colors; plain-text destinations still
+receive the same ordinary text. Destination paste preferences can discard style.
+
+HTML uses a preformatted monospace block and escaped colored spans derived from
+the source editor's current QTextLayout highlighter ranges. Foreground colors,
+font weights and italics are retained, with normal editor colors for unstyled
+identifiers and spaces. It preserves selected Unicode, tabs, spaces, blank lines
+and partial tokens across blocks. HTML metacharacters are escaped as source
+text, never executable markup. Line-number gutters, cursor/selection backgrounds
+and diagnostics are not copied into the code fragment.
+
+The normal Qt clipboard MIME adapter supplies platform rich-text formats,
+including Windows CF_HTML; no Word dependency or external clipboard tool is used.
+Only the selected source is copied. Copy leaves the buffer, revision, undo stack,
+encoding/newline metadata and safe-save behavior unchanged. Cut retains standard
+Qt removal/undo behavior and adds the same rich clipboard data.
+
+To bound memory, selections above 4,194,304 UTF-16 characters or HTML output above
+8 MiB fall back to ordinary plain text. The plain-text selection is not truncated.
+Copy may refresh lexical highlighting before reading ranges; it never runs the
+static checker, interpreter, native compiler or an ODE solve.
+
+L33. SOURCE PRINTING IN STUDIO
+File > Print (Ctrl+P), Print Preview and Page Setup print the active source
+buffer with syntax colors, font styles, Unicode and indentation. A complete
+independent formatted snapshot retains unsaved text without execution or forced
+saving. Long lines wrap and long documents paginate; source text is unchanged.
+Page ranges, captured selections and printer color/paper choices are supported.
+Preview remains tied to its captured document. Autosave pauses during printing
+dialogs and resumes afterwards. No .p print() builtin or grammar change is added.
+PRINTING_GUIDE.txt and F41 describe the GUI workflow.
+
+L34. INDEXING, SLICES, RANGE EXPANSION AND REDUCTIONS
+ARRAY LANGUAGE TOOLS CONTRACT (26 October 2026)
+
+Range values retain their existing integer/real range types. Converting a range
+to matrix/vector, using it in array arithmetic or an array-aware call, and using
+it in a matrix literal expands it to a real row vector. a:b uses step 1; a:s:b
+uses explicit nonzero finite step. Oppositely directed endpoints produce a
+1-by-0 vector. Floating endpoints use a bounded roundoff allowance so 0:.1:.3
+contains four values. Expansion obeys configured matrix bounds and cancellation;
+steps too small to advance binary64 values are rejected.
+
+Matrix literals concatenate scalar, range and numeric matrix blocks. Blocks
+within each syntactic row must have equal heights, and expanded rows must have
+equal widths. Syntactic rows may contain differing numbers of blocks. Entries
+retain order; Pentarnion-valued cells widen the whole array. No implicit scalar
+replication occurs during concatenation.
+
+Indices remain one based; one selector uses column-major linear order and two
+selectors address rows/columns. A scalar index produces one scalar. Colon, a
+range, or a real row/column vector of positive integer-valued indices produces
+an array. Repeated and descending indices are supported. Bounds are checked.
+Full logical indexing and multidimensional index arrays are not introduced.
+end is the current indexed extent: numel(A) for one selector, rows/columns for
+two. Nested indexing temporarily replaces and then restores the outer extent.
+A(:) always produces a column vector. Other linear selections of vector bases
+retain the base row/column orientation; selections of general matrices retain
+the index vector's orientation. Empty selectors preserve their resulting shape.
+
+Slice assignment supports one numeric scalar broadcast or a matching array.
+Two-selector assignment requires exact selected rows/columns. Linear assignment
+allows any RHS vector/matrix shape with matching element count and traverses
+RHS entries column-major. The old array is immutable; aliases retain old data.
+Repeated targets are assigned in column-major traversal order; the last value
+wins. Assignment never resizes/deletes arrays, and real arrays reject Pentarnion
+values. Selector expressions are evaluated before the RHS expression.
+
+Real/Pentarnion ODE sampled series support the same read selectors as column
+vectors. A small selection need not materialize the entire solution. Selected
+results are scalar values or ordinary bounded arrays. Series are immutable.
+size/length/numel inspect series without copying the data.
+
+sum(A[,dim]) and mean(A[,dim]) reduce along the first nonsingleton dimension by
+default. min/max(A) use the same default; min/max(A,[],dim) specify a dimension.
+min/max(A,B) are pairwise operations on equal shapes or one scalar broadcast.
+Dimension values must be positive integers; dimensions above two are singleton
+dimensions and return the input unchanged. Numeric scalar reductions return a
+scalar; array reductions retain their reduced two-dimensional shape.
+sum/mean support real and Pentarnion values; min/max require real entries.
+sum of an empty extent yields zero; sum([]) is a 1-by-1 zero. min/max over empty
+extents retain empty results. mean of an empty extent that would produce numeric
+entries is rejected because nonfinite results are not admitted by the language.
+Real/Pentarnion ODE series are treated as column arrays by these utilities.
+Accumulation uses independent long-double coefficient sums and checks finite
+results; no Pentarnion multiplication is reassociated.
+
+Retained scope: existing elementwise .*, ./, .^ and scalar expansion, constructors,
+transpose/conjugate transpose, seeded random generation and bounded storage are
+preserved. No determinant, matrix inverse/solve, array resizing, higher-dimensional
+array, native array ODE state, parallel execution, or PDE feature is introduced.
+
+L35. CONTROL FLOW, FUNCTIONS, VALIDATION AND HELP
+CORE LANGUAGE ADDITIONS
+
+Braces delimit control blocks, following the existing ODE body convention:
+  integer total=0;
+  for(n=1:5){total=total+n;}
+  while(total<20){total=total+1;if(total==18){break;}}
+  if(total==18){display("done");}else{display("other");}
+  if(...) {...} else if(...) {...} else {...} is supported.
+
+for(iterator=values) accepts a finite integer/real range or a real row/column
+vector. Integer-range iterators have Integer type; other iterator values are
+Real. The iterator is local to the loop; any existing same-named variable is
+restored afterwards. break exits the nearest loop; continue starts its next
+iteration. while rechecks its real scalar condition each time. Declarations in
+if/for/while blocks are local to that block; assignment to existing outer
+variables persists. Clear is reserved for top-level workspace management.
+
+Comparison operators: ==, !=, ~=, <, <=, >, >=. Results are Integer 0/1.
+true/false are Integer constants. ! and ~ perform logical not; && and ||
+short-circuit and accept real scalar conditions. Ordered comparisons require
+real scalars. Pentarnion equality compares the five coefficients exactly;
+matrix equality compares shape and every coefficient, yielding one scalar.
+String equality is supported. No ordering or truth conversion for Pentarnions
+or arrays is assumed. Use real predicates such as norm2(p)<tolerance.
+
+function real square(real x){return x*x;}
+function integer factorial(integer n){
+  if(n<=1){return 1;}return n*factorial(n-1);
+}
+Function results/parameters may be integer, real, pentarnion, string,
+matrix/realmatrix or pentarnionmatrix; void is a result type only. matrix
+parameters/results have real entries; use pentarnionmatrix explicitly for
+Pentarnion arrays. Define functions before calling them; self-recursion is
+supported. Each call has its own parameter/local variable scope and can call
+earlier declared functions. There are no implicit global captures. return
+matches the declared result type; reaching the end of a non-void function is
+a runtime error. void functions use return; or reach the end. Nested function
+definitions are rejected. Functions persist between console submissions and
+are removed by clear like other workspace bindings.
+
+string name="Susanne"; declares an immutable value with ordinary typed
+assignment support. Strings can be compared for equality and passed to
+display, user functions, diagnostics and data IO. String concatenation and
+arrays of strings are not introduced.
+
+assert(condition[,"message"]); errors on a false real scalar condition.
+error("message"); stops execution. warning("message"); writes a warning to
+the unified Command Window and continues. help; / help(); provides an
+overview; help("topic"); provides builtin/control syntax or a user-function
+signature. Unknown help topics report their absence without failing a run.
+who; / who(); lists workspace names in name order. whos; / whos(); also
+shows each type and shape, including ODE sample-series lengths. Functions
+and other scalar objects appear as 1x1.
+
+Language 0.1 identifiers that coincide with newly introduced keywords or
+builtins keep their original identifier meaning. Execution requires language
+0.2 as before. The shared lexer highlights new keywords/builtins immediately.
+
+Execution is bounded by the existing source/token/node/nesting/operation,
+output, cancellation and workspace budgets. Function call depth defaults to
+32 and has a hard ceiling of 32; callers can choose a lower value. Retained
+matrix-coordinate budgeting includes suspended caller scopes and de-duplicates
+shared immutable arrays. Infinite loops exhaust the operation budget. Cancelled
+requests restore previous session variables, functions, random stream and timer.
+Ordinary runtime failures keep completed top-level statements, as before.
+Native ODE kernels retain their restricted expression subset; general functions,
+control flow and arrays are not silently compiled into those kernels.
+
+L36. NATIVE DATA PERSISTENCE AND TABULAR FILE IO
+NATIVE WORKSPACE, CSV AND XLSX FILES
+
+save("workspace.pws"); stores numerical values and strings in a versioned UTF-8
+JSON workspace. Optional quoted names select variables: save("w.pws","p","A").
+Integer, Real, Pentarnion, ranges, matrices and sampled ODE solutions retain
+their types/data. Sample-series views save as ordinary coefficient/value arrays.
+Default save excludes executable function/ODE definitions; keep those in .p
+source files. Explicitly requesting an executable definition is an error.
+
+load("workspace.pws"); restores names for following console submissions.
+Analysis finishes before execution, so a checked script must predeclare typed
+targets before load if it uses them in the same script. Optional quoted names
+select bindings to restore. Existing targets retain declared types and use the
+ordinary assignment conversions; compatible Integer-to-Real conversions may
+round values above 2^53. Loading a complete workspace into an empty scope is
+lossless. Version, algebra ID/gamma, names, schemas, finiteness, dimensions and
+retained-resource limits are validated before any loaded binding is committed.
+Malformed/over-budget loads leave the previous workspace intact. Files contain
+data and are never evaluated as code. Random-stream/timer state is not persisted.
+
+matrix A=readmatrix("data.csv");
+writematrix(A,"data.csv");
+writematrix(A,"data.xlsx","Results");
+matrix B=readmatrix("data.xlsx","Results");
+csvread/csvwrite and xlsread/xlswrite aliases use filename first:
+  matrix C=csvread("data.csv"); csvwrite("other.csv",C);
+  matrix X=xlsread("data.xlsx","Results"); xlswrite("other.xlsx",X,"Results");
+
+CSV uses a native bounded numeric parser/writer with UTF-8 paths, optional BOM,
+quoted fields, CRLF/LF and round-trip real formatting. XLSX uses native XLSXIO
+0.2.37, Expat and Minizip. No installed Excel application, COM, Python or online
+service is required by Studio. XLSXIO reads/writes .xlsx; legacy binary .xls is
+not supported. CSV is a separate native path because XLSXIO handles .xlsx only.
+Numeric tables must be rectangular and finite, without headers, blank/text cells
+or merged-cell interpretation. Formula evaluation is not provided; a stored
+numeric cached formula value can be read. Output creates a new single-sheet
+workbook; it does not append to or preserve other sheets in an existing workbook.
+Pentarnion arrays must be exported explicitly via coeff(P,k), keeping their five
+coordinates distinguishable. readmatrix returns a realmatrix; writes accept real
+scalars, matrices/vectors and sampled real series.
+
+Relative data paths in Studio use the active project's directory (the source
+directory when no project is open). The CLI uses its script's directory.
+CSV/XLSX tables are bounded to 100,000 entries; stored/archive-expanded bytes
+default to 64 MiB. Numerical/workspace/operation/cancellation limits also apply.
+Writes validate then commit an adjacent temporary file atomically; failures or
+cancellation before commit preserve the existing destination. Completed explicit
+file writes are side effects and are not undone by a later script error/cancel.
+Checking/highlighting alone never creates files, opens Excel or compiles models.
+
+Reproduce dependencies with tools/bootstrap-xlsxio.ps1 or
+tools/bootstrap-linux-xlsxio.sh. Dependencies are project-local; the existing
+C:/msys64 compiler is retained. No automatic downloads occur during configure.
+
+L37. STUDIO PRINT PREVIEW, PROJECT FOLDERS AND MULTIPLE DATA TIPS
+File Print/Ctrl+P and Print Preview show an integrated Qt page preview with
+destination, orientation, page/selection range, copies, colour and PDF settings.
+The print path no longer enters Windows' generic no-preview print screen.
+PDF destinations are committed atomically. Formatting/snapshot/source-safety
+rules in L33 remain in effect. Project subfolders start collapsed; a refresh
+preserves only folders opened manually in the same project.
+Data cursors support multiple retained tips per subplot. Selecting a tip and
+pressing Delete/Backspace removes its annotation; context/toolbar controls can
+remove one or clear all. Numerical samples remain unchanged. See F48.
+
+L38. CLICKABLE COMMAND WINDOW DIAGNOSTICS
+Errors and warnings include file:line:column in their transcript text. Click a
+diagnostic (or activate its link using the keyboard) to navigate to the source.
+Stale source positions are rejected without replacing unsaved changes. UTF-8,
+UTF-16 and CRLF location mapping follows F49 and Problems navigation.
+
+L39. CALLBACKS, MULTIPLE OUTPUTS AND TYPED RECORDS
+callback f=@named_function; callback g=@sin;
+callback h=@(real x)=>x*x; anonymous parameters are explicitly typed.
+Anonymous outer captures are immutable value snapshots. Named handles retain
+available function resolution. Callbacks may be parameters and persist between
+commands. Ordinary named functions have no implicit numerical global captures.
+
+function [real lo,real hi] bounds(real x){return x-1,x+1;}
+[real lo,real hi]=bounds(5); or [lo,hi]=bounds(5); for predeclared targets.
+Evaluate once; validate and commit all targets transactionally. A typed single
+assignment selects output 1. tuple t=(1,"two"); retains both; output limit 16.
+
+options cfg=options(scale=2.0); record is an alias declaration type.
+Read cfg.scale or get_option(cfg,"scale"). with_options(cfg,scale=3.0) rejects
+unknown/incompatible fields. Fields are immutable with stable schema, at most
+64 fields and depth 32. Constant parameter defaults declare option schemas:
+function real gain(real x,options cfg=options(scale=2.0)){return x*cfg.scale;}
+Named arguments reorder declared parameters; positional arguments come first.
+Missing, unknown and duplicate names diagnose explicitly. See F50-F51 and
+specs/foundations_v0_2.txt for callback return-typing conventions and limits.
+
+L40. SOURCE IMPORTS AND EXPLICIT COMPLEX SCALARS
+import "helpers.p" as science; then science.square(3.0).
+Check recursively reads/checks source without executing it. Run evaluates the
+module in an isolated scope. Exported functions retain module function resolution;
+module data is read explicitly through its namespace. Relative imports resolve
+beside their source. File/command scope only; reject cycles/duplicate direct
+imports, differing algebra contexts, depth above 16 and aggregate source over
+8 MiB. Existing per-file limits and language 0.1 compatibility remain enforced.
+
+complex z=complex(re,im); is separate from Pentarnion i. Real values embed, with
+no implicit Complex/Pentarnion mixing. realpart, imagpart, arg, abs, norm2, conj
+and documented scalar complex elementary functions are available. Complex arrays
+and FFT/eigen/Floquet APIs remain deferred. Additional real expm1, log1p, erf,
+erfc, hypot and sign retain finite/domain checks. Whole-Pentarnion elementary
+functions retain the published one-element calculus. See F52-F53.
+
+L41. RESTRICTED CACHED NATIVE SCALAR FUNCTIONS
+native function real cube(real x){return x*x*x;}
+Real/Pentarnion parameters/results, scalar math, typed locals, assignment, if/else
+and return compile on first Run into a separate structural function cache. Runtime
+parameter changes reuse the kernel. Check validates without compilation. Reject
+loops, arrays, complex values, callbacks, records, imports, IO, captures, helper
+calls and multiple outputs; no silent interpreted fallback or general .p JIT.
+Preserve operand order, grouping, diagnostics and resource limits. A configured
+project/source cache is required. tic/toc excludes native function/ODE compilation.
+See F54 and specs/foundations_v0_2.txt for the accepted scalar subset.
+
+L42. ARRAY SHAPES, LOGICAL MASKS AND GRIDS
+reshape(A,rows,columns), reshape(A,[rows,columns]) preserve count and column-major
+traversal; one [] dimension may be inferred. diag(vector[,offset]) constructs a
+square matrix; diag(matrix[,offset]) extracts a column. Preserve real/Pentarnion/
+logical entry types. [matrix X,matrix Y]=meshgrid(x[,y]); uses length(y)-by-length(x),
+default y=x. ndgrid(x,y) uses length(x)-by-length(y); ndgrid(x) gives a column.
+Storage remains bounded and two dimensional; higher-dimensional shapes diagnose.
+
+logical(A) converts real values to a logical array. Array <,<=,>,>= and &,| produce
+logical masks; ~ performs logical negation. Existing array ==/!=/~= still give one
+shape/data predicate. Full masks match numel(A); per-axis mask vectors match the
+axis extent. Selection/find use one-based column-major order. Numeric index lists
+remain distinct. Masked writes broadcast scalars or accept matching values and
+preserve old immutable aliases. find accepts real/Pentarnion nonzero entries.
+
+dot(a,b) is real-vector-only. norm(v[,1|2|"inf"]) gives real vector norms;
+norm(A,"fro") gives real-matrix Frobenius norm. No whole-Pentarnion inner product
+is inferred; scalar Pentarnion norm2 retains its separate definition. See F55.
+
+L43. INTERPOLATION, QUADRATURE AND SAMPLED SPATIAL CALCULUS
+interp1(x,y,xq[,"linear"[,"error"|"extrap"]]) supports real/Pentarnion sampled
+vectors and finite strictly monotone coordinates. Query shape is preserved;
+outside queries fail unless extrapolation is explicit. deval(solution,tq[,"p"])
+uses retained native solver polynomials when available, as specified in L58.
+Legacy/dense_output=0 solutions instead use stored values and RHS endpoint slopes
+in a cubic Hermite interpolant; that fallback is not the integrator's internal
+polynomial and depends on sample spacing. Multiple states require a name.
+Missing legacy slopes diagnose.
+
+integral(callback,a,b[,options(abs_tol=1e-9,rel_tol=1e-8,max_intervals=10000)])
+uses bounded adaptive Simpson quadrature of real/Pentarnion scalars. Reverse
+intervals negate results. Require abs_tol>0, rel_tol>=0, integer max_intervals in
+1..100000. Convergence exhaustion/nonfinite values/cancellation fail explicitly.
+Callbacks execute synchronously on the owner thread. No rigorous error guarantee.
+
+trapz(y), trapz(x,y) integrate vectors to scalars; trapz(x,Y,dimension) explicitly
+reduces matrices along dimension 1/2. cumtrapz preserves shape, initially zero.
+Omitted coordinates are unit spaced. diff(A[,order[,dimension]]) takes repeated
+forward differences; default first nonsingleton dimension; order 0 preserves.
+[matrix gx,matrix gy]=gradient(F[,h] or [,hx,hy]) computes spatial derivatives;
+vectors yield gx and zero gy. For matrices x runs across columns, y down rows.
+laplacian sums unscaled second derivatives. divergence(Fx,Fy[,h] or [,hx,hy])
+sums dFx/dx+dFy/dy. Coordinate vectors may be nonuniform monotone; scalar spacings
+are nonzero/signed. Three-point local polynomial stencils use one-sided endpoints;
+two-point first derivatives use a secant, singleton derivatives are zero and
+second derivatives with fewer than three points are zero. These are sampled
+spatial operators, distinct from objective parameter gradients. See F56 and the
+full shape/boundary/empty-array contract in specs/foundations_v0_2.txt.
+
+L44. PARALLEL VECTOR EXECUTION AND THREAD CONTROL
+threads(); gets requested Integer; threads(0); selects bounded automatic logical
+CPUs. threads(n); sets Integer 1..64 and returns Void. Settings persist across
+commands/clear; Reset Workspace restores 0. Counts are maxima; small work stays
+serial. parallel_info() returns typed fields requested, effective, threads_used,
+peak_active, parallel_calls, serial_calls, last_elements, threshold, module_loaded.
+Introspection does not load the module. Default cost-weighted threshold: 32768.
+
+Supported vector addition/scaling, entrywise operations, elementary maps, sum/
+mean, real dot/norm and axpy(alpha,x,y) use native kernels and a shared bounded
+persistent CPU pool. axpy means alpha*x+y, alpha on the left, equal-shaped vectors.
+Preserve Pentarnion operand order and whole-element functions. sum/mean retain
+their 1-by-1 matrix result convention. Fixed 256-entry reduction blocks/merge order
+give reproducible tested one/four-thread results on the same build/platform;
+cross-platform bit identity is not promised. L2 norms use scaled sums of squares.
+Full parallel matrix products/OpenBLAS remain category 5 future work. See F57.
+
+L45. LAZY NUMERICAL MODULE AND RESOURCE OWNERSHIP
+The Qt-free host loads modules/penta_numerics.dll or libpenta_numerics.so on first
+numerical use through a validated versioned C ABI. Module/storage/cancellation
+failure produces diagnostics without committing candidate results. Successful
+modules remain resident until process exit. One host pool coordinates concurrent
+callers; nested numerical worker calls execute inline. Workers handle native
+buffers/atomic cancellation only, never the interpreter workspace. Active cancel
+joins dispatched work and leaves the pool reusable. An embedding host may specify
+an absolute controlled module directory. See F58 for ownership/loading details.
+
+L46. STRUCTURED PERSISTENCE, BOUNDS AND RUNNABLE EXAMPLES
+save/load also supports complex, pure-data records/tuples and logical arrays.
+Existing structured targets require matching schemas. Executable callbacks or
+records containing them are rejected before atomic writes. Solution files may
+carry endpoint slopes; older files remain loadable. Retained values in captures,
+records, tuples and suspended caller scopes count toward shared-data resource
+budgets. Cancellation restores thread settings/statistics with session state.
+Category 1..4 runnable projects and expected-value READMEs are under
+examples/language-foundations, array-shapes, numerical-calculus and parallel-vectors. Full normative details:
+specs/foundations_v0_2.txt. docs/VALIDATION.md records actual acceptance/platform status.
+
+L47. PARALLEL MATRIX PRODUCTS AND BATCHES (F59)
+C=A*B preserves existing dense shape rules and ordered Pentarnion entries.
+matmul(A,B[,options(threads=n)]) and batchmul(tupleA,tupleB[,options]) use the
+native linear-algebra module. Batches contain1..16 pairs; uniform shapes/widths
+use one tiled request, other pairs remain individually bounded. Real tiles use
+OpenBLAS CBLAS; Pentarnion tiles use the published binary product and fixed
+inner-index order. Independent entrywise maps/transposes/reductions share workers.
+No reassociation of Pentarnion matrix chains or universal speedup is implied.
+
+L48. REAL SOLVES, DETERMINANTS, INVERSES AND DECOMPOSITIONS (F60)
+linsolve(A,B[,options]) returns a residual-validated real matrix. solve_report
+returns solution, raw/relative residuals, rank/condition availability, convergence,
+iterations/error estimate, method and configured backend_threads. Default lu
+requires square full-rank sufficiently conditioned A; explicit qr/svd may select
+a least-squares/minimum-norm candidate, which is not an equation solution if its
+residual fails. cholesky/chol requires symmetric positive definite A.
+det/inv/rank/rcond/cond and lu/qr/chol/svd/eig/schur accept real matrices and final
+options. det(0x0)=1; determinant underflow may be0 and is not a rank test. inv
+checks rank/conditioning and residual; prefer solves. rcond/cond use2-norm singular
+values. Decomposition records use P*A=L*U, A*P=Q*R(thin pivoted QR), A=U*S*V'
+and A=Q*T*Q'(real Schur). chol returns lower L. Eig records split complex values/
+vectors into real/imaginary arrays; Pentarnion i and complex dense types are intact.
+
+L49. CANONICAL SPARSE ARRAYS AND SOLVES (F61)
+sparse(A) or sparse(i,j,v,m,n) creates a validated immutable CSC record:
+format,rows,columns,row_indices,column_pointers,values. Indices/pointers are
+one-based; duplicates add in input order, exact zeros are omitted, rows sorted.
+Use full,nnz,sparsemul,sparsetranspose explicitly; arbitrary record*record is not
+sparse multiplication. Real/Pentarnion storage and binary products are supported.
+sparsesolve/sparse_solve_report require real square systems; method sparselu or
+bicgstab, with ilut/diagonal/identity preconditioning and explicit tolerances,
+iteration and fill bounds. Unknown/unavailable rank/condition estimates are
+marked as such. Sparse Pentarnion solves require explicit real coordinate assembly.
+
+L50. LEFT/RIGHT PENTARNION COORDINATE OPERATORS (F62)
+For m-by-n A, leftop(A) is5m-by5n mapping column x to A*x; rightop(A) is5n-by5m
+mapping row x to x*A. Entry coordinates are(1,i,j,k,ell). solveleft(A,B) solves
+A*X=B; solveright(A,B) solves X*A=B, with explicit multiple-RHS packing and the
+real solver safeguards. Direct det/inv/decomposition of Pentarnion arrays is
+rejected: use det(leftop(A)),det(rightop(A)),inv(leftop(A)),inv(rightop(A)) for
+explicit real operator quantities. These do not define an associative whole-
+Pentarnion matrix determinant/inverse or justify inverse reversal/reassociation.
+The existing scalar inv(Pentarnion) remains its algebraic reciprocal.
+
+L51. COMPILER DERIVATIVES, HESSIANS AND PRODUCTS (F63)
+jacobian(f,point[,options]); gradient(f,point[,options]); hessian(f,point[,options]);
+jvp(f,point,direction[,options]); vjp(f,point,weights[,options]);
+hvp(f,point,direction[,options]); derivative_check(f,point[,options]).
+All operate on real coordinates of typed scalar/Pentarnion/multiple-output
+callbacks. Point is scalar/Pent, typed tuple or flat real vector; parameters
+record supplies trailing fixed arguments. wrt is a declared name or ordered
+one-based coordinate list. Default columns are supplied point coordinates.
+Jacobian is output-by-input; gradient/VJP/HVP are columns; Hessian square. Gradient/
+Hessian/HVP require one real scalar objective. AD2 seeds HVP directions without
+a dense Hessian. method analytic/ad/automatic means generated native hyperdual
+AD, not symbolic algebra; finite_difference explicitly uses compiled native
+values. Nonsmooth/unsupported branches diagnose, with no hidden fallback.
+step,wrt,parameters,method,threads and derivative_check-only order/tolerance are
+validated options. derivative_check reports independent AD/FD agreement, native
+evaluations/cache identity and honest threads_used1. RHS/flow partials are not
+an automatic sensitivity through an opaque ODE solve.
+
+L52. NATIVE ROOTS, EQUILIBRIA AND FIXED POINTS (F64)
+root(f,[a,b][,options]) uses Boost.Math TOMS748 with a finite sign-changing bracket
+(or exact endpoint root) and an assumed continuous function. rootsolve(F,initial[,options]) uses KINSOL Newton/line_search on a square real-coordinate system,
+including five coordinates per Pentarnion. Native generated Jacobians are default;
+jacobian=finite_difference explicitly uses KINSOL differences of native values.
+Fixed trailing parameters use options.parameters; initial points follow callback
+packing. fixedpoint solves G(x)-x with DG-I; equilibrium solves an autonomous ODE
+RHS=0 and rejects time references. It does not integrate an orbit.
+Reports include x,residuals, raw/scaled residual norm, convergence,status/message,
+flag, iterations, host/backend/native evaluation counts, step/bracket, method,
+Jacobian choice, cache identity and requested/actual thread data. Small steps,
+narrow brackets and iteration limits alone do not establish roots. Hard budgets,
+domain failures and cancellation diagnose. Options/scaling/tolerances are defined
+fully in specs/advanced_numerics_v0_2.txt; scalar and KINSOL step tolerances differ.
+
+L53. CACHED NATIVE NUMERICAL CALLBACKS (F65)
+Every derivative/root callback is compiled into a structural cached DLL/SO before
+iteration, including finite-difference mode. Real/Pent scalar inputs, numeric
+multiple outputs, typed locals, assignment, if/else and return are supported.
+Pure anonymous/builtin handles can be adapted. No interpreted fallback; unsupported
+arrays, loops, IO, helper calls or implicit captures diagnose. Pass fixed values
+as explicit trailing parameters. Points, parameters, directions, clock and solver/
+derivative settings do not rebuild unchanged structure. Compilation is excluded
+from tic/toc. Preserve ordered AST/Group nodes, one-element calculus, fixed algebra
+gamma, finite domains, C ABI ownership and existing native resource limits.
+
+L54. SESSION DEFAULT VERSUS PER-CALL THREAD SETTINGS (F66)
+threads(n) sets a session default; it does not force every function to use n.
+A supported pure numeric call accepts one final options(threads=n), overriding
+only that call. Integer0 auto-selects CPUs;1..64 sets a maximum. Restore defaults
+after success/error/cancel. Random/stateful calls and interpreted quadrature are
+excluded; richer linalg/derivative/root option records retain their own syntax.
+Scalar/native AD and dense KINSOL remain serial when that is their implementation.
+parallel_info keeps requested/effective for the session, adds last_requested/
+last_effective for the last native dispatch, and exposes module_loaded,
+linalg_module_loaded,roots_module_loaded without loading unused modules.
+Actual host participation is threads_used/peak_active; backend_threads is a
+configured backend limit. One host CPU reservation coordinates modules; nested
+worker backends receive one slot. Shared runtime APIs also accept independent
+ParallelSettings per call. See parallel-vectors/per_call_threads.p and canonical rules.
+
+L55. DIRECT NATIVE ODE RIGHT-HAND-SIDE PARTIALS (F67)
+Derivative builtins also accept an OdeModel: jacobian(model,state,
+options(parameters=options(A=A),time=0.5,wrt="A")). The adapter compiles original
+ordered RHS expressions with states leading, model parameters following and the
+original time name last. Supply exactly all states in the point, all parameters
+by name, and outer time(default0); extra state/time/unknown parameter keys fail.
+Default columns are states. wrt selects state/parameter/time names or real
+coordinates. J/JVP/VJP/verification support real/Pent/multiple RHS outputs;
+gradient/Hessian/HVP require one scalar-real RHS. Values and clock reuse the cache.
+These are partials of F(t,state,parameters), not sensitivities of integrated
+state(t). Integrated trajectory sensitivities are now defined separately in L59/F71.
+
+CURRENT AUTHORITY — categories5-8,26October2026
+L47-L55/F59-F67 and specs/advanced_numerics_v0_2.txt supersede earlier deferred
+claims for the described features and clarify the session/per-call default.
+Windows staged acceptance37/37 passed; HANDOFF records final installed/Code::Blocks
+and native GUI evidence. Native Linux execution remains unverified. Examples:
+parallel-matrices,linear-algebra,native-derivatives,root-finding and parallel-vectors/per_call_threads.p.
+
+
+L56. NATIVE NONLINEAR LEAST SQUARES AND MODEL FITTING (F68)
+lsqfit/lsqnonlin(residual,initial[,options]) use native Ceres real-coordinate
+residuals. curvefit(model,initial,xdata,ydata[,options]) handles sampled models;
+the independent real data argument is last after unknown/fixed arguments.
+odefit(model,initialStates,times,observations,options) supplies explicit native
+CVODES forward trajectory sensitivities to Ceres, or explicit finite differences
+of native solves. Selected parameter/initial coordinates determine unknown order;
+a named Pentarnion parameter expands to five coordinates. Observations contain
+every state coordinate per sample; zero weights can exclude a coordinate.
+Options select lm/dogleg, analytic/ad/automatic or finite_difference, bounds,
+positive parameter scales, nonnegative weights, none/huber/cauchy/soft_l1 loss,
+multistart or explicit starts, seed, limits and optional covariance. Losses apply
+to each weighted real residual coordinate. Runtime data/options reuse unchanged
+native bodies. Finite-difference probes respect supplied bounds; other domain
+boundaries remain explicit. Reports include residual/Jacobian, objective/history/
+status, rank/conditioning, caches and evaluation counts. Covariance requires
+qualified local linear/Gaussian assumptions, convergence, full rank, inactive
+bounds and linear loss; it does not prove uniqueness. backend_threads is configured
+Ceres limit; threads_used records observed residual workers, not simultaneous
+callback bodies. Full schemas/options/packing/limits: specs/research_v0_2.txt.
+
+L57. NATIVE GENERAL OPTIMIZATION (F69)
+minimize(objective,initial[,options]) minimizes one real scalar native objective.
+Algorithms: lbfgs(default),bobyqa,nelder_mead,slsqp,cobyla,direct,crs2,isres.
+SLSQP/COBYLA/ISRES accept native real inequality g<=0 and equality h=0 callbacks;
+others reject nonlinear constraints. Global algorithms require finite bounds;
+BOBYQA needs at least two unknown coordinates. Fixed arguments are explicit.
+Gradients use generated AD or bounds-aware FD of native values. Bounds/scales,
+seed, budgets, history and algorithm are runtime options. NLopt is serial under
+the common CPU reservation; requests remain maxima and preserve session settings.
+Reports independently evaluate feasibility and preserve stopping/budget status.
+Finite global searches do not certify a global optimum. See canonical rules and
+examples/optimization for options, qualified stopping semantics and expected values.
+
+L58. NATIVE ODE EVENTS, BACKWARD TIME AND DENSE OUTPUT (F70)
+odesolve retains named bindings. t1<t0 integrates backward with positive sample_step
+magnitude. events supplies a native function(real time,states...,parameters...)
+returning one/multiple real values; event_direction=-1/0/+1 and event_terminal=0/1
+accept scalars or matching vectors. Directions refer to increasing physical time.
+odeevents(s) returns localized times/states/indices/directions. Terminal roots
+append their solved endpoint and stop. Continuous crossings are assumed; grazing
+roots and jump/reset handlers are not inferred. New solutions retain native
+internal-step interpolation polynomials; deval uses them independently of output
+spacing: DP5 ERK quartic Hermite, ESDIRK4 cubic Hermite, CVODES native variable
+order. Legacy/dense_output=0 solutions retain their sample/RHS cubic Hermite path.
+output_times requests nonuniform exact native outputs. Step/order controls,
+constant nonsingular real-coordinate mass M*y'=f, native dense budgets and
+odestats are available. Singular DAEs are rejected. odewindow(s,start[,stop])
+selects stored samples/events/sensitivities in an absolute integration-order window
+without rerunning or inserting a boundary sample. The legacy8M sampled-state
+workspace budget is unchanged. Separate host C++ controls
+ExecutionOptions.maxRetainedSolutionCoordinates and SolveOptions.maxRetainedCoordinates
+default to32M combined states/slopes/times/sensitivities/events/polynomials;
+native sampled states plus sensitivities and dense-only coefficients each retain
+their separate8M bounds. These host controls add no named .p option. See canonical
+specification.
+
+L59. INTEGRATED NATIVE ODE SENSITIVITIES AND TERMINAL ADJOINTS (F71)
+sensitivities="parameters"/"initial"/"all" selects CVODES forward directions;
+"none" is default. sensitivity_parameters selects one-based parameter coordinates;
+sensitivity_initial is an n-by-ns seed matrix. Generated native J_x/J_theta integrate
+S'=J_x*S+J_theta with parameter/initial seeds and optional error control.
+sensitivity_method is simultaneous/staggered. odesens(s[,direction]) returns
+sample rows and n state-coordinate columns per selected direction. These are
+trajectory derivatives, distinct from L55 instantaneous RHS partials. BDF/Adams
+are supported; ERK/ESDIRK sensitivity requests explicitly diagnose.
+odeadjoint(model,initial,options(parameters=...,objective=callback,t0=...,t1=...))
+uses native terminal objective(real time,states...,parameters...) and actual CVODES
+checkpoint/replay/backward quadrature. It returns parameter_gradient,initial_gradient,
+objective,solution and cache/step metadata for a smooth fixed terminal time.
+Direct parameter terms are included. Running objectives/event-time/jump adjoints
+and singular masses remain future. Persistence retains dense/sensitivity/event
+data and backward order under the independent32M combined retained-coordinate
+budget described in L58; sampled-state workspace accounting remains8M states only.
+
+L60. NATIVE DISCRETE MAPS AND SAMPLED ORBIT DIAGRAMS (F72)
+mapiterate(function,initial[,options]) compiles scalar/Pentarnion/tuple maps;
+trailing parameters are explicit runtime values. Output and state coordinate
+counts must match. Options select iterations/transient/stride/Jacobian mode,
+finite escape radius and budgets. Initial index0 is retained when selected;
+transients compute and skip, final/off-stride endpoints remain. The reported
+Jacobian is the final map derivative, not the derivative of all iterations.
+mapdiagram(function,initial,"parameter",values[,options]) resets the same initial
+state at each scanned real parameter value and reuses compiled structure. It is
+a sampled orbit diagram, not continuation. returnmap(orbit_or_samples[,options(
+component=1,lag=1)]) pairs retained samples; independent parameter diagrams reject.
+Results retain coordinate arrays, iteration indices, final state and status/cache/
+counts. Finite escape/completed samples do not prove boundedness/chaos. Current
+kernels are serial; no-scripting Map Explorer remains future20, chaos future13.
+
+L61. BOUNDED PARALLEL NATIVE COMPILATION AND CACHE REPORTS (F73)
+Multiple statically discoverable callback/model source units prepare through
+independent GCC processes before execution. Imports resolve scoped full bodies;
+unsupported/dynamic preparation remains on demand with normal call-site errors.
+Unchanged bodies reuse hashes/caches across parameter/data/solver edits.
+ExecutionOptions.nativeCompileJobs is a host setting:0 auto up to4,1..64 an
+explicit maximum, hard-capped at8 compiler processes and available jobs. It is
+separate from threads(n). compile_info reports static candidate units, actual
+attempts, prepared hits, failed preparations, peak preparations versus actual
+compiler overlap, and excluded compilation_seconds. On-demand attempts also count.
+tic/toc excludes the union of compiler wall intervals, preserving cold/cached
+timing. No general native script JIT/interpreted numerical callback fallback.
+
+L62. COMMAND WINDOW RUN, INTERRUPT, HELP AND OUTPUT (F74)
+Studio accepts run main.p, run "path with spaces.p" and run("main.p"), with optional
+final semicolon. Dirty source saves safely before execution; F5/right-click Run
+share the path. System terminals use penta-run path.p. While idle, Ctrl+C copies
+selected console text or abandons unfinished input and starts a fresh prompt.
+During work, Ctrl+C requests cooperative cancellation from any Studio child,
+including the editor and selected console text. It shows Stopping until the worker
+has returned; repeated presses do not create prompts or queue commands. Native PDE
+reaction/JIT cancellation remains cancellation, restoring the prior workspace.
+help topics, help plot, help if,
+help("odefit") and lookfor "words" find builtin/keyword/function-signature guidance.
+Command-style topics are literal names. Ordinary output is black; warnings/errors
+red. Explicit metadata identifies warnings; ordinary strings beginning Warning:
+remain black. Source diagnostics retain clickable file/line/column navigation.
+parallel_info adds nonloading fitting_module_loaded,optimization_module_loaded,
+maps_module_loaded flags; actual host and configured backend distinctions remain.
+
+L63. NONMODAL SOURCE FIND/REPLACE (F75)
+Ctrl+F reuses one persistent bar inside the editor. Case/Unicode whole-word/regex
+modes, Enter/F3 next and Shift+Enter/Shift+F3 previous wrap. Current/all matches
+have different backgrounds. Escape hides/clears decorations. Source stays editable;
+tab changes retarget the bar. Replace All is one Undo. Regex replacement supports
+captured groups \1..\99 and escaped backslash. Invalid/broad patterns do not edit
+source. At most10000 matches retain; Replace All disables above the cap. Replacement
+output is bounded to4Mi UTF-16 characters. Read-only editors remain searchable.
+Syntax foreground/rich copy/print colors persist; search neither executes nor saves.
+
+CURRENT RESEARCH AUTHORITY — categories9-12,26October2026
+L56-L63/F68-F75 and specs/research_v0_2.txt supersede earlier deferred claims only
+for these bounded additions. least-squares..12 include projects and expected-value
+READMEs. HANDOFF records final acceptance/deployment; source contracts do not imply
+native Linux validation. Future13+ remain separate implementation steps.
+
+CURRENT FRONTIER AUTHORITY -26October2026
+L64-L74/F76-F86 supersede earlier future/deferred claims only for these bounded
+first implementations of tasks13-21 and iterative output observers. Canonical
+contracts below name unsupported subcases; roadmap checkboxes and HANDOFF retain
+actual validation/deployment/platform status.
+
+L64. DYNAMICAL METRICS AND LOCAL STABILITY (F76)
+Native ODE/map Lyapunov QR spectra and histories, localized Poincare sections, residual-checked local stability and bounded recurrence. Shooting/Floquet/true continuation and proof claims remain outside the implemented subset.
+Canonical syntax/options/results/limits: specs/chaos_v0_2.txt.
+
+L65. NATIVE PARALLEL MAP ENSEMBLES (F77)
+Independent cached native map tasks share the CPU pool, preserve task identities and isolate failed/escaped runs. General parfor, ODE ensembles and checkpoint/resume remain future.
+Canonical syntax/options/results/limits: specs/chaos_v0_2.txt.
+
+L66. REAL AND PENTARNION ONE-DIMENSIONAL PDES (F78)
+Native cached local reactions, uniform centered FD and P1 consistent-mass FE with nodal reaction interpolation, periodic/constant-Dirichlet/zero-flux boundaries and bounded explicit RK4. Real analytic-mode/refinement and report examples required.
+Canonical syntax/options/results/limits: specs/pde_geometry_v0_2.txt.
+
+L67. SCALAR FIELDS AND SAMPLED REAL GEOMETRY (F79)
+Native structured surfaces,colour maps,2D contours and tetrahedral3D level sets preserve physical samples, exact-level ownership and finite limits. Curve geometry is explicitly sampled; rich unstructured/manifold packages remain future.
+Canonical syntax/options/results/limits: specs/pde_geometry_v0_2.txt.
+
+L68. NATIVE SIGNAL ANALYSIS (F80)
+Split real/imag FFT/IFFT, stated transform/window normalizations,Welch PSD,autocorrelation and bounded peak detection. Unsupported FFT sizes/methods reject rather than silently pad.
+Canonical syntax/options/results/limits: specs/science_data_v0_2.txt.
+
+L69. STATISTICS AND SEEDED UNCERTAINTY SUMMARIES (F81)
+Explicit sample/population variance/covariance,type7quantiles,histograms,normal functions and numeric-data bootstrap with reproducible seeds and stated sampling assumptions.
+Canonical syntax/options/results/limits: specs/science_data_v0_2.txt.
+
+L70. EXACT ORDERED FORMAL EXPRESSIONS (F82)
+Native rational formal expression trees support substitution,differentiation and controlled constant simplification without commuting or reassociating products. No automatic whole-Pentarnion symbolic identity is invented.
+Canonical syntax/options/results/limits: specs/science_data_v0_2.txt.
+
+L71. REPRODUCIBLE DATA-ONLY ANALYSIS RECORDS (F83)
+Versioned typed records,explicitsettings/sourceidentity,cache metadata and canonicaldataSHA256 support safe atomic export/import. Hashes are integrity evidence,not signatures or mathematical validation.
+Canonical syntax/options/results/limits: specs/science_data_v0_2.txt.
+
+L72. NO-SCRIPTING MAP EXPLORER (F84)
+One docked panel validates a single next-state expression,typedparameters/initials/algebra/projections; compiles cached map bodies and submits through the existing execution worker. Preserve allcoefficients; inspect/save script and exportdata.
+Canonical syntax/options/results/limits: specs/map_explorer_v0_2.txt.
+
+L73. GENETIC AND EVOLUTIONARY OPTIMIZATION (F85)
+Pinned pagmo2 jDE/iDE,CMA-ES,elitist realGA and NSGA-II use cached native objectives,strictbounds,seeds,budgets and shared worker allocation. No finite global-optimum claim; unsupported subcases remain explicit.
+Canonical syntax/options/results/limits: specs/evolution_v0_2.txt.
+
+L74. MATLAB-STYLE ITERATIVE OUTPUT OBSERVERS (F86)
+OutputFcn(matrix x,record optimValues=iterationinfo(),string state)returns0/1 forcontinue/cleanstop. Native drivers report iterations/generations/evaluations honestly; ordinary observation code mayplot through bounded immutable liveframes,without hidden objective evaluations.
+Canonical syntax/options/results/limits: specs/iteration_output_v0_2.txt.
+
+L75. NATIVE ODE EXPERIMENTS AND DISCOVERY (F87)
+Cached prepared RHS/Jacobian kernels, bounded explicit parameter domains, full-coordinate ensembles, stable task IDs and atomic completed-task checkpoints. Finite-time classifications remain candidates.
+Canonical syntax/options/results/limits: specs/research_frontier_v0_2.txt.
+Examples: examples/native-discovery/project.pprj.
+
+L76. SELECTED NATIVE HEADLESS PNG EXPORTS (F88)
+Explicit run/kind/axis selection, deterministic top-N ordering, resource caps and resumable export ledgers. No images are created when disabled; numerical results survive individual rendering failures.
+Canonical syntax/options/results/limits: specs/research_frontier_v0_2.txt.
+Examples: examples/native-discovery/project.pprj.
+
+L77. PERIODIC SHOOTING, FLOQUET AND CONTINUATION (F89)
+Native autonomous phase-condition shooting, generated tangent equations and equilibrium/periodic pseudo-arclength continuation. Sampled bifurcation flags do not imply refinement or certified fundamental periods.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/periodic-orbits/project.pprj.
+
+L78. PARALLEL AND IMPLICIT GRID PDES (F90)
+Native shared-budget FD/P1-FE work, consistent FE mass, first-order implicit-diffusion IMEX and regular2D real/Pentarnion fields. Report actual workers; preserve all five coefficients and existing RK4 formulas.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/parallel-pdes/project.pprj.
+
+L79. PARAMETRIC METRICS, CURVATURE AND TRANSPORT (F91)
+Cached real/R5 embedding derivatives, explicit induced or supplied metrics, codimension-aware curvature/projectors and native chart-local geodesics/parallel transport. Singular metrics fail; no algebra-derived metric is presumed.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/differential-geometry/project.pprj.
+
+L80. NATIVE MORRIS AND SOBOL WORKFLOWS (F92)
+Deterministic independent-uniform native model experiments, matched Saltelli/Jansen estimates and optional matched-row bootstrap. Estimator/noise/distribution assumptions remain explicit; modelsensitivity adds explicitly defined native ODE/map/PDE summaries; failed solves remain failures. See specs/solver_sensitivity_v0_2.txt.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/global-sensitivity/project.pprj.
+
+L81. PROFILES, BOOTSTRAP AND MULTISTART REFITS (F93)
+Cached Ceres curve models, nuisance refits, explicit known-variance deviance or descriptive SSE, dependency-aware bootstrap, rank/failure masks and pointwise fitted-mean bands. Shared workers and completed-task checkpoints apply.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/native-inference-and-refits/project.pprj.
+
+L82. EXACT BASIS-AWARE PENTARNION POLYNOMIALS (F94)
+Declared central real variables, exact rational gamma/radicals, ordered basis expansion, coordinate differentiation/substitution and inspectable checked native source. Preserve source groups and enforce numeric algebra-context compatibility.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/exact-pentarnion-symbolics/project.pprj.
+
+L83. NATIVE INDEX-ONE DAES AND RESETS (F95)
+IDAS residuals and compiler Jacobians, explicit algebraic masks/local rank contract, checked or consistent initials and cached native localized event/reset handlers. General index reduction remains later. Explicit ODE saltation/terminal adjoints use the separate L95 contract.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/implicit-daes-and-hybrid-events/project.pprj.
+
+L84. NATIVE REGULAR MECHANICS (F96)
+Explicit q/v/p coordinates, positive-mass Newton forces, regular AD2 Euler-Lagrange equations, canonical Hamiltonian dynamics, restricted Verlet and analytic-Hessian midpoint. Defined energy diagnostics do not imply exact conservation. constrainedmechanics adds constant-SPD-mass holonomic SHAKE/RATTLE with native constraint jets; see specs/constrained_mechanics_v0_2.txt.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/native-mechanics/project.pprj.
+
+L85. BOUNDED N-D AND EXPLICIT COMPLEX FIELDS (F97)
+Versioned column-major real/complex/Pentarnion records with named axes, checked indexing/slicing/broadcasting, native arbitrary-length axis FFTs and cached scalar mapping. Fourier complex units and algebra i remain distinct.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/multidimensional-fields/project.pprj.
+
+L86. PUBLICATION PLOTTING AND FIELD PLAYBACK (F98)
+Sample-preserving styles/legends/hold/limits, 2D linked axes, physical export dimensions and native PDF. Saved-field playback and explicit bounded PNG-frame/native uncompressed-AVI export perform no simulation on the GUI thread.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/field-animation/project.pprj.
+
+L87. DRAWN TILE LAYOUTS, SPANS AND DIVIDERS (F99)
+Visual grid and rectangular-span selection, resizable row/column weights, explicit Studio/Desktop/subplot targets and versioned validated layout save/restore preserve stable figure/panel identities and camera/data state.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/figure-layout/project.pprj.
+
+L88. NATIVE GRAPHS AND COUPLED-NETWORK EXAMPLES (F100)
+Stable directed/undirected real-weight graphs, algorithms, direct sparse operators,
+seeded generators, interactive node/path views and context-safe native coupled
+node dynamics. graphcomponents is unambiguous; optional components alias preserves
+existing array declarations. Graph costs are not ordered whole Pentarnions.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/graph-theory/project.pprj.
+
+L89. CHECKED MATLAB AND PYTHON EXPORTS (F101)
+Typed-AST export with safe target names, source maps, compatibility diagnostics, small runtime and atomic fresh output. Unsupported constructs produce diagnostics. Optional Python SciPy-BDF mapping is explicit and is not CVODES.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/portable-code-export/project.pprj.
+
+L90. AUTOMATIC RESEARCH PROVENANCE (F102)
+Capture source/import/native/backend identities and algebra/language/precision separately from execution paths/thread/timing. Versioned typed data-only records remain integrity-checked and atomic; hashes are not signatures.
+Canonical syntax/options/results/limits: specs/research_frontier_v0_2.txt.
+Examples: examples/native-discovery/project.pprj.
+
+L91. CHECKED RESEARCH EXPLORER WORKFLOWS (F103)
+One docked panel and the existing worker support explicit ODE/chaos/fitting/discovery/PDE/geometry/mechanics runs, script review/save and fresh-result data export/replay. Opening/editing/previewing never executes source. Hashes detect stale submitted snapshots.
+Canonical syntax/options/results/limits: specs/research_modules_v0_2.txt.
+Examples: examples/research-explorer/project.pprj.
+
+L92. TAGGED SURFACE MESHES AND DIFFERENTIAL FORMS (F104)
+Native real2..5-coordinate mesh primitives/parametric surfaces, transforms,
+refinement, strict mesh I/O/intersections; real oriented forms with explicit SPD
+metrics, exterior calculus and Laplace-Beltrami. Consistent-mass surface FEM heat
+and explicit-reaction IMEX preserve all field coefficients and shared CPU limits.
+meshplot(mesh) needs no scalar field: plain geometry uses the current series
+colour. options(values=...) requires one finite real value per vertex and
+enables field colouring. Plain geometry does not invent scalar values in
+data tips or image/vector exports.
+Canonical semantics/limits: specs/research_modules_v0_2.txt and example READMEs.
+Examples: real-geometry, differential-forms, surface-diffusion.
+
+L93. PARALLEL PDE EXPERIMENTS AND RAW CONTEXT-SAFE RESULTS (F105)
+Explicit paired/Cartesian real/Pentarnion PDE batches share native cached models,
+task IDs, bounded workers and completed-task ledgers. Raw real coefficient records
+retain each run's gamma; typed replay requires matching context and model identity.
+Commands: pdeensemble/pdeensemble2/pderun/pdeparams/pdesettings/pdereplay.
+Canonical semantics/limits: specs/research_modules_v0_2.txt.
+Examples: examples/parallel-pde-experiments/project.pprj.
+
+L94. EXPLICIT REAL SI PHYSICAL QUANTITIES (F106)
+Versioned real quantity records, strict seven-exponent SI dimensions, explicit
+conversion and dimension-compatible arithmetic. Array operations are elementwise
+with equal shapes/scalar expansion. Native AD/numeric operators never strip units
+implicitly. Affine temperatures and whole-Pentarnion quantities are unsupported.
+Commands: quantity/unitconvert/unitadd/unitsub/unitmul/unitdiv/unitpow/unitvalues/
+unitcompatible/unitinfo. Canonical contract: specs/physical_quantities_v0_2.txt.
+Examples: examples/physical-quantities/project.pprj.
+
+L95. NATIVE HYBRID SALTATION AND TERMINAL ADJOINTS (F107)
+hybridsolve/hybridval/hybridadjoint use cached native RHS, scalar event, reset and terminal objective bodies. Transverse-event time derivatives, fixed-time saltation and reverse CVODES jumps have separate defined layouts. Cold compilation is excluded from numerical timing and wall limits. General IDAS sensitivities, running/event objectives and moving terminal objectives remain unsupported.
+Canonical syntax/options/results/limits: specs/hybrid_saltation_v0_2.txt.
+Examples: examples/hybrid-event-sensitivities/project.pprj.
+
+L96. BOUNDED REAL HIGH-ORDER ELLIPTIC FINITE ELEMENTS (F108)
+femsolve/femplot use MFEM H1 orders1..4 on tagged real R2 triangular meshes. Native coefficient/forcing/boundary/exact callbacks retain structural cache identity. Authoritative high-order nodal data and sampled visualization are distinct. Actual CG residuals, host work/time/memory/cancel bounds and serialized shared-budget execution apply. Pentarnion and embedded-surface high-order FEM are not implied.
+Canonical syntax/options/results/limits: specs/mfem_v0_2.txt.
+Examples: examples/high-order-finite-elements/project.pprj.
+
+L97. NATIVE FOLD, HOPF AND PERIOD-DOUBLING REFINEMENT (F109)
+refinebifurcation corrects augmented equilibrium or periodic equations with explicit parameter coordinates and full1..8 real state coordinates. Equilibrium correctors use native AD2; period-doubling correctors explicitly use centered differences of native first-variation flow. Simple-mode, transversality, phase, closure and refinement checks produce numerical candidate evidence. Hopf/flip cubic criticality and certified bifurcations are not inferred.
+Canonical syntax/options/results/limits: specs/bifurcation_refinement_v0_2.txt.
+Examples: examples/bifurcation-point-refinement/project.pprj.
+
+L98. SAFE SOURCE-AWARE DATA-ONLY EXPERIMENT BUNDLES (F110)
+saveexperiment/loadexperiment/experimentinfo/experimentsource retain typed data, exact current invocation/import bytes and separate scientific/runtime metadata. Integrity, template, context, version and physical project path checks apply. Selected artifact files remain external hashed references. Loading never executes source; prior console history and automatic self-contained replay are not supplied.
+Canonical syntax/options/results/limits: specs/experiment_bundle_v0_2.txt.
+Examples: examples/experiment-bundles/project.pprj.
+
+L99. CACHED ANALYTIC TRILINEAR THIRD DERIVATIVES (F111)
+thirdderivative(function,point,u,v,w[,options(parameters=...)]) evaluates analytic D3f[u,v,w] in one native hyperdual call. All five Pentarnion coefficients and explicit product groups survive. Directions, points, gamma and fixed parameters are runtime data. The optional versioned AD3 entry/cache is distinct from unchanged AD1/AD2. Nonsmooth/domain boundaries reject; no dense third tensor or finite-difference substitution is implied.
+Canonical syntax/options/results/limits: specs/third_derivatives_v0_2.txt.
+Examples: examples/native-third-derivatives/project.pprj.
+
+L100. NATIVE ALGEBRAS, PROOF-AWARE CALCULUS AND TABLE IMPORTS (F112)
+algebra H=builtin_algebra("quaternion"); element<H> q=1+H.i+H.j;
+element r=element(H,[1,1,1,0]); Immutable definitions retain complete coefficient
+widths and explicit basis/convention/unit metadata. Real/complex, quaternion,
+octonion, sedenion, dual/dual-quaternion, split, Clifford and matrix/Lie/Jordan
+presets coexist with unchanged legacy Pentarnions. Strict literal JSON and native
+CSV/XLSX table imports capture exact data-only snapshots. Different definition
+hashes cannot mix implicitly. Ordered equation solves, verified reciprocals,
+coordinate metrics and proof-gated whole-element elementary calculus are distinct.
+Typed native callbacks/ODEs/generated Jacobians and workspace persistence preserve
+the descriptor. Runtime parameters reuse unchanged compiled bodies; table structure
+changes invalidate them. Generic element arrays/PDE fields are not inferred.
+Canonical syntax, evidence, limits and persistence:specs/native_algebras_v0_2.txt.
+Examples:examples/native-algebras/project.pprj;guide:NATIVE_ALGEBRAS_GUIDE.txt.
+
+ADDITIONAL NATIVE ALGEBRA AND ROADMAP CONTRACTS - 27 OCTOBER2026
+These additive contracts supersede older deferred statements only in their stated
+command/algorithm scope. They do not claim universal mathematics or untested platforms.
+
+L101. NATIVE FIXED-SHAPE ARRAY CALLBACKS AND FULL COORDINATE AD (F113)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/native_arrays_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L102. STATE/TIME-DEPENDENT NATIVE MASS OPERATORS (F114)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/mass_operators_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L103. REGULAR MOVING/NONHOLONOMIC CONSTRAINED MECHANICS (F115)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/general_constrained_mechanics_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L104. EQUATION-LEVEL COHERENT SI VALIDATION (F116)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/equation_units_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L105. BATCHED MULTIDIMENSIONAL ORDERED PRODUCTS (F117)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/batched_nd_products_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L106. DOMAIN-AWARE EXACT SYMBOLIC FUNCTIONS AND EQUATIONS (F118)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/domain_symbolics_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L107. NATIVE BATCHED REAL/COMPLEX SOLVE, INVERSE AND LU (F119)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/nd_complex_linalg_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L108. RATIONAL/AFFINE/LOGARITHMIC AND WHOLE-ELEMENT QUANTITIES (F106)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/physical_quantities_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L109. CHECKED MATLAB/PYTHON EXPLICIT TARGET ADAPTERS (F101)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/checked_export_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L110. IMPLICIT NONLINEAR/STIFF PDE INTEGRATION (F120)
+Commands: pdeimplicit,pdeimplicitcoeff,pdeimplicitslice.
+Canonical syntax, numerical semantics, limits and acceptance: specs/implicit_pde_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L111. NATIVE PDE SPATIAL CONVERGENCE ESTIMATES (F121)
+Commands: pdeconverge.
+Canonical syntax, numerical semantics, limits and acceptance: specs/implicit_pde_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L112. MEAN-CONSTRAINED PARALLEL H1 FINITE ELEMENTS (F122)
+Commands: femsolve,femplot.
+Canonical syntax, numerical semantics, limits and acceptance: specs/mfem_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L113. OPTIONAL PETSC KSP AND NATIVE SNES (F123)
+Commands: petscsolve,petscroot.
+Canonical syntax, numerical semantics, limits and acceptance: specs/petsc_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L114. NATIVE MESH PROJECTION PROBING SLICING AND SOLID QUERIES (F124)
+Commands: meshclosest,meshprobe,meshray,meshslice,meshcontains.
+Canonical syntax, numerical semantics, limits and acceptance: specs/mesh_queries_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L115. INTRINSIC METRICS TENSORS CONNECTIONS AND MOVING FRAMES (F125)
+Commands: intrinsicgeometry,tensorcovariant,charttransition.
+Canonical syntax, numerical semantics, limits and acceptance: specs/intrinsic_geometry_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L116. EXPLICIT NATIVE CHART ATLASES (F126)
+Commands: chartatlas,atlasgeometry,atlastransition.
+Canonical syntax, numerical semantics, limits and acceptance: specs/chart_atlas_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L117. VARIABLE METRIC MANIFOLD FORMS AND RETAINED JETS (F127)
+Commands: formfield,hodge,codifferential,formlaplacian.
+Canonical syntax, numerical semantics, limits and acceptance: specs/manifold_forms_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L118. NATIVE NONLINEAR VECTOR ALGEBRA AND CURVED HIGH-ORDER H1 FEM (F128)
+Commands: femsystem,femsystemplot.
+Canonical syntax, numerical semantics, limits and acceptance: specs/fem_system_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L119. CONFORMING LOCAL H1 ADAPTATION AND EXACT BASIS EVALUATION (F129)
+Commands: femevaluate,meshadapt,femadapt.
+Canonical syntax, numerical semantics, limits and acceptance: specs/fem_adaptive_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L120. NATIVE PARALLEL ODE/PDE FITTING AND REFIT ENSEMBLES (F130)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/solver_refits_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L121. CHECKPOINTED STOCHASTIC MAP ENSEMBLES (F131)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/chaos_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L122. PERSISTENT COMPLETED VERIFICATION TIERS (F132)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/verification_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L123. NATIVE BASIN/LYAPUNOV WORKFLOWS AND DISCOVERY EXPORTS (F133)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/discovery_workflows_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L124. AUTOMATIC CONTINUATION CANDIDATE REFINEMENT (F134)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/continuation_refinement_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L125. NATIVE INFERENCE LIKELIHOODS AND PARAMETRIC BOOTSTRAP (F135)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/inference_uncertainty_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L126. PREDICTION UNCERTAINTY, IDENTIFIABILITY AND COVERAGE (F136)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/inference_uncertainty_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L127. NATIVE DYNAMICAL METRIC AND ADVANCED-MODEL SUMMARIES (F137)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/dynamical_summaries_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L128. STATEFUL EVOLUTION, ISLANDS AND NATIVE FINISHING (F138)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/evolution_sessions_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L129. TYPED RESEARCH ARCHIVES, CATALOGUE AND EXPLICIT REPLAY (F139)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/research_archives_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L130. CHECKED EDITOR ASSISTANCE, SOURCE FRAMES AND MODULE TOOLS (F140)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/editor_assistance_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L131. TYPED MULTIFIELD RESEARCH EXPLORER (F141)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/research_explorer_extended_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L132. REUSABLE PLOTS, LINKED CAMERAS AND VECTOR TYPOGRAPHY (F142)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/plot_templates_and_queries_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L133. NATIVE ORDERED ALGEBRA NETWORK OPERATORS (F143)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/ordered_network_operators_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L134. DATA-ONLY NUMERICAL CALLBACK SOURCE SNAPSHOTS (F144)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/source_callback_snapshots_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L140. CONSISTENT-MASS NATIVE TRANSIENT HIGH-ORDER FEM (F150)
+Commands: femtime,femtimecoeff,femtimeslice.
+Canonical syntax, numerical semantics, limits and acceptance: specs/fem_time_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L141. NATIVE DIFFERENTIAL-FORM PULLBACK JETS (F151)
+Commands: formpullback.
+Canonical syntax, numerical semantics, limits and acceptance: specs/form_pullback_v0_2.txt.
+Native callbacks preserve complete typed coordinates and cache bodies independently of runtime parameters. Explicit resource/cancellation and shared CPU budget contracts apply.
+
+L142. NATIVE SIGNAL PROCESSING AND TIME/FREQUENCY ANALYSIS (F152)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/signal_statistics_extensions_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L143. NATIVE PROBABILITY DISTRIBUTIONS AND BAR/HISTOGRAM DISPLAYS (F153)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/signal_statistics_extensions_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L144. NATIVE CUSTOM STATISTIC AND BLOCK BOOTSTRAP (F154)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/signal_statistics_extensions_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L145. NATIVE TRIANGLE-MESH INTERSECTIONS (F155)
+meshintersect retains deterministic triangle-pair contact points, segments and
+coplanar overlap polygons, full two-sided barycentric fields and immutable algebra
+metadata. Scaled numerical tolerance predicates, BVH filtering, shared CPU ranges
+and bounded resources apply. This is not watertight Boolean remeshing.
+Canonical contract:specs/mesh_intersections_v0_2.txt.
+
+L146. MIXED-ORDER H1 FINITE ELEMENT SPACES (F156)
+femmixed/femmixedplot retain distinct P1..P4 spaces per state or explicit real
+coefficient, with authoritative ragged offsets and independently sampled complete
+visualization fields on tagged real R2 meshes. H(div)/H(curl) conformity and general
+saddle-point stability are not implied. Canonical contract:specs/fem_mixed_v0_2.txt.
+
+L147. NATIVE QUASILINEAR WEAK FLUXES (F157)
+femmixed compiles complete state/gradient-dependent Fx,Fy,reaction callbacks and
+all analytic chain derivatives natively. Ordered algebra laws preserve brackets;
+parameters/time reuse unchanged bodies. Shared-budget sparse Newton/GMRES uses
+independent weak/linear residual checks. Canonical contract:specs/fem_mixed_v0_2.txt.
+
+L148. NATIVE LOCAL DAE RANK AND INDEX EVIDENCE (F158)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/higher_index_linear_dae_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L149. NATIVE HIGHER-INDEX CONSTANT DESCRIPTOR SYSTEMS (F159)
+Canonical syntax, algorithms, output layouts, bounds and numerical limitations:
+specs/higher_index_linear_dae_v0_2.txt. Its named descriptive examples accompany the implementation.
+Preserve complete typed coordinates, ordered products, explicit domain assumptions,
+native callback body/cache semantics and host CPU/resource/cancellation controls.
+Actual integrated/platform acceptance is recorded in docs/VALIDATION.md.
+
+L150. SHARED NATIVE BLAS CONFIGURATION (F160)
+Linear algebra and PETSc share one lazy support-library configuration epoch.
+Compatible equal-count leases may overlap; count changes and first PETSc
+initialization are protected. Runtime threads remain bounded by Studio's existing
+CPU grant, with0 resolved by the host. Mathematical APIs/residual checks remain
+unchanged. Native ABI, lifetime/cancellation and benchmark contracts:
+specs/shared_blas_v0_2.txt. F161 is an optional CLI benchmark, no language keyword.
+
+L154. FIRST-CLASS FIXED-SHAPE NATIVE TENSORS (F165)
+Tensor rank1..8 literal-positive shapes retain real/complex/Pentarnion/immutable
+algebra entries with adjacent full coefficients in column-major entry order.
+See specs/typed_tensors_v0_2.txt for constructor, indexing, arithmetic, native
+AD1/2/3, bounded ODE/state-series and workspace persistence contracts.
+Meaningful runnable examples live in examples/native-tensors/.
+
+
+STUDIO DESKTOP PRESENTATION -31 OCTOBER2026
+No scientific language grammar changes accompany this GUI rebuild. Existing
+figure/subplot/tilefigures, export, Run/help and native callback commands retain
+their definitions. Classic/Ribbon, interactive figure arrangements, optional
+Copilot and independent workbook document controls are desktop facilities.
+See specs/desktop_shell_v0_2.txt and docs/STUDIO_GUI_GUIDE.txt.

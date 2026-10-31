@@ -1,0 +1,42 @@
+MAP EXPLORER GUI;TASK20;26 OCTOBER2026
+
+Dockable QWidget with Real/Pentarnion state selection, A_gamma_v1 gamma,
+one next-state expression in x/p, one initial expression, typed real/Pentarnion
+runtime parameter table, iteration/transient/stride controls and three distinct
+coefficient projection choices. Maximum16 trailing parameters. Existing native
+function scalar/coordinate restrictions apply. Gamma changes create values in
+that explicit context; existing Pentarnions are not reinterpreted.
+
+Controls and generated source are checked without executing. Each initial and
+parameter value is analysed as exactly one typed declaration. The map is analysed
+as exactly one native function with exactly one Return statement; injected extra
+statements/functions reject. Parameter names must be unique ASCII identifiers,
+distinct from the state, with full language reserved-name checking. The final
+generated source is analysed again. Expressions are not shell commands.
+
+Run emits runRequested(source); the parent submits source to the existing single
+execution worker and Command Window. No second console/worker is created. The
+native mapiterate path handles cached DLL/SO compilation, parameters, cancellation,
+finite escape and numerical reports. The panel clears only its generated names
+mapexplorer_fn/mapexplorer_result before each submission, permitting repeat runs.
+Other workspace names are retained. Existing Stop stops the submitted execution.
+
+Default real logistic example and Pentarnion affine example match discrete-maps
+semantics. A dedicated figure20 plots the real orbit, or a coefficient timeline
+and selected3D Pentarnion trajectory. mapexplorer_result.states retains every
+original real coordinate; the projection never discards coefficients. Sampling
+and coordinate budgets reject excessive retained results before submission.
+
+Generate Script fills the read-only source preview. Save Script uses a user-chosen
+path and QSaveFile for atomic source writes. Export Data emits an escaped
+writematrix command for the last completed result, including iteration n followed
+by all states; CSV and XLSX reuse existing native safe persistence. If the last
+result was cleared/never produced, the ordinary shared Command Window reports
+that error. Export does not silently rerun the dynamics. This version does not
+persist a separate GUI session/settings file; the inspectable saved .p script
+is the reproducible record. No chaos/PDE/geometry capability is implied by the UI.
+
+Qt tests: valid real/Pentarnion source, Run signal, projection uniqueness,
+initial/body/parameter injection rejection, sample budgets, Reset, escaped export,
+and nonmodal script preview. Native Windows/Linux GUI acceptance must be recorded
+after actual execution, separately from source/static tests.

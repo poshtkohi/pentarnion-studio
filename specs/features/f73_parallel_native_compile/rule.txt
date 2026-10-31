@@ -1,0 +1,10 @@
+F73: Bounded parallel GCC callback preparation and cache reporting
+Authorized extension,26 October2026.
+
+A scoped structural plan deduplicates discoverable native source units and uses bounded hidden GCC processes. nativeCompileJobs0 auto<=4, explicit1..64 capped8. Hits start no compiler. Dynamic/unsupported candidates retain normal call-site behavior. compile_info reports actual attempts/overlap distinct from preparation concurrency. Exclude compiler wall-interval union from tic/toc and preserve honest cold/hit evidence/atomic caches.
+
+Authority: language.txt L61; specs/research_v0_2.txt.
+Acceptance example: examples/least-squares/project.pprj.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

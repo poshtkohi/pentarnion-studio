@@ -1,0 +1,103 @@
+PENTARNION LANGUAGE0.2 — SAFE EXPERIMENT BUNDLES
+Additive data-only export/inspection/loading; existing saveanalysis/loadanalysis
+context checks and typed serialization remain unchanged.
+
+API
+  saveexperiment(path,typed_record[,options]);
+  record loaded=loadexperiment(path,typed_template_record[,options]);
+  record info=experimentinfo(path);
+  string bytes=experimentsource(path[,source_id]);
+
+Export options: name="experiment",settings=options(...),artifacts=options(...),
+overwrite=0. settings must be a typed data record. artifacts maps user labels to
+explicit project-relative filenames. overwrite accepts integer0/1; default
+publication refuses an existing path, including symlinks. Explicit overwrite uses
+the existing atomic data writer. No numerical data are mutated by bundle building.
+Load options: allow_real_context=0 (integer0/1 only).
+
+FORMAT AND INTEGRITY
+The version1 PentarnionExperimentBundle is one bounded JSON object containing
+scientific metadata, runtime metadata, the original typed payload, scientific_hash
+and integrity_hash. Source snapshots are exact byte strings represented as strict
+canonical base64, with independent size and SHA-256 checks. They are never parsed
+or executed on load. The scientific section includes context (algebra,gamma,
+language,precision/integer bits), name, settings, framework scientific provenance,
+source manifests and selected external artifact manifests. Runtime metadata holds
+execution provenance, original source locations and capture time separately.
+
+scientific_hash covers canonical scientific metadata including a hash of the
+scientific payload projection. The projection replaces only a structurally
+recognized version1 PentarnionProvenance.execution record with an empty record;
+the full original payload is retained. Arbitrary user fields with identical names
+are never discarded. User-selected numerical data, including timing fields placed
+inside that data, remain scientific. integrity_hash covers the whole document
+except its own field. Hashes establish internal consistency, not authenticity.
+
+Snapshot scope is current_execution_input. The Evaluator executedSource_ hook
+supplies exact current invocation bytes; result.sourceHash must match. Recursive
+AnalysisResult dependencies supply exact analyzed bytes rather than files reread
+later. Identical import bytes share a scientific source identity while every
+distinct original location is retained/integrity-covered in runtime metadata.
+The core hook does not know the main source filename. Prior console workspace
+history/bodies/values are not automatically captured: workspace_history_included
+is always0. No universal self-contained replay claim follows from a bundle.
+
+Artifact files are explicitly selected for hash/size capture and remain external.
+The bundle contains no artifact binary payload or portable native binary cache.
+It never unpacks files, installs dependencies, compiles, runs source or replays an
+experiment automatically. Artifact names reject traversal, absolute paths,
+drive/ADS syntax, reserved devices, empty components and ambiguous trailing
+dots/spaces. Physical paths must remain within the project root. Windows uses
+GetFinalPathNameByHandleW on opened root/artifact handles and reads bytes from
+the same verified read-only handle, preventing junction/reparse escape. Linux
+uses canonical path resolution. Optional artifact references are integrity-covered
+but are not silently read back or declared present by loadexperiment.
+
+LOAD AND COMPATIBILITY
+Version1 format, integrity, scientific/source/data hashes and manifests are
+validated before typed decoding. Unknown bundle versions require explicit future
+migration. Language, algebra and numerical precision must be compatible; no
+automatic migration is supplied. Gamma must match by default. An explicit
+allow_real_context=1 permits only otherwise-compatible real-only gamma data.
+Recursive inspection rejects typed Pentarnion scalars, matrices (even empty),
+solution state widths and algebra-context-bearing records such as Pentarnion N-D
+arrays, coefficient meshes/surface solutions and exact coefficient expressions.
+The same scan applies to scientific settings/provenance. No typed Pentarnion
+value is silently relabeled. The existing typed decoder and sameDataSchema check
+then enforce the template before a value is assigned.
+
+experimentinfo fields:
+  format="PentarnionExperimentBundleInfo",version,name;
+  integrity_valid,compatible,context_match,migration_required,contains_pentarnion;
+  source_count,external_artifact_count;
+  scientific_hash,integrity_hash,main_source_hash,reason;
+  source_scope="current_execution_input",workspace_history_included=0,
+  external_artifacts_only=1,algebra,source_gamma,source_language.
+Unsupported future versions may be reported as migration_required without
+claiming valid integrity or decoding their unknown schema. experimentsource
+requires the known verified bundle format but may inspect harmless source bytes
+from a different numerical context; its default source identity is"main".
+
+BOUNDS AND FAILURE BEHAVIOR
+Bundle size<=64MiB; aggregate source bytes<=12MiB; at most128unique source
+snapshots,256original source locations and64selected external artifacts.
+Aggregate selected artifact bytes<=64MiB. Existing typed data nesting/array bounds
+remain in force; JSON nesting and recursive inspection are additionally bounded.
+Capture/save/read honor cancellation. Atomic publication exposes either the
+previous complete file or a new complete file, never a partial bundle.
+
+Static diagnostics use E2053. Data/version/context/path/integrity failures use
+source-spanned R2053; resource exhaustion uses R1005. Cancellation in load or
+ordinary execution remains R1006. Cancellation inside saveexperiment's own
+serialization/publication is an explicit export-only R2053 runtime error with
+completed numerical workspace retained. This exception never applies to an earlier
+numeric solve, never resets the cancellation flag, and does not weaken the existing
+context-changing transaction rollback. Cancellation after the commit point may
+leave the valid newly committed file; failures before commit preserve the prior
+bundle. C++ capture data are immutable throughout failed/cancelled exports.
+
+Examples: examples/experiment-bundles/*.p.
+Acceptance tests cover exact non-UTF8/NUL source bytes, recursive imports/all
+locations, stable-vs-runtime identities, user fields not discarded, corruption,
+unknown versions, typed/domain context guards, atomic preservation, path/NTFS
+junction escape, no-execution loads and retained numerical data on export cancel.

@@ -1,0 +1,9 @@
+F154 Native custom/dependent bootstrap
+Extended bootstrap supports moving/circular/stationary blocks, percentile/basic
+intervals, deterministic per-replicate streams and shared-budget workers.
+Custom statistics are checked cached native functions with explicit fixed sample
+shape/parameters, retaining compiler coordinate limits and full error reporting.
+Changing fixed runtime parameters does not recompile an unchanged statistic body.
+Block dependence/coverage assumptions remain explicit; no automatic inference
+certificate follows from a nominal interval.
+See specs/signal_statistics_extensions_v0_2.txt.

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "name": "Native hybrid resets, saltation sensitivities and adjoints",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "main.p",
+    "moving-terminal-event.p",
+    "fixed-time-hybrid-adjoint.p",
+    "pentarnion-section-reset.p",
+    "simultaneous-sections-and-priorities.p",
+    "running-event-and-moving-terminal-costs.p",
+    "stiff-nonlinear-arkode-sensitivities.p"
+  ]
+}

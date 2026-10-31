@@ -1,0 +1,99 @@
+PENTARNION LANGUAGE0.2 - EVOLUTIONARY OPTIMIZATION (TASK21)
+26 October2026 - implementation contract, final deployment evidence in HANDOFF
+
+SYNTAX
+  record r=evolve(objective,initial,options(algorithm="jde",lower=...,upper=...));
+Algorithm values: jde,ide,cmaes,ga,nsga2. All objectives are minimized.
+The callback has real/Pentarnion scalar inputs; initial packs complete unknown
+coordinates and parameters=options(...) binds trailing fixed inputs. Scalar
+single-objective callbacks return real; NSGA-II returns2..16 real tuple outputs.
+Each whole Pentarnion input has five real coordinates. Native arithmetic keeps
+the published algebra, operand order and explicit groups. No new determinant,
+associativity or whole-Pentarnion objective ordering is inferred.
+
+BACKEND AND COORDINATES
+Lazy penta_evolution DLL/SO with versioned C ABI uses pinned pagmo2-2.19.1:
+- sade variant2, adaptation1 (jDE) or2 (iDE), parameter memory retained;
+- cmaes with adaptive covariance memory and force_bounds=true;
+- elitist sga, tournament selection2, SBX eta15/crossover0.9, polynomial
+  mutation eta20/probability1/n;
+- NSGA-II crossover0.9/eta15, polynomial mutation1/n/eta20, crowding selection.
+Finite strict physical lower/upper bounds are mandatory, scalar-broadcastable.
+An initial point must be finite and feasible. Unknown coordinates are normalized
+to[0,1]; log_coordinates=[oneBasedIndices] additionally logs positive coordinates.
+Returned arrays use physical coordinates. Nonfinite objectives fail explicitly.
+Nonlinear constraints and mixed-integer searches are not silently penalized or
+rounded; use existing ISRES where its constraint contract applies.
+
+OPTIONS AND BUDGETS
+parameters; algorithm; lower; upper; log_coordinates; seed32bit(default0);
+population(defaultmax(32,8*n),multiple4,8..4096); max_generations(default200,
+1..1000000); max_evaluations(default10000,at least population,at most10000000);
+max_wall_seconds(default60,positive finite); history_limit(defaultbounded
+generationCount+1,0..100000); ftol(default1e-10); xtol(default1e-8);
+target(optional finite scalar objective threshold); restarts(CMA-ES only,
+default1,0..4); threads(defaultsession,0auto or1..64). Unknown fields reject.
+NSGA-II has no scalar target. Dimensions1..128. Every population/result matrix
+and four-column history respects the interpreter's matrix-element budget.
+
+Each algorithm advances one generation per driver step. A generation starts
+only if its full population fits the remaining evaluation allowance. Every
+native evaluation still charges/checks the strict budget, wall time, host work
+allowance and cancellation. No extra finalist evaluation is hidden in counts.
+CMA-ES restarts double population (capped4096) after30 stagnant generations or
+population collapse when a requested restart fits the remaining budget. The
+best evaluated point survives independently of the nonelitist CMA population.
+Single-objective population_tolerance needs at least10 generations plus both
+fitness spread<=ftol*(1+abs(best)) and normalized coordinate spread<=xtol.
+Only target_satisfied/population_tolerance sets converged. Finite stochastic
+search and small population spread do not certify a global optimum.
+
+NATIVE CALLBACKS AND THREADS
+Every user body executes a cached native DLL/SO; changed runtime parameters,
+algorithm settings/bounds/initials do not change the callback fingerprint.
+No interpreted evaluation fallback is allowed. CMA-ES/NSGA-II batch fitness and
+population initialization call the host ThreadBudget pool, with no new TBB pool.
+jDE/iDE/GA upstream generations remain serial. Native calls inside outer workers
+receive one inner CPU slot. Parallel callback invocations own separate argument
+buffers; work charging is serialized, and errors/cancellation join workers before
+propagation. Seeds and generated populations do not depend on worker ordering.
+
+RESULT
+x retains the initial input shape/type; objective is its scalar/first objective.
+population_x/population_f are final surviving rows. pareto_x/pareto_f contain
+independently nondominated final rows sorted lexicographically by objectives,
+then coordinates. For multiple objectives x/objective selects a lexicographic
+representative of all evaluated candidates, not a weighted Pareto compromise.
+history columns are generation,evaluations,bestFirstObjective,normalizedSpread.
+Additional fields: evaluations,native_evaluations,generations,restarts_completed,
+converged,status,message,elapsed_seconds,algorithm,backend,seed,cache_hit,cache_key,
+threads_requested,threads_used. Normal generation/evaluation/wall termination
+preserves the incumbent; cancellation and invalid callbacks are explicit errors.
+
+VALIDATION AND CURRENT LIMITS
+Known scalar optima, every returned survivor bound, independently calculated
+Pareto formula/dominance/extremes, seeded repetition, tested1vs4 thread agreement,
+CMA restart/best preservation, strict budgets, nonfinite inputs and missing
+modules are regression tested. evolutionary-optimization contains runnable expected-value plots.
+Native Linux execution still needs actual validation. State checkpoint/resume,
+island migration, nonlinear/mixed-integer evolution and automatic multi-basin
+refinement remain future; explicit global-to-local refinement is demonstrated.
+
+DEPENDENCIES/ATTRIBUTION
+pagmo2 v2.19.1 archive SHA256:
+ecc180e669fa6bbece959429ac7d92439e89e1fd1c523aa72b11b6c82e414a1d
+Two compatibility patches only: discover installed Eigen across its major
+version boundary, and use <version> instead of obsolete <ciso646> under C++20.
+Upstream algorithm sources are unchanged; preserve COPYING.gpl3/COPYING.lgpl3.
+https://esa.github.io/pagmo2/docs/cpp/algorithms/sade.html
+https://esa.github.io/pagmo2/docs/cpp/algorithms/cmaes.html
+https://esa.github.io/pagmo2/docs/cpp/algorithms/sga.html
+https://esa.github.io/pagmo2/docs/cpp/algorithms/nsga2.html
+
+MATLAB-STYLE OUTPUT OBSERVERS
+OutputFcn and OutputEvery are supported options; see specs/iteration_output_v0_2.txt.
+The monitor receives a physical real-coordinate row, typed iterationinfo metadata
+and init/iter/done state. Native evolution reports one driver event per generation,
+never from population workers. Return1 requests status=output_function_stop with
+converged=0 and preserves candidate/population/Pareto/history data. The monitor may
+plot through the common live figure stream; objectives remain cached native bodies.

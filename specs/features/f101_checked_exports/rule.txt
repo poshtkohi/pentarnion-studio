@@ -1,0 +1,9 @@
+F101: Checked MATLAB and Python exports
+Authorized second-roadmap extension, 26 October 2026.
+Status: implemented within the explicit bounded contracts below. Generator158 checks passed; all13 Python and12 MATLAB target bundles executed successfully on the recorded Windows target versions. Broader unmapped contracts remain explicit.
+
+Typed-AST export with safe target names, source maps, compatibility diagnostics, small runtime and atomic fresh output. Records/tuples/complex scalars, checked named/default calls, snapshot expression lambdas and real/ordered coefficient equations have explicit target representations. Optional Python SciPy-BDF and MATLAB ode15s-BDF mappings include analytic AD1/AD2 Jacobians, localized events, dense queries and complete scalar-state trajectory sensitivities. Scientific plus BDF opt-ins map regular state/time mass, indexed priority hybrid resets/saltation and actual continuous/hybrid reverse running/event/moving-terminal costs using retained adaptive dense trajectories. Scientific adapters also cover real fitting/objectives/constraints, weighted graph algorithms, real/Pentarnion1D FD/P1FEM fields and generated Newton/Lagrangian/Hamiltonian mechanics. Sampled geometry and field graphics map. Algorithm, stopping, numerical and scheduling differences are in compatibility.json. Broader intrinsic geometry, multidimensional/adaptive PDE, constraint/generalized-force/unit-aware mechanics, generic/fixed-array coordinate ABIs and singular/general DAE or non-BDF advanced solvers remain unsupported. Unsupported constructs produce source diagnostics and no executable bundle.
+
+Authority: language.txt L89/L109; specs/checked_export_v0_2.txt.
+Acceptance: examples/portable-code-export/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

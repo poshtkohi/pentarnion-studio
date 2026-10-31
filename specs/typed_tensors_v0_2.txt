@@ -1,0 +1,113 @@
+F165 / L154: FIRST-CLASS FIXED-SHAPE NATIVE TENSORS
+
+A tensor has rank1..8, positive literal extents, an explicit entry type, and
+complete coefficient storage. Entry types are real, complex, legacy pentarnion
+and element<H> for an immutable builtin or imported algebra H. No coordinate
+count identifies an algebra. A generic five-coordinate entry remains generic.
+
+Declarations:
+  tensor<2,3,4> x = tensor(0,[2,3,4]);
+  tensor<complex,2,2> z = tensor([1,2;3,4;5,6;7,8],[2,2],"complex");
+  tensor<pentarnion,2,2> p = tensor(1+i+ell,[2,2]);
+  algebra H = builtin_algebra("quaternion");
+  tensor<H,2,2,2> q = tensor(H.i,[2,2,2]);
+An unqualified tensor declaration infers the complete constructor descriptor.
+Function/ODE parameters and results require the full fixed tensor declaration.
+
+Constructors:
+  tensor(values,[literal_dimensions])
+    infers scalar/matrix entry kind. A scalar or single-entry matrix broadcasts.
+    Otherwise a matrix contributes
+    its entries in MATLAB column-major traversal, retaining every coefficient.
+    Matrix storage and native row-major matrix ABI are unchanged.
+  tensor(real_coordinate_rows,[dimensions],"complex" or "pentarnion")
+    requires N-by2 or N-by5 real coefficient rows, N=entry_count or1 broadcast.
+    A matching scalar also broadcasts. Explicit "real" disallows coefficient
+    loss from complex/Pentarnion values.
+  tensor(real_coordinate_rows,[dimensions],H)
+    requires N-by-dimension(H) real rows; a matching generic scalar or matrix
+    contributes full entries. A real scalar embeds with H's verified unit
+    (zero is also valid in a nonunital algebra). Different hashes do not mix.
+  tensor(existing_tensor,[new_dimensions])
+    explicitly reshapes while retaining entry kind, algebra, all coefficients,
+    and total entry count. There is no implicit Matrix-to-Tensor conversion.
+
+Packing is column-major ELEMENT order over every axis, with complete adjacent
+entry coefficients. Zero-based linear=i0+d0*(i1+d1*(i2+...)). Language indexing
+is one-based: T(2,1,2) in shape[2,2,2] selects its sixth packed entry. One linear
+selector or exactly rank selectors is required. Full-rank runtime ranges/: keep
+one output extent per selector (scalar selector extent1); all scalar selectors
+return one entry. Linear non-scalar selection returns a rank1 tensor. Empty
+slices are rejected by this positive-shape type. Indexed assignment copies on
+write, retains the original descriptor, and accepts one compatible entry or a
+matching-entry tensor with the selected entry count. An unqualified declaration initialized by a runtime slice
+resolves its inferred shape from that checked slice; explicit declared shapes
+and later assignments still require exact extents. Native callbacks support
+checked bounded scalar indices/end; dynamic range slices are runtime operations.
+
+Arithmetic:
+  +,- identical tensors or compatible entries/reals; unary +/-;
+  .* equal-shape entry products; scalar/entry * on either side keeps its order;
+  / or ./ by a real scalar; .^ maps a scalar integer entry power;
+  complete equality compares descriptor and values.
+Native entry powers require a literal integer with absolute value<=64. Runtime
+entry powers retain their existing entry algebra/domain and execution budgets.
+Tensor*Tensor is rejected: it does not imply a matrix product or contraction.
+There is no reassociation of generic or legacy algebra products. Generic scalar
+addition requires the verified unit; real scaling remains meaningful nonunital.
+Whole sin/cos/exp/sinh/cosh/conj map over entries under the existing entry
+algebra capability gates. norm(T[,"fro"]) is Euclidean Frobenius over ALL real
+coordinates, not an asserted physical metric or composition norm.
+
+Queries:
+  size(T[,axis]), length(T), numel(T), ndims(T);
+  tensorvalues(T), tensorcoords(T): entry_count-by-entry_width real rows;
+  coeff(T,zero_based_component): real tensor with identical shape;
+  sum(T[,"all"]), mean(T[,"all"]): reduce all complete entries to one entry;
+    no axis-specific default is inferred. Coordinates accumulate in the original
+    entry order using wide arithmetic; mean divides that total before binary64
+    conversion, preserving finite large and minimum-subnormal constant means.
+  tensorinfo(T): rank,elements,components,bytes,shape,entry_type,algebra_hash,
+                 order,gamma.
+The current order report is column_major_entries_full_coefficients. bytes
+counts retained TensorData/vector capacities; generic definition storage is
+separately charged once by the workspace. gamma0 is reported for non-Pentarnions.
+
+Native compilation specializes shape, entry kind, multiplication-table hash,
+coefficient order and checked body in structural cache identity. Changed runtime
+values do not recompile. AD1/AD2/AD3 retain the same full-coordinate order and
+use per-invocation buffers. Native callbacks retain the existing128 input and
+128 output coordinate bounds; local native tensor temporaries are bounded to
+1024 coordinates. The universal ODE backend retains64 total state coordinates.
+Runtime tensors allow at most one million entries and eight million coordinates,
+subject to narrower host matrix/coordinate quotas. Shape/byte arithmetic is
+checked before allocation, finite values are mandatory, and cancellation is
+observed during construction/traversal. No storage cap is increased to evade a
+native callback or ODE limit.
+
+Tensor ODE state series use ArraySeries with explicit tensor entry type/shape
+metadata. Scalar sample selection restores the complete tensor. statecoord
+selects a zero-based flat retained coordinate; scalar deval restores the tensor;
+vector-time deval reports flattened coordinate rows. Workspace snapshots store
+entry type, exact shape, gamma, all coefficient values, and frozen generic
+algebra JSON/hash/provenance. Solution/series state metadata carries the same
+identity. Corrupted dimensions, coefficient counts and hashes reject before
+workspace replacement. Equal-width different-shape/algebra targets reject.
+
+Examples: examples/native-tensors/column_major_fields.p;
+          examples/native-tensors/typed_tensor_decay.p.
+Regression sources: typed_tensor_storage_tests.cpp and
+                    typed_tensor_language_tests.cpp.
+Executed acceptance results belong to docs/VALIDATION.md, not the specification.
+
+Native temporary/resource identity clarification
+Every native tensor expression, including an unnamed constructor temporary, is
+limited to1024 complete real coordinates. At most4096 tensor-expression
+coordinates are emitted per callback body; this conservative static allowance
+bounds generated stack temporaries separately from the input/output128 and ODE64
+limits. Local entry counts are constrained by full coordinate width, rather than
+an unexplained128-entry shape limit. Each normalized parameter/expression/result
+descriptor includes its entry kind, full shape and exact generic algebra hash.
+Two equal-width definitions cannot alias by swapping bindings inside the same
+global algebra-definition set. Runtime scalar/compatible-entry slice assignment
+broadcasts without changing the original tensor shape or algebra identity.

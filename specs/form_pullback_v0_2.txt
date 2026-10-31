@@ -1,0 +1,49 @@
+F151 / L141: NATIVE DIFFERENTIAL-FORM PULLBACK JETS
+Status: implemented candidate; executed acceptance is recorded in docs/VALIDATION.md.
+
+record a=formpullback(native_form,native_map,domain_point,degree[,options]);
+
+native_map takes all n real domain coordinates and explicit trailing parameters,
+and returns m real target coordinates. Bounds:1<=n<=m<=6. The map must be a
+numerically resolved immersion. A pullback as an exterior-algebra operation also
+exists for singular/general maps, but this API deliberately retains a resolved
+induced positive-definite metric for subsequent Hodge/codifferential operations;
+singular maps reject explicitly. No automatic atlas path is inferred.
+
+native_form takes all m target coordinates and parameters, and returns one real
+coefficient per increasing lexicographic degree-p target index tuple. Its value
+and first/second analytic jets are evaluated at native_map(domain_point). A
+native real tuple or fixed-shape real matrix may supply the complete coefficients.
+Degree is0..m; if p>n the pulled-back form is the known zero form of that degree.
+
+The pullback multiplies each composed coefficient by the corresponding Jacobian
+minor, with exterior signs preserved. Both first and second coefficient jets
+are retained. Native map AD1/AD2 plus cached analytic trilinear AD3 supply the
+third map derivatives required to differentiate Jacobian minors twice. No finite
+differences or zero-filled unknown higher derivatives are substituted. Symmetric
+third entries are evaluated once per increasing triple and expanded explicitly.
+
+options(parameters=record,map_parameters=record,metric=matrix_or_native_metric,
+metric_parameters=record,orientation=1,max_native_operations=execution_allowance,
+tolerance=1e-12). The target metric defaults to Euclidean identity. A native metric
+takes m target coordinates and parameters and returns the complete m-by-m real
+metric with compiler-generated AD2. The induced metric J^T(g o map)J and both of
+its derivative orders are retained. Metric/Jacobian conditioning,symmetry,finite
+arithmetic,work/cancellation and output capacities are checked. Orientation is
+explicit +/-1 on the domain; it is not guessed from a nonsquare map determinant.
+
+Output is PentarnionManifoldForm-v2, compatible with wedge,exteriord,hodge,
+codifferential,formlaplacian and data-only workspace persistence. point is the
+domain point. cache_key retains the field/map/AD3 structural identities;
+metric_cache_key also retains target-metric identity. Parameters and coordinates
+are runtime data and do not recompile unchanged callback bodies. source reports
+native_analytic_pullback_jets. The result is local pointwise differential data,
+not a global cohomology or atlas consistency certification.
+
+Goldens: y=x^3,y^2 dy pulls back to3*x^8 dx, including its two derivatives;
+-y dx+x dy under the polar map becomes r^2 dtheta; a curved R2-to-R3 immersion
+retains its nonconstant induced metric Hessian. Rejection covers singular maps,
+incomplete coefficient jets,inconsistent symmetric tensors,work and cancellation.
+Acceptance:tests/runtime/form_pullback_kernel_tests.cpp and
+form_pullback_language_tests.cpp. Example:
+examples/intrinsic-geometry/native-form-pullback-jets.p.

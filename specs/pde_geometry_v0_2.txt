@@ -1,0 +1,104 @@
+NATIVE REAL/PENTARNION PDE AND REAL SCALAR GEOMETRY - LANGUAGE0.2
+Bounded first release;26 October2026. Tasks15, F78-F79, languageL66-L67.
+
+pdesolve(reaction,x,initial[,options]) returns a typed record.
+Reaction signature: native-compatible function real or pentarnion reaction(
+  matching_state_type u,real t,real s[,trailing real/Pentarnion parameters]).
+The function body is compiled into a cached shared library. options(parameters=
+options(...)) supplies trailing named values at runtime; editing those values,
+initial data or integration settings reuses an unchanged body. Parentheses and
+operand order are retained. Diffusion is a real scalar applied componentwise;
+this does not define a nonassociative elliptic-operator inverse.
+
+Options (unknown names reject): method="fd" or"fem"; boundary="periodic",
+"dirichlet" or"neumann"; length, diffusion=.1,t0=0,t1=1,time_step=.001,
+sample_step=.05,left=0,right=0,max_steps=1000000,max_reaction_evaluations=20000000,
+max_native_operations=host limit(default1e9),max_wall_seconds=120,parameters.
+There are3..4096 strictly increasing finite real nodes. initial is a matching
+real/Pentarnion vector. Finite widths, positive domain measure, settings and
+boundary values are checked. A periodic grid omits the repeated endpoint; length
+exceeds the stored span and its closing cell is part of discretization/weights.
+A nonperiodic grid includes both endpoints. left/right options apply only to Dirichlet; a supplied nonperiodic length must
+match the explicit coordinate span. Dirichlet values are constant typed
+scalars; Neumann is homogeneous zero flux. Robin/time-dependent conditions reject.
+
+FD uses a uniform centered three-point Laplacian. Neumann endpoints reflect ghost
+nodes, with trapezoidal weights. FE uses one-dimensional linear P1 elements,
+assembled consistent mass M and stiffness K; element matrices are h*[2,1;1,2]/6
+and [1,-1;-1,1]/h. Periodicity identifies end nodes; Dirichlet elimination retains
+the interior mass block. The method solves M*u'=M*F(u,t,s)-nu*K*u, with reaction
+represented by its nodal interpolant. This is not exact quadrature of an arbitrary
+nonlinear Galerkin reaction. Sparse LDLT factorization is reused for the constant
+mass matrix. Means/RMS use lumped nodal spatial weights, not the exact consistent
+FE L2 norm. The mass matrix is never silently replaced with identity.
+
+Time integration is classical explicit RK4; steps land at anchored sample times
+and the exact final time. A conservative diffusion check requires nu*dt/h_min^2
+<=.60(FD),<=.20(FE). This does not bound nonlinear reaction stiffness; users must
+also refine time and space. Rejected/nonfinite/cancelled/budget-failed solves do
+not publish a partially successful result. No stiff PDE/DAE backend is claimed.
+
+The lazy Qt-free penta_pde DLL/SO has a versioned C ABI, host-owned buffers and
+shared CPU reservation. This first kernel is serial and reports threads_used=1.
+Generated callback node work and assembly work count against the separate bounded
+host maxNativeOperations (a PDE option may lower this); interpreted orchestration
+still obeys maxOperations. Step/evaluation/wall/retained-data/cancellation limits
+also apply. Work counts are resource units, not floating-point instruction counts.
+Native compilation remains excluded from tic/toc.
+
+Result: x(1xN),t(Mx1),values(MxN real/Pentarnion),mean(Mx1 matching type),
+spatial_rms(Mx1 real),steps,reaction_evaluations,native_operations,elapsed_seconds,
+status,message,method,boundary,diffusion,cache_hit,cache_key,threads_used.
+pdecoeff(result,j) returns a real MxN field, with zero-based j=0..4 for Pentarnions
+and0 for real fields. Original five coefficients remain available in values.
+The bounded dense-array defaults now allow1e6 entries per matrix and8e6 retained
+coordinates (including nested records/tuples); embedding hosts may lower either. Fitting and
+NLopt history limits remain independently capped at20000 and33333 rows to preserve
+their established resource contracts.
+Dimensions stay bounded2D, each<=100000; no newN-D array grammar is implied.
+
+GEOMETRY AND DISPLAY
+surf(x,y,Z),imagesc(x,y,Z),contour(x,y,Z[,levels]) emit figure actions. Z has
+length(y) rows and length(x) columns; axes are finite and strictly increasing.
+Values must be real: select an explicit Pentarnion coefficient/defined invariant.
+surf triangulates sampled heights; imagesc flattens height while retaining colour
+values. contour uses consistent triangle splits and piecewise-linear interpolation;
+default8interior levels, or1..32 explicit real levels. Shared exact-level edges
+have one owner. An entirely-level triangle has no unique one-dimensional contour.
+isosurface(x,y,z,V,level) uses a consistent six-tetrahedron cube subdivision.
+V uses x-fastest order, y rows per z slice (e.g. ny*nz by nx). Exact-level hits
+are deduplicated; valid crossing polygons are triangulated without zero-area
+faces, including boundary faces. Entirely-level volumes have no unique2Dsurface.
+These are sampled piecewise-linear level sets, not exact symbolic geometry.
+
+Mesh vertices,scalar values,triangles/segments and physical units remain in the
+immutable figure snapshot. Native navigation/data tips sample original vertices;
+2D colour maps also display the original scalar value. Whole/subplot PNG/JPEG/SVG
+export works. SVG uses vector polygons coloured from the same lookup table at
+cell means, whereas the native raster interpolates vertex colours; colour bars
+are included. Constant fields use one actual value label and a uniform colour.
+The existing request/retained point/primitive/export-size budgets remain enforced.
+
+curvegeometry(points) requires>=3real2D/3D points, one per row. It returns sampled
+arc,length,tangent,normal,curvature,status="sampled_estimate". Consecutive duplicates
+and undefined cusp tangents reject. Arc is polyline distance; tangent/normal/
+curvature are finite-difference estimates with one-sided endpoint treatment.
+General manifold metrics/geodesics/intersections/unstructured meshes remain future.
+
+ACCEPTANCE
+Real heat modes, spatial refinement, periodic/no-flux/constant Dirichlet tests,
+P1 consistent-mass checks, parameter cache reuse and the attached Pentarnion initial
+RMS provide independent tests. Geometry tests compare plane intersections with an
+independent cube-edge polygon-area oracle, including exact-level and extreme cases.
+examples/pdes-and-geometry contains small real FD/FE, geometry and fullreport PDE scripts.
+The report N128,L20,nu.1,dt.005,sample.05,t120 andinitialperturbation are preserved.
+Plots decimate display only; all2401x128x5samples remain retained. Reported chaotic
+endpoint summaries require statistical/refinement comparison, not bitwise equality.
+
+PETSc/MFEM, general weak forms, adaptive meshes,2D/unstructured PDEs, generalized
+boundary conditions, implicit/stiff PDE integration and complete mathematical
+geometry remain unchecked roadmap work. Native Linux execution remains unverified.
+Primary numerical background: MFEM diffusion examples/weak-form documentation,
+https://mfem.org/examples/ ; PETSc portability integration plan,
+https://petsc.org/release/install/windows/ . The current kernel uses Eigen sparse
+P1 mass solves and a dedicated FD stencil, not a claimed PETSc/MFEM installation.

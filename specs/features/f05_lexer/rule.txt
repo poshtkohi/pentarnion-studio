@@ -1,0 +1,35 @@
+FEATURE F05: Shared source lexer
+Version: 0.1
+Status: implemented for the user's keyword-highlighting extension;
+        tested without Qt and through the editor adapter
+Implementation stage: S2
+Dependencies: F01
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+INPUT/OUTPUT
+UTF-8 SourceBuffer -> token stream with kind, lexeme/source span and comments.
+Byte-offset source spans are independent of Qt. Keep a map for line/column.
+
+REQUIRED BEHAVIOUR
+F05-R1: Implement L02-L03 exactly; full tokenisation not regex substitution.
+F05-R2: Handle signed numbers as operators + literal, exponent notation,
+         maximal munch, quoted escapes, line and non-nested block comments.
+F05-R3: Lexer remains total on incomplete/invalid input. Report bounded errors,
+         advance source position and reach EOF rather than hanging.
+F05-R4: Preserve token/group source ranges for editor underlines and AST tests.
+F05-R5: Recognise \ as one operator; no C++/MATLAB transpose interpretation of '.
+F05-R6: Identifier names are case sensitive. i/j/k/ell are built-in basis names,
+         not complex literals, array indexes or implicit multiplication syntax.
+F05-R7: Support a resumable comment state for editor block styling without
+         duplicating token rules in unrelated Qt regular expressions.
+
+ACCEPTANCE
+F05-T1: Golden token streams for every valid example.
+F05-T2: Unterminated comment/string, bad escape and 2i give appropriate errors.
+F05-T3: Unicode comment before an error and CRLF files have correct source spans.
+F05-T4: Random short invalid byte/text cases terminate without crashes.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

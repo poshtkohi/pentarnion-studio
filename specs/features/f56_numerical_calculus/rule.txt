@@ -1,0 +1,42 @@
+F56: Sample interpolation, quadrature and spatial calculus
+Authorized extension, 26 October 2026. Language 0.2.
+
+Provide interp1 linear interpolation/extrapolation with strict monotone finite
+coordinates; deval cubic Hermite interpolation uses retained sample values and
+RHS endpoint slopes. It is not the solver's internal dense polynomial; report
+sample-spacing dependence and reject missing legacy slopes/outside queries.
+Provide bounded adaptive Simpson integral for real/Pentarnion callbacks;
+callbacks stay synchronous, errors/cancellation/convergence exhaustion diagnose.
+Add trapz/cumtrapz, diff, gradient, divergence and unscaled laplacian, with explicit
+1/2 axes, shapes, monotone nonuniform coordinates, signed spacings and one-sided
+three-point boundary stencils. Document empty/singleton/two-point behavior.
+Linear Pentarnion calculus acts on five coefficients without changing products.
+Heavy kernels reside in lazy penta_numerics; share the host thread/cancel budget.
+
+Authority: language.txt L43 and specs/foundations_v0_2.txt section 7.
+Acceptance: foundation_numerics_tests, calculus_kernel_tests and numerical-calculus example;
+analytic polynomial checks, Hermite refinement, malformed buffers, callback
+failure and cancellation. Out of scope: PDE solves, objective gradients, internal
+solver dense output and rigorous quadrature error bounds. Status: docs/VALIDATION.md.
+
+
+RESEARCH EXTENSION SUPERSESSION — 26 OCTOBER2026
+specs/research_v0_2.txt and language.txt L56-L63/F68-F75 supersede earlier future
+claims for native Ceres/NLopt fitting/optimization, CVODES integrated sensitivity/
+terminal adjoints, ODE events/dense output/backward time, native maps, parallel
+callback preparation and Studio run/help/interrupt/find. Instantaneous RHS partials
+remain distinct from integrated sensitivities. The existing callback subset/cache
+rules continue; arbitrary native scripts, chaos/PDE/geometry and Map Explorer are
+not added. HANDOFF records actual acceptance/deployment/platform status.
+
+
+SECOND-DERIVATIVE INSUFFICIENT-DATA CORRECTION — 26 OCTOBER 2026
+For nonempty PENTA_CALC_DERIVATIVE2 requests, the differentiated axis must
+contain at least three samples. Two samples determine a secant, not curvature.
+The unchanged C ABI returns PENTA_NUMERIC_ARGUMENT with an Insufficient data
+diagnostic before writing any output; laplacian propagates the runtime error.
+Real/Pentarnion coefficients and row/column axes follow the same rule. Empty
+arrays stay empty; the two-sample first derivative remains the secant. diff(A,2)
+is a different operation and retains its ordinary empty-difference semantics.
+Regression coverage: calculus_kernel_tests (buffer sentinels/axes/widths),
+foundation_numerics_tests (language errors and valid first/quadratic derivatives).

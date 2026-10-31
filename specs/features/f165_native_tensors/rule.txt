@@ -1,0 +1,5 @@
+F165: First-class fixed-shape native tensors
+Canonical contract: specs/typed_tensors_v0_2.txt.
+Preserve rank1..8 positive extents, column-major entry/full-coefficient packing,
+immutable entry-algebra identity, ordered products, lazy native body caches,
+checked resource limits and complete AD/state persistence metadata.

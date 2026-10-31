@@ -1,0 +1,39 @@
+FEATURE F09: Built-in algebra function signatures
+Version: 0.1
+Status: builtin checking and numerical interpretation implemented in 0.2;
+        completion/signature-hover UI remains deferred under F11;
+        actual verification in docs/VALIDATION.md
+Implementation stage: S3
+Dependencies: F07/F12 metadata
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F09-R1: Maintain one declarative signature table for pent, sqrt, conj, scalar,
+         pure, norm2, inv, coeff, commutator and associator, matching L11.
+F09-R2: Type checker, completion and hover documentation share this table.
+F09-R3: pent requires exactly five scalar entries and fixed canonical order.
+F09-R4: coeff uses zero-based index 0..4; literal out-of-range index is an error.
+F09-R5: Domain constraints appear in Help. Type checking inv(p) does NOT certify
+         p nonzero, and checking p/q does not certify a unique quotient.
+F09-R6: plot2/plot3 and figure controls are enabled under F23. Generic plot,
+         disp, general derivative, filesystem and shell functions remain unsupported.
+         Native ODE blocks/odesolve and automatic Jacobians are covered by F28-F29.
+         No hidden generic eval/import function may execute arbitrary source.
+
+ACCEPTANCE
+F09-T1: Each signature has good-arity/type and bad-arity/type fixtures.
+F09-T2: Constructor [0,1,0,0,0] is i according to the independent core tests;
+         the checker validates shape only and does not compute that result.
+F09-T3: Hover text for / and inv explicitly states their different meanings.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.
+
+F09-R7: Elementary overloads and real-only signatures follow language.txt L11/L18 and F24.
+
+NATIVE ODE / SUBPLOT EXTENSION (26 October 2026): ODE_GUIDE.txt and language.txt
+L23-L26 are current; F28-F31 supersede earlier ODE/native/curve exclusions.
+First-paper demo: examples/paper1-bracketing/project.pprj. General native scripts,
+PDEs, parameter sensitivities and parallel scientific execution remain deferred.

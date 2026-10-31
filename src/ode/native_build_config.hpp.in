@@ -1,0 +1,9 @@
+#pragma once
+#define PENTA_ODE_CXX_COMPILER "@PENTA_ODE_CXX_COMPILER@"
+#define PENTA_ODE_TOOLCHAIN_ID "@PENTA_ODE_TOOLCHAIN_ID@"
+#define PENTA_ODE_BUILD_ID "@PENTA_ODE_BUILD_ID@"
+#define PENTA_ODE_SOLVER_BUILD_ID "@PENTA_ODE_SOLVER_BUILD_ID@"
+#define PENTA_ODE_SUPPORT_HEADER "@PENTA_ODE_SUPPORT_HEADER@"
+namespace penta::ode::detail {
+inline constexpr char embeddedNativeSupport[] = R"penta_ode(@PENTA_ODE_SUPPORT_SOURCE@)penta_ode";
+}

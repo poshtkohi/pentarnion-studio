@@ -1,0 +1,32 @@
+FEATURE F08: Finite range syntax and types
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S3
+Dependencies: F07
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+PURPOSE
+Record finite search/iteration domains syntactically without implementing
+search, loops or runtime enumeration in this release.
+
+REQUIRED BEHAVIOUR
+F08-R1: integer range name=start:step:stop and real range declarations follow L12.
+F08-R2: Integer endpoints/step required for integer ranges. Scalar widening is
+         allowed in real range descriptor components, not range-type conversion.
+F08-R3: Exactly three parts in the colon form. Range-copy initialization and
+         same-type range reassignment are allowed; scalar/range assignment is not.
+F08-R4: Literal signed zero step is diagnosed. Unknown step values remain a
+         future runtime check; do not execute variables/functions to decide them.
+F08-R5: No materialisation of huge ranges or numerical iteration in checker.
+F08-R6: Help distinguishes finite sequence descriptors from continuous intervals.
+
+ACCEPTANCE
+F08-T1: orders=1:1:5, descending 5:-1:1 and strengths=.1:.1:1 type-check.
+F08-T2: integer range xs=0:.5:1; and real b=0:.1:1; fail.
+F08-T3: Huge range bounds do not allocate a huge array or hang the editor.
+F08-T4: zero-step fixture gets E1404; no claims that variable step is safe.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

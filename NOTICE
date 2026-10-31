@@ -1,0 +1,21 @@
+Pentarnion Studio
+Copyright 2026 Alireza Poshtkohi and Susanne Pumplün.
+
+The first-party implementation, documentation, examples and reusable runtime
+helpers in this repository are licensed under the Apache License, Version 2.0.
+See LICENSE for the complete terms.
+
+Reusable Qt GUI components were adapted from GTG Cell Studio. Retained
+adaptation provenance and original source identities are recorded in
+src/ide/desktop/GTG_COMPONENT_PROVENANCE.txt.
+
+Third-party software, libraries, fonts and tools retain their own copyright
+notices and licences. See THIRD_PARTY_NOTICES.md and LICENSES/, together with
+the applicable dependency locks and release source/relinking materials.
+
+This notice applies to the included Pentarnion Studio material. It does not
+assign a licence to users' independently authored models, scripts, data or
+results. Copies of Studio runtime/helpers distributed with generated programs
+retain their applicable licence and attribution notices.
+
+This NOTICE is informational and does not modify the Apache License.

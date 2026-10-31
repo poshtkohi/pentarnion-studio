@@ -1,0 +1,6 @@
+F164: daeinitialize uses cached compiled residual/time/state AD and native damped
+Newton to project algebraic y/differential yp while fixing differential y. It
+then solves differentiated constraints for complete algebraic yp/differential
+ypp. Requires straight-line differentiable local index0/1 residuals and guarded
+nonsingular matrices. Does not claim global consistency search, generic nonlinear
+high-index reduction or algebraic accelerations. V1/V2 ABIs remain unchanged.

@@ -1,0 +1,105 @@
+TIERED NATIVE EXPERIMENT VERIFICATION - LANGUAGE0.2
+
+verifyexperiment(model,experiment,run_ids[,options]) returns a data-only record.
+verifyrun(model,verification,row) replays one recorded tier at exactly its native
+solver method, interval, sampling, Jacobian, tolerance and work/step settings.
+Both calls require the original checked body/cache identity. Run IDs are original
+one-based experiment IDs. Evidence rows use tier-major, selected-ID order.
+
+The source experiment is retained unchanged as source_experiment, with its
+request hash. Every row records run_ids, tier_ids, t0/t1, rtols, atols,
+sample_steps, gammas, screen_codes, final status_codes and full original states.
+verifyrun returns raw real-coordinate values and the recorded gamma, preserving
+mixed-gamma experiment safety. It does not reconstruct foreign Pentarnion values
+inside the current workspace. Saved records use existing saveanalysis/loadanalysis
+and execute nothing on loading. They are evidence data, not authenticated proofs.
+
+Selection:1..256 unique completed tasks;1..8 explicit increasing horizons, each
+at least the original duration. The default durations are2x/4x the original.
+Pending/cancelled original tasks require resume first. Longer tiers rerun from the
+original initial condition, not the final state of the shorter simulation.
+Tolerances cannot be looser than the original experiment. tightening in(0,1]
+multiplies both first-tier tolerances by tightening^(tier-1). Default0.1.
+rtol cannot fall below1e-14. sample_step/method/jacobian/max_steps/max_samples/
+max_seconds and native diagnostic settings are explicit, validated overrides.
+
+Physical coordinates include leading WHOLE declared states. The compiler checks
+retained expression trees for references to every removed auxiliary state.
+Pruning a dependent auxiliary or part of a five-coefficient state is rejected.
+Full original equations run for screening; a checked pruned native kernel is
+prepared once for tangent/shooting diagnostics. Multiplication grouping and all
+five coefficients in retained Pentarnions are preserved. Work integrals can be
+excluded only when they do not feed the retained physical equations. A q/v model
+therefore uses ten coordinates, not a chosen2D/3D display projection.
+
+lyapunov=1 enables native CVODES tangent integration plus native QR for1..32
+physical coordinates. Options: qr_step=.5, max_intervals=4096 (2..16384),
+minimum_observation=20, minimum_positive=.02, lyapunov_tolerance=.05.
+The complete sorted finite-time exponents and availability flag are returned.
+window_drift compares largest growth in the first and second post-transient
+observation windows. Orthogonality must be <=1e-8. compare_method=1 (default)
+independently repeats with the other CVODES method (BDF/Adams), half the QR step,
+and0.1x tolerances (reference rtol floor1e-14). settings_drift reports the largest
+exponent discrepancy. tier_drift compares adjacent longer horizons. Availability
+and convergence flags distinguish genuine zeros from absent diagnostics.
+
+Code10/chaotic_candidate requires full-state recurrence in both adjacent tiers,
+positive largest growth >minimum_positive, sufficient observation duration,
+window/method/QR agreement in both tiers and adjacent-tier agreement within the
+user's tolerance. It is FINITE-TIME EVIDENCE, never a certified chaos/global
+boundedness assertion. A positive exponent without recurrence, weak positivity,
+failed comparisons or insufficient observation remains inconclusive. No
+quasiperiodic classification is inferred from a few near-zero exponents.
+Original screen_codes expose evidence before conservative verification relabels.
+Codes0..9 retain discovery meanings;10 is an additional verification-only code.
+
+refine_periodic=1 attaches native autonomous phase-fixed shooting and Floquet
+diagnostics when the full-state screen found separated periodic returns.
+periodic_tolerance=1e-8, stability_tolerance=1e-5, periodic_iterations=20.
+periodic_converged requires closure and the neutral multiplier checks. Reported
+period is not certified minimal. Degenerate families, equilibria, failed Newton
+steps or nonautonomous forcing are not silently reported as refined cycles.
+Nonautonomous shooting is explicitly marked unsupported; state tangent analysis
+can still be requested. Tangent/shooting currently require BDF or Adams. Selecting
+ERK/ESDIRK with these diagnostics fails explicitly rather than changing methods.
+
+Row diagnostics: screen_codes/status_codes, labels, diagnostic_statuses,
+maximum_norm, return_error, rhs_norm, stop_times, steps/evaluations,
+lyapunov_available/window_converged/settings_converged/tier_converged/positive,
+exponents/reference_exponents, largest_lyapunov, window/settings/tier_drift,
+orthogonality_error/qr_intervals, periodic_converged/periods/closure_residuals,
+neutral_errors/floquet_moduli/stable/unstable. Unavailable numeric entries are zero
+placeholders and MUST be interpreted together with availability flags.
+
+Budgets: threads follows Studio's shared CPU pool (0 auto,1..64 explicit), with
+private integrator/tangent scratch per run. maximum_bytes includes retained
+evidence plus the underlying native search estimate; it is a conservative
+buffer estimate, not an exact allocator peak. max_wall_seconds covers all tiers;
+max_seconds bounds individual native solves/diagnostics. Native operation charges
+are atomic across workers. Cancellation and exhausted quotas leave the original
+experiment unchanged. Selected follow-ups are bounded in memory; they do not
+serialize raw SUNDIALS memory. Persistent mid-tier verification resume is future;
+save accepted evidence and resume/replay the existing original experiment.
+
+Examples: examples/tiered-ode-verification (normal-form cycle, Lorenz evidence,
+weak/neutral exponents, independent work integrals).
+Tests: tests/runtime/verification_tests.cpp. Windows isolated native45 checks
+passed before global integration: analytic exponents/divergence, serial/parallel,
+one resident kernel, autonomous cycle/Floquet, conservative labels and cancellation.
+Actual cross-platform/full-runtime acceptance belongs in HANDOFF, not inferred
+from this source-level specification.
+COMPLETED-TIER CHECKPOINT EXTENSION (27 October2026)
+verifyexperiment accepts checkpoint="path.json", resume=0|1 and
+overwrite_checkpoint=0|1. Completed tiers include the complete screen, tangent,
+method/QR convergence and optional periodic/Floquet evidence. Each full tier is
+atomically saved before the next tier starts. An interrupted tier restarts; no
+SUNDIALS/QR/shooting internal workspace is serialized. Prior completed tiers and
+their original run IDs are reused, including the previous tier needed for drift.
+Worker count may change on resume. The request fingerprint covers model/backend
+identities, selected initials/parameters/gammas, horizons and numerical settings.
+Mismatched, truncated or integrity-invalid ledgers reject without replacement.
+Existing ledgers require explicit resume or overwrite_checkpoint. Checkpoints are
+bounded to32MiB. restored_tiers reports reused full tiers; checkpoint_ok and
+checkpoint_message report a write failure while preserving numerical evidence.
+Example: tiered-ode-verification/checkpointed-verification-tiers.p.
+

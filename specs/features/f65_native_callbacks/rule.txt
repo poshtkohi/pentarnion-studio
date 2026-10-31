@@ -1,0 +1,29 @@
+F65: Structural native numerical callback compiler and cache
+Authorized extension, 26 October 2026.
+
+Compile derivative/root callbacks to cached DLL/SO before iteration. Supported
+pure Real/Pent scalar parameters/results, numeric multiple outputs, typed locals,
+assignment, if/else and return preserve ordered AST/Group nodes and published
+one-element calculus. Unsupported arrays, loops, IO, helper calls and implicit
+captures diagnose instead of interpreted fallback. Pass fixed values explicitly.
+Point/parameter/time/direction/solver-option changes do not recompile unchanged
+structure. Validate ABI/dimensions/source/compiler cache identities and borrowed
+buffer ownership, retain successful code until shutdown and bound caches/work.
+C++ exceptions cannot cross the entry point; preserve host budget exception
+identity. All compilation attempts are excluded from tic/toc.
+Acceptance: native_derivative_tests, derivative/root/model suites and cache examples.
+
+Authority: language.txt L53; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.
+
+
+RESEARCH EXTENSION SUPERSESSION — 26 OCTOBER2026
+specs/research_v0_2.txt and language.txt L56-L63/F68-F75 supersede earlier future
+claims for native Ceres/NLopt fitting/optimization, CVODES integrated sensitivity/
+terminal adjoints, ODE events/dense output/backward time, native maps, parallel
+callback preparation and Studio run/help/interrupt/find. Instantaneous RHS partials
+remain distinct from integrated sensitivities. The existing callback subset/cache
+rules continue; arbitrary native scripts, chaos/PDE/geometry and Map Explorer are
+not added. HANDOFF records actual acceptance/deployment/platform status.

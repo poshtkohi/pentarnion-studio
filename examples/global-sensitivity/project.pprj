@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Native global sensitivity and interaction screening",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "morris_screening.p",
+    "sobol_interactions.p",
+    "pentarnion_input_screening.p"
+  ]
+}

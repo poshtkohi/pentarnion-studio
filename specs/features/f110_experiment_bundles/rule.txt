@@ -1,0 +1,6 @@
+F110: Safe source-aware data-only experiment bundles
+Authorized second-roadmap extension,27 October2026.
+saveexperiment/loadexperiment/experimentinfo/experimentsource retain typed data, exact current invocation/import bytes and separate scientific/runtime metadata. Integrity, template, context, version and physical project path checks apply. Selected artifact files remain external hashed references. Loading never executes source; prior console history and automatic self-contained replay are not supplied.
+Authority: language.txt L98; specs/experiment_bundle_v0_2.txt.
+Acceptance: examples/experiment-bundles/project.pprj and independent native/runtime checks.
+Actual platform and integration evidence belongs in docs/VALIDATION.md.

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "Native ODE, map and PDE summary sensitivity",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "main.p",
+    "iterated-map-effects.p",
+    "reaction-diffusion-effects.p",
+    "two-dimensional-field-effects.p",
+    "ordered-pentarnion-map-effects.p"
+  ]
+}

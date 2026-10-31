@@ -1,0 +1,19 @@
+PAGMO2 2.19.1 BOUNDED NUMERIC SESSION ADAPTER
+
+The pinned source archive and its upstream SHA256 remain unchanged.
+tools/patch-pagmo-state.ps1 and tools/patch_pagmo_state.py idempotently add one
+forward declaration and one friend declaration to each of five algorithm headers:
+sade,cmaes,sga,nsga2,cstrs_self_adaptive. Algorithm implementations, data-member
+layouts, public methods and mathematical update formulas are unchanged.
+
+Studio's StateAccess adapter stores only numeric adaptation vectors/matrices,
+counters and fixed-size textual RNG state. It validates JSON lengths and matrix
+dimensions against checked request dimensions/populations BEFORE allocation.
+No Boost archive, type-erasure object, problem, BFE, resident callback pointer,
+source executable authority or arbitrary DLL path is restored from a checkpoint.
+Fresh checked callbacks/problem/BFE/configuration are attached by the owner.
+
+The library is rebuilt from the same patched headers for a consistent C++ ODR.
+The original GPL3/LGPL3 notices and full pinned sources remain available under
+third-party; this patch changes access declarations only. Both Windows and Linux
+explicit dependency bootstraps apply it before compiling/installing the SDK.

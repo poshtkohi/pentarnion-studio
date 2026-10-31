@@ -1,0 +1,21 @@
+FEATURE F23: Pentarnion vector figures and image export
+Version: current profile0.2 extension
+Authority: language.txt L17-L19 and the user's approved discussion.
+Status: implementation and regression validation recorded in docs/VALIDATION.md.
+
+REQUIRED BEHAVIOUR
+Implement plot2/plot3 with literal distinct axes and Pentarnion expressions,
+numbered embedded figure tabs, replacement/clear/close semantics and endpoint
+arrowheads. Equal scales, exact-zero markers and full five-coefficient inspection.
+VTK stays in GUI only. Numerical worker emits ordered typed actions; stale and
+cancelled results cannot render. Export actual visible figure as PNG/JPEG via
+Save Image using atomic Unicode-safe writes. No figure handles/hold/PDE meshes.
+
+VALIDATION
+Record actual automated/native checks, skipped contexts and platform limits in
+docs/VALIDATION.md. Unsupported OpenGL export must fail clearly, never fake an image.
+
+NATIVE ODE / SUBPLOT EXTENSION (26 October 2026): ODE_GUIDE.txt and language.txt
+L23-L26 are current; F28-F31 supersede earlier ODE/native/curve exclusions.
+First-paper demo: examples/paper1-bracketing/project.pprj. General native scripts,
+PDEs, parameter sensitivities and parallel scientific execution remain deferred.

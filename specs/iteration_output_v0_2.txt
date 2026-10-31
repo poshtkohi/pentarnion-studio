@@ -1,0 +1,86 @@
+MATLAB-STYLE ITERATIVE OUTPUT OBSERVERS;26 OCTOBER2026
+
+options(OutputFcn=monitor,OutputEvery=1) is supported by lsqfit/lsqnonlin,
+curvefit,odefit,minimize,evolve,root,rootsolve,equilibrium and fixedpoint.
+Signature:
+function integer monitor(matrix x,record optimValues=iterationinfo(),
+                         string state="iter") { return 0; }
+Return scalar0 to continue or1 for a clean user stop. Any other result rejects.
+OutputEvery is an Integer1..1000000 and requires OutputFcn; it samples ITER events
+only. INIT and DONE are always delivered; a stop requested from DONE is ignored.
+Missing OutputFcn preserves existing execution and evaluation counts.
+
+The current iterate x is a row vector of flattened physical real coordinates,
+including all five coordinates per Pentarnion parameter. It is an immutable copy,
+not borrowed native solver memory. INIT/ITER/DONE map to state strings init/iter/done.
+optimValues fields:
+ iteration,funccount,start_index,dimension:Integer counters/layout;
+ objective,residual_norm,step_norm,elapsed_seconds:Real available statistics;
+ iteration_available,objective_available,residual_available,step_available,
+ accepted:Integer flags, distinguishing unavailable0 values from real0 data;
+ event:String iteration/evaluation/generation; state:String;
+ history:RealMatrix with up to1000 delivered observations,6 columns:
+   iteration,funccount,objective,residual_norm,step_norm,elapsed_seconds;
+ history_dropped:Integer;history_columns:String documenting that column order.
+Unavailable scalar fields/history columns contain0 and must be interpreted using
+the flags and event contract. Residual norms retain their backend definitions:
+Euclidean for Ceres fitting and infinity norm for the existing root interface.
+iterationinfo() supplies the same empty/default
+typed record schema for callback declarations; it does not start a solver.
+
+Ceres reports iteration callbacks including whether a step was accepted. NLopt
+and root backends expose honest objective/residual evaluation events because their
+interfaces do not provide an equivalent accepted-iteration hook; iteration is0,
+iteration_available=0. Evolution reports the driver after each generation. All
+callbacks run on the owner execution thread, never on numerical pool workers.
+Callbacks receive statistics already available; no hidden objective/residual/Jacobian
+evaluation is added just to populate the monitor. Root stop can preserve the last
+finite evaluation candidate, including a finite-difference probe; it is not a
+convergence certificate. A clean stop returns status=output_function_stop and
+converged=0, retaining available candidate/history/report data.
+
+OutputFcn is a deliberate observation/UI exception to the native numerical-body
+rule: ordinary DSL monitor code may plot, display, inspect and return a stop flag.
+Objectives,residuals,constraints,RHS,events and map kernels continue to execute
+their cached native DLL/SO bodies. Observers must not recursively start another
+fitting,optimization,evolutionary or root solver; such calls reject before execution.
+Explicit native model/ODE evaluation for visualization is allowed at the caller's
+expense, under ordinary operation/time/storage/cancellation/thread-budget bounds.
+Those user-requested evaluations are separate from the optimizer's objective
+evaluation count; no extra evaluation is performed implicitly. Observer errors unwind the
+native backend and rethrow the original diagnostic. Normal cancellation remains
+distinct from clean user stop. Observer bodies/options do not alter objective
+cache identity. Mutable persistent/global callback state is not invented; use the
+supplied bounded history and existing immutable snapshot-capture semantics.
+For additional observed data, an existing typed anonymous wrapper can capture an
+immutable snapshot, for example:
+ callback observer=@(matrix x,record info,string state)=>draw_data(x,state,data);
+where draw_data is an ordinary typed helper that accepts the captured data. If
+the helper also needs optimValues member access, keep the direct three-argument
+monitor signature with its iterationinfo() default schema; no untyped member
+schema inference for anonymous record parameters is added. Native ODE previews
+can declare their ODE locally inside the monitor, retaining normal function-scope
+rules and the same cached native equation body.
+
+Live figures use ExecutionOptions.figureProgress, forwarding pending immutable
+actions after each successful observer call, then clearing the pending action list
+and resetting point accounting. The UI may coalesce frame delivery for refresh
+rate; numerical observations/stop checks are not skipped by UI throttling.
+Final normal source actions remain in the final result. Without a progress sink,
+execution retains the INIT frame, including initial plots and figure/subplot/title
+context, plus the latest nonempty subsequent observer frame. Ordinary source
+figures before/after the solver remain intact; long runs do not accumulate every
+subsequent frame. Put persistent presentation setup in INIT. A subsequent frame
+that changes presentation context should emit that context itself. Distinct new
+figures on every iteration require a live progress sink or an explicitly bounded
+source sequence; deferred frame compaction does not retain an unlimited sequence
+of per-iteration figures. Normal pending-action/point limits still include INIT.
+Existing256-action/1M-point limits apply per pending frame; at most10000 observer
+invocations per solve, with explicit guidance to increase OutputEvery if exceeded.
+Existing output-byte,operation,matrix,cancellation and call-depth bounds remain.
+
+Tests cover typed defaults,all iterative backend families/aliases,clean stop,
+event metadata,root/evolution statuses,native callback behavior,bounded frame
+retention/live streaming,ordinary surrounding figures,error propagation,
+invalid callbacks/options and recursive solver rejection. Native Linux/UI checks
+must be recorded only after actual execution.

@@ -1,0 +1,17 @@
+FEATURE F40: Copy source with syntax formatting
+Version: current GUI 0.2 extension
+Authority: language.txt L32; user request, 26 October 2026
+Status: implemented; actual validation recorded in docs/VALIDATION.md
+
+F40-R1: Normal Copy/Ctrl+C supplies original plain-text selection plus portable
+HTML preformatted monospace spans with actual highlighter colors/weights/italics.
+F40-R2: Preserve Unicode, whitespace, blank lines and partial/multiblock selections;
+escape HTML source metacharacters. Do not copy line numbers or selection overlays.
+F40-R3: Copy never checks, executes or modifies source/document metadata. Preserve
+standard Cut/Ctrl+X removal, clipboard and undo semantics through Qt's base path.
+F40-R4: Bound rich HTML to 8 MiB and selected UTF-16 length to 4,194,304; larger
+rich payloads fall back to complete untruncated plain text.
+F40-R5: Use Qt MIME/platform clipboard support, without Word or external tools.
+Acceptance: document_lifecycle native/offscreen clipboard copy/Ctrl+C/Ctrl+X,
+HTML text/style round-trip, Unicode/escaping/partial/blank-line and budget cases.
+Actual native results and any untested destination applications are in docs/VALIDATION.md.

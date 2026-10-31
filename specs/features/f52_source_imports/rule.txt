@@ -1,0 +1,17 @@
+F52: Bounded source modules and namespace imports
+Authorized extension, 26 October 2026. Language 0.2.
+
+import "helpers.p" as science recursively checks .p source without executing it.
+Run evaluates checked statements in isolated module scope and exports a typed
+namespace. Module functions retain module function resolution; numerical values
+are explicitly read through the namespace. Relative paths resolve beside source.
+Imports are file/Command Window scope only. Reject cyclic/duplicate direct
+imports, algebra-context mismatch, depth above 16, aggregate imported source above
+8 MiB and existing per-file/parser resource violations. Embedders may provide an
+explicit resolver. New 0.2 names preserve original 0.1 identifier semantics.
+
+Authority: language.txt L40 and specs/foundations_v0_2.txt section 3.
+Acceptance: foundation_language_tests; language-foundations helpers.p/main.p; Check must not
+write files/execute imported statements or compile/load native libraries.
+Out of scope: implicit numerical globals and remote/package-manager imports.
+Actual platform/test status: docs/VALIDATION.md.

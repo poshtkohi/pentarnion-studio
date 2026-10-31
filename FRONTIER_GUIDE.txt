@@ -1,0 +1,38 @@
+PENTARNION STUDIO: TASKS 13-21 FIRST IMPLEMENTATIONS
+26 October 2026; see HANDOFF for actual build/test/deployment evidence.
+
+Open a topic project.pprj listed in examples/README.txt in Studio, then Run main.p.
+13: native Lyapunov spectra, local stability, Poincare and recurrence plots.
+14: native parallel map ensembles, cache reuse and per-run failure/escape status.
+15: real FD/P1FE heat equation, scalar geometry/level sets and attached Pentarnion
+    reaction-diffusion report scripts. Start with the small main.p; full report
+    scripts integrate to t=120. PDE_GEOMETRY_GUIDE.txt explains the current 1D scope.
+16: split FFT/IFFT, Welch spectra, autocorrelation and peaks with explicit conventions.
+17: statistics, normal distribution functions, seeded numeric-data bootstrap/plots.
+18: exact rational formal expressions preserving nonassociative product grouping.
+19: typed reproducible records with safe hashed data-only export/import.
+20: View > Map Explorer; choose a real/Pentarnion map, parameters, initial values
+    and projections, generate an inspectable script, Run or Export it.
+21: pagmo2 jDE/iDE, CMA-ES, real-coded GA, NSGA-II and explicit local polish examples.
+
+LIVE FITTING/OPTIMIZATION
+Open examples/iteration-callbacks/project.pprj. A typical monitor is:
+function integer monitor(matrix x,record optimValues=iterationinfo(),string state="iter") {
+    if(optimValues.objective_available){display(optimValues.objective);}
+    return 0;
+}
+Pass options(OutputFcn=monitor,OutputEvery=1) to the solver. The monitor can plot
+current fitted models and bounded convergence history; return 1 to stop cleanly.
+Ceres reports iterations, evolutionary methods generations, and NLopt/root methods
+explicitly labeled evaluation updates. All solvers retain native objective/residual
+callbacks. Observers run on the owner worker; immutable figures render on the GUI
+thread. An observer may explicitly evaluate a native ODE model for visualization,
+using its normal cost/budgets. No extra model evaluation is hidden by the monitor.
+
+WORKFLOW AND LIMITS
+New heavy kernels are lazy DLL/SO modules; existing numerical/algebra semantics,
+thread budgeting, autosave, source safety and native cache reuse remain. The language
+reference/help catalogue and F76-F86 contracts define exact bounded APIs. Each
+category's README supplies expected results and limits. Unfinished subcases remain
+unchecked in WORK_TO_DO.txt; a first implementation does not complete every broad
+research milestone. Native Linux execution is not inferred from portable source.

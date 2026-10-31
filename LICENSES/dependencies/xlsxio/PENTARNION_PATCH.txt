@@ -1,0 +1,1 @@
+Windows UTF-8 filenames use Minizip wide Win32 callbacks; see tools/xlsxio-windows-utf8.h and bootstrap-xlsxio.ps1. SpreadsheetML uses none/gray125 pattern fills and a Normal default style; see tools/patch-xlsxio-styles.cmake. Upstream XLSXIO 0.2.37 is MIT licensed.

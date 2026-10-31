@@ -1,0 +1,49 @@
+FEATURE F21: Interpreter and MATLAB-style Command Window
+Version: 0.2
+Status: implemented; exact test evidence and platform limits in docs/VALIDATION.md.
+Authority: language.txt; specs/interpreter_v0_2.txt; A_gamma_v1 unchanged.
+
+F21-R1: Analyse the whole source without evaluating, then execute the retained
+         typed AST in operand/statement order only on explicit user action.
+F21-R2: One Studio main window contains docked editor, Command Window and Problems.
+         No separate console/results windows or external shell processes for Run.
+F21-R3: Direct commands use >> prompt and shared typed bindings; Enter submits,
+         Up/Down recalls bounded history. A missing final semicolon echoes the
+         final value; a semicolon suppresses automatic echo. display always prints.
+F21-R4: Run File/F5, project-tree right-click Run and console run("file.p") use the
+         same file execution path, including current unsaved editor buffers.
+         External penta-run uses the same Qt-free checked interpreter.
+F21-R5: File runs start independent scopes after validation and retain completed
+         values for console inspection. Commands persist until clear/reset.
+         Static errors preserve old workspace; ordinary runtime errors retain
+         completed statements. Cancellation rolls back the request's workspace.
+F21-R6: clc clears transcript/output only, retaining variables/context/history.
+         clear/clear all delete all user bindings; clear p q deletes named
+         bindings. Unknown names are no-ops, protected bases/names are errors.
+         clear() and clear("p","q") are equivalent function-style spellings.
+         Commands also work in scripts with semicolons. Clear preserves context.
+F21-R7: Transcript scrolls. Appending output follows the end only when the user
+         was already there. Keep history200 and transcript8MiB bounds. Empty
+         display output produces a newline; no-output operations produce none.
+F21-R8: One cancellable worker owns the interpreter session. Immutable snapshots,
+         revision/context checks and generation reset prevent stale file results
+         or variables reaching a closed/changed editor/project.
+F21-R9: Navigate UTF8 byte spans to Qt UTF16 positions correctly. Runtime errors
+         appear inline and in Problems; console errors focus the prompt.
+F21-R10: Existing0.1 projects remain editable/checkable and require explicit
+          metadata-only upgrade before script execution. Console profile is0.2.
+F21-R11: run("path.p") is a complete console adapter command, not a generic
+          script import or arbitrary file/process API. Resolve relative paths
+          using project, active-source directory, then working directory.
+F21-R12: Enforce resource/finite/domain/integer/rank/condition/residual checks.
+          Preserve full five coefficients, grouping and reciprocal/division
+          distinction. No native code generation, ODE or parallel backend yet.
+
+Tests cover console values/history, script launch, scrolling, clear/clc, inline
+errors, output budgets/blank lines, worker cancellation/staleness, UTF8 spans,
+project version upgrade, numerical fixtures and independent runtime review.
+
+NATIVE ODE / SUBPLOT EXTENSION (26 October 2026): ODE_GUIDE.txt and language.txt
+L23-L26 are current; F28-F31 supersede earlier ODE/native/curve exclusions.
+First-paper demo: examples/paper1-bracketing/project.pprj. General native scripts,
+PDEs, parameter sensitivities and parallel scientific execution remain deferred.

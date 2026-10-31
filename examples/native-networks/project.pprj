@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "Native Ordered Algebra Network Dynamics",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "real_network_diffusion.p",
+    "pentarnion_network_diffusion.p",
+    "local_oscillator_network.p",
+    "stiff_network_bdf.p"
+  ]
+}

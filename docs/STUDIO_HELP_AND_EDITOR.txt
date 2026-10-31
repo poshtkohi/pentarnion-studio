@@ -1,0 +1,67 @@
+PENTARNION STUDIO: HELP, EDITOR AND ABOUT
+GTG workflow refinements, 31 October 2026
+
+This guide describes the desktop implementation. Actual build, test, platform
+and deployment results belong in docs/VALIDATION.md. It does not claim native desktop
+acceptance. These presentation changes do not alter the scientific language,
+algebra conventions, solver methods or native callback cache.
+
+FORMATTED HELP AND LANGUAGE REFERENCE
+
+Help > Language Reference opens the formatted Help browser, with a language
+contents page, a typed source example and links to the current specification.
+It no longer opens a separate raw-text language-reference window. F1 opens Help
+for the selected word/current editor word; Ctrl+Shift+Space focuses Help search.
+
+Search a command such as display, sin, plot3 or odesolve. An exact command name
+is ranked first. Command pages use the same current syntax and descriptions as
+the Command Window help catalogue, with syntax-coloured source blocks, examples,
+related installed scripts and detailed contracts. The display page includes:
+
+    display([1,100]);
+    pentarnion p=1+i+j;
+    display("p =",p);
+
+Plotting pages demonstrate named vector figures. The odesolve page includes a
+small native decay equation. Examples are displayed as source text; viewing or
+searching them never executes a script or compiles a callback. Existing .p
+examples and the authoritative specification remain linked for fuller workflows.
+
+Use All topics, Command reference, Language sections, Examples, or Guides and
+contracts to narrow the result list. Results include readable snippets. Topic
+links and Back/Forward stay inside the local browser. Reference details reveals
+the source location. Text uses reading fonts and section headings; code retains
+syntax colours, and supported mathematical expressions use Studio's bounded
+native renderer. External web/file resources are not loaded by the Help article.
+
+The browser works without an API key or network connection. It searches built-in
+command topics and bounded installed specifications, guides and examples.
+Documentation indexing starts on demand. Help and lookfor in the Command Window
+remain available; Help does not send a question or source to Copilot.
+
+FIND AND REPLACE
+
+Ctrl+F or Edit > Find / Replace opens a compact, movable, modeless search window,
+following GTG's search-window design. The editor stays enabled and its layout
+does not shrink to make room for a footer panel. Matches are highlighted in the
+current source. Enter/F3 advances, Shift+F3 goes back, and Escape closes search.
+Case, whole-word and regular-expression options remain available; replacements
+support captured groups. Replacing all matches is one undo step.
+
+The same search window follows source-tab changes and retains its query. Search
+and replacement histories and the last visible placement use Studio preferences.
+Highlights are view decorations: searching does not change saved text, syntax
+colours or the document's undo history. Both editor scrollbars use narrow
+controls. Horizontal scrolling retains its measured long-line range after the
+editor is resized.
+
+ABOUT
+
+Help > About opens with Authors as its first tab, retaining names, affiliations
+and email addresses. An algebra-inspired illustrated banner sits beside the
+Studio logo. Overview, Libraries, Licences and Build hold the other details
+without a long capability paragraph. The footer credits Pentranion Team.
+The Qt 6 and third-party licence notice is inside Licences, together with the
+supplied original library notice texts.
+
+Related desktop guide: STUDIO_GUI_GUIDE.txt

@@ -1,0 +1,184 @@
+NATIVE SIGNAL/STATISTICS EXTENSIONS (language0.2, extension19)
+
+The existing penta_science version1 query/layouts and operation numbers remain
+compatible; native standard deviation is appended without renumbering operations.
+Extended signal/resampling operations use a separate version2 entry point in the
+same lazy DLL/SO. Numerical loops are
+native C++; custom statistics use the existing checked typed AST/native callback
+compiler/cache, never an interpreted resampling loop. Existing standard-string
+IID bootstrap remains on its original version1 path unless an extended option or
+statistic is requested. Successful scientific calls also enter the bounded
+research archive ledger.
+
+Fourier and time-frequency analysis
+  record s=fft(real_data_or_split_complex[,nfft_or_options[,axis]]);
+  record x=ifft(split_complex[,nfft_or_options[,axis]]);
+  record p=pwelch(signal[,options]);
+  record s=spectrogram(signal[,options]);
+  matrix x=istft(s[,options(threads=...)]);
+  record c=cpsd(x,y[,options]);
+  record c=mscohere(x,y[,options]);
+
+Split-complex records contain matching real/imag real arrays. FFT matrix axes1/2
+are explicit; absent an axis, the first nonsingleton axis is used for matrices.
+Legacy vector FFT results stay column vectors. nfft truncates or zero-pads the
+selected axis. Smooth legacy vector FFT remains on its existing backend; arbitrary
+supported lengths use bounded radix2/Bluestein, with the same unscaled forward and
+inverse/n normalization. Length1..262144 is supported, including primes. Both
+complex components and matrix shape are retained. Whole algebra-valued transforms
+remain undefined; select real coefficients explicitly.
+
+Spectral options: fs=1,segment,overlap,nfft,window,demean,detrend,sides,threads;
+spectrogram also supports center=1. Segment length>=2, nfft>=segment, overlap is an
+integer0..segment-1. Hann requires nonzero energy (at least3 samples). Named
+windows: hann,hamming,blackman,rectangular. A user real window vector is accepted
+by pwelch/spectrogram; cross spectra use named windows. Default Welch segment is
+the legacy largest power2<=min(samples,256), Hann/50% overlap/constant detrending.
+Explicit arbitrary segment/nfft sizes no longer require smooth factors.
+
+detrend is none,constant or linear; legacy demean=0/1 maps to none/constant.
+Choose one of detrend/demean. Default Welch/cross detrend=constant; STFT=none.
+Real signals default to one-sided densities, with correct odd/even Nyquist factors;
+explicit complex signals use two-sided spectra. sides="onesided"/"twosided" is
+explicit; one-sided complex densities are rejected. Frequency bins are unshifted
+k*fs/nfft. Welch normalization is |FFT(window*x)|^2/(fs*sum(window^2)), averaged
+over complete segments; a partial Welch tail is not silently included.
+
+pwelch fields: frequency,power,fs,segment,overlap,nfft,normalization.
+Cross-spectrum fields: frequency,real,imag,coherence,power_x,power_y,fs,
+normalization,cross_convention="conjugate(X)*Y". Coherence is magnitude-squared
+cross spectrum/(Pxx*Pyy),0 when both energy estimates leave no defined ratio.
+
+spectrogram returns format="PentarnionSTFT-v2",frequency,time,real,imag,power,
+frames,segment,overlap,nfft,fs,onesided,padding_left,original_count,window,
+window_values,detrend,normalization. Matrices have frequency rows/time columns.
+Centered zero padding and a padded final frame cover every original sample.
+istft reconstructs by weighted overlap-add, trims to original_count and rejects
+uncovered/zero-weight original samples. Real inverse spectra require conjugate
+symmetry and real DC/Nyquist bins. Default detrend="none" permits numerical
+round-trip reconstruction; removed trends are not reconstructed from absent data.
+Changing window/shape metadata inconsistently is an error, not implicit repair.
+
+Filtering
+  matrix y=filter(b,a,signal[,options(initial_state=...,threads=...)]);
+  record y=filterstate(b,a,signal[,options(initial_state=...,threads=...)]);
+  matrix y=filtfilt(b,a,signal[,options(padding=...,threads=...)]);
+  record design=butter(order,cutoff[,options(fs=2,type="low",threads=...)]);
+
+Coefficients/signals are real vectors. b/a length1..129, a(1)!=0; coefficients
+are normalized by a(1). Direct-form-II-transposed state has
+max(length(a),length(b))-1 values. filter returns the original signal shape;
+filterstate returns values,final_state,method and supports streaming block state.
+Scalar filter input returns a scalar; filterstate.values is always an array.
+
+filtfilt performs odd reflection, finite constant-input steady initial conditions,
+forward filtering then reverse filtering/trimming. Default padding=3*order and
+samples>padding is required. A denominator with no resolved finite DC steady state
+is rejected. Nonfinite responses are errors. Arbitrary supplied IIR stability is
+not proved by evaluating a finite response. Butterworth designs order1..12 low/high
+filters using prewarped bilinear poles with verified strict digital pole stability;
+returns b,a,order,fs,cutoff,type. Cutoff lies strictly inside(0,fs/2). Near unresolved
+binary64 normalization/pole cases are rejected. Lowpass gain is1 at DC; highpass
+gain1 at Nyquist. This is not a general elliptic/multiband design package.
+
+Peak properties
+  record p=findpeaks(signal[,options]);
+  record p=peakprops(signal[,options]);
+Options min_height,min_distance,min_prominence,min_width,max_width,
+relative_height=0.5,fs=1,threads. min_distance is an integer number of samples;
+width thresholds use sample intervals. Topographic prominence uses minima before
+the nearest strictly higher samples on each side, preserving equal-height peaks.
+Range-minimum trees/nearest-higher stacks bound property queries. Half-prominence
+crossings are linearly interpolated. Nonplateau refined maxima use a three-point
+parabola only when the local curvature/offset are valid. Plateau metadata retains
+the legacy leftmost index and separately reports its midpoint and size. Endpoints
+are not interior peaks. Height/distance selection remains deterministic.
+
+Fields values,indices,count retain their legacy meanings. Added fields:
+prominences,widths,widths_samples,left_bases,right_bases,left_crossings,
+right_crossings,refined_values,refined_indices,plateau_sizes,positions,
+refined_positions,fs. Indices/bases/crossings are one-based sample coordinates;
+positions=(indices-1)/fs and widths=widths_samples/fs. Full properties require at
+least3 samples; the old short findpeaks empty-result path remains compatible.
+
+Distribution functions and reproducible draws
+  real_or_matrix y=distpdf(family,x[,options]);
+  real_or_matrix y=distcdf(family,x[,options]);
+  real_or_matrix y=distinv(family,p[,options]);
+  record draws=distrand(family,rows,columns[,options(seed=...,...) ]);
+families: normal,uniform,exponential,gamma,lognormal,weibull,beta,student_t,
+chi_squared,fisher_f,poisson,binomial,bernoulli,negative_binomial,laplace,cauchy,
+logistic. Boost.Math provides the native functions with bounded root/series
+iteration policies. Explicit options select location,scale,shape,lower,upper,rate,
+alpha,beta,df,df1,df2,lambda,trials,probability,successes as appropriate. Default
+location0/scale1/shape1,uniform[0,1],rate1,alpha=beta=1,df/df1/df2=1,lambda1,
+trials1/probability0.5,successes1. Backend parameter-domain checks apply.
+
+Finite inverse probabilities lie strictly inside(0,1). Discrete inverses are the
+smallest integer k with CDF(k)>=p; their native bracket is capped at one billion
+counts. Noninteger discrete PDF values are0; discrete CDF floors the argument.
+Outside support, finite PDF/CDF values are0 or1 as mathematically appropriate.
+Unresolved/infinite endpoint densities/results are errors because Studio numerical
+arrays retain finite binary64 values. Inputs are real; no whole-Pentarnion
+probability convention is implied.
+
+distrand returns values,seed,distribution,method. Explicit nonnegative int64 seed
+is reproducible on the same supported build. If omitted, one seed is drawn from
+Studio's shared session RNG and reported in the result; no hidden native stream
+silently replaces session reproducibility. Draws use a private stream from that
+reported seed and inverse CDF. Cross-platform bitwise identity of transcendental
+libraries is not claimed. Existing normpdf/normcdf/norminv remain available.
+
+Native/custom and dependent bootstrap
+  record b=bootstrap(samples,options(method="moving_block",block_length=3,...));
+  record b=bootstrap(samples,options(statistic=native_fn,
+      parameters=options(...),method="circular_block",block_length=3,...));
+New options method,block_length,interval,parameters,threads select version2. Existing
+replicates,seed,statistic,confidence remain. Methods iid,moving_block,
+circular_block,stationary are explicit. IID requires block_length1. Moving blocks
+start in0..n-L without wrap; circular blocks wrap; stationary blocks restart with
+probability1/L and otherwise advance circularly. Samples stay ordered within each
+block; the last block truncates at the original sample count. Block length1 moving
+blocks exactly reduce to the same independent IID per-replicate stream.
+
+Built-in statistics mean,median,stddev,variance,min,max,rms are native. A custom
+statistic returns one real scalar from complete real sample coordinates, commonly
+a matrix<R,C> fixed-shape first argument. Trailing parameters are explicit options;
+implicit captured callback environments are rejected by the shared native checker.
+Current native callback cap is128 total sample/fixed real coordinates. Built-in
+statistics retain the larger one-million-sample bound. Changing only runtime
+parameters preserves the compiled body/cache key; shape/body edits change it.
+
+Each replicate has an independent splitmix/mt19937_64 stream indexed by seed and
+replicate. Shared CPU workers preserve identical tested resamples across thread
+limits; native callbacks are reentrant. Scratch worker count is independently
+bounded by128MiB, then capped by the shared CPU budget. No separate worker pool
+or interpreted statistic loop is created. Up to100000 replicates and100million
+sampled coordinates are allowed within the caller's operation/memory budget.
+
+interval="percentile" or "basic". Results retain estimates,mean,standard_error,
+lower,upper,confidence,replicates,seed,method,statistic and add original,block_length,
+resampling,assumption,cache_hit,cache_key,native_evaluations,threads_used.
+The original statistic is evaluated once separately. Dependent block methods
+assume ordered stationary dependence and a scientifically chosen block length;
+nominal confidence coverage is not automatically certified. BCa/studentized
+intervals and arbitrary dynamic-size native statistic arrays are not supplied.
+
+Real estimates, summary statistics and interval bounds must remain finite binary64.
+Mean accumulation, even medians, RMS/SD square roots, percentile interpolation and
+basic interval reflection avoid intermediate overflow/underflow when the requested
+result is representable. A truly unrepresentable variance or confidence bound is
+an explicit domain error. Such failures leave the version2 host's result values,
+metadata bytes and returned count unchanged; successful metadata never substitutes
+JSON null for an invalid real summary. The legacy IID summary follows the same
+finite-result rule while retaining its original resampling stream.
+
+All extended operations honor cancellation, shared atomic work charging, bounded
+outputs and native callback error propagation. V2 options JSON is limited to64KiB,
+depth8/1024 nodes; each numerical input at most1million values and total result
+at most8million coordinates, additionally bounded by Studio's configured limits.
+Lazy module mismatch is explicit: an old DLL cannot silently execute a requested
+new operation under version1 semantics. Examples: examples/native-signal-analysis
+and examples/native-statistical-analysis. GUI histogram rendering is available
+through histplot(samples,edges) / bar(histogram_record), with counts/density data
+still directly available from the unchanged histogram record API.

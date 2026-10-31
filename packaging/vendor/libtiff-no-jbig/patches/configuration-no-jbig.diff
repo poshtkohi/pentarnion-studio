@@ -1,0 +1,22 @@
+--- baseline/tiffconf.h
++++ no-jbig/tiffconf.h
+@@ -76,7 +76,7 @@
+ #define JPEG_SUPPORT 1
+ 
+ /* Support JBIG compression (requires JBIG-KIT library) */
+-#define JBIG_SUPPORT 1
++/* #undef JBIG_SUPPORT */
+ 
+ /* Support LERC compression */
+ #define LERC_SUPPORT 1
+--- baseline/tif_config.h
++++ no-jbig/tif_config.h
+@@ -60,7 +60,7 @@
+ #define HAVE_IO_H 1
+ 
+ /* Define to 1 if you have the `jbg_newlen' function. */
+-#define HAVE_JBG_NEWLEN 1
++/* #undef HAVE_JBG_NEWLEN */
+ 
+ /* Define to 1 if you have the `mmap' function. */
+ /* #undef HAVE_MMAP */

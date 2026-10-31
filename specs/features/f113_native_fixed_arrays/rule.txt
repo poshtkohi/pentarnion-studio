@@ -1,0 +1,11 @@
+F113: Native fixed-shape arrays and complete coordinate AD/ODE interfaces
+matrix<R,C>, pentarnionmatrix<R,C>, matrix<A,R,C> preserve explicit shapes and
+immutable entry algebra metadata across native callbacks, tuple returns,
+real-coordinate AD1/AD2/AD3, ODE states, dense evaluation and persistence.
+Native shared modules are shape-specialized, reentrant, bounded and cached;
+source linear indexing stays one-based column-major independently of the
+row-major-cell/full-coefficient C ABI. Dynamic declarations remain resizable.
+Preserve E1301 and ordered nonassociative products. Do not guess missing shapes.
+Authority: language.txt L101; specs/native_arrays_v0_2.txt.
+Acceptance: tests/runtime/native_array_language_tests.cpp and descriptive
+examples/native-array-callbacks/project.pprj; record actual results in HANDOFF.

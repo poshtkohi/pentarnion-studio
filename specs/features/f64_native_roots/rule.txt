@@ -1,0 +1,20 @@
+F64: Native roots, equilibria and map fixed points
+Authorized extension, 26 October 2026.
+
+root uses Boost.Math TOMS748 on finite increasing sign-changing brackets or
+exact endpoint roots, with continuity assumed. rootsolve uses native KINSOL
+Newton/line_search on square real-coordinate systems, five coordinates per
+Pentarnion. Compiler-generated Jacobians are default; explicit finite_difference
+uses the same compiled native callback. fixedpoint solves G-x with DG-I;
+equilibrium solves an autonomous ODE RHS and rejects explicit time references.
+Return residuals, raw/scaled norms, convergence/status/message/flag, solver and
+native evaluation counters, bracket/step, cache identity and thread metadata.
+Narrow brackets, small steps, iteration limits and nonzero minima alone are not
+roots. Enforce options/scaling/budgets/cancellation; never invoke an interpreter
+inside root iteration or claim all roots/uniqueness. Root module loads lazily.
+Acceptance: root_tests, bad-ABI fixture, discontinuity/no-root/cancel tests, root-finding.
+
+Authority: language.txt L52; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.

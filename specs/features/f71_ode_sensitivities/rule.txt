@@ -1,0 +1,20 @@
+F71: CVODES trajectory sensitivities and terminal adjoints
+Authorized extension,26 October2026.
+
+Actual CVODES BDF/Adams integrates generated native J_x/J_theta with selected parameter/initial seeds. Checkpointed native terminal adjoints include direct parameter terms and initial gradients. ODE fitting uses this explicit adapter. ERK/ESDIRK sensitivities, running/event-time/jump adjoints remain unsupported. Preserve finite/domain/storage/step/time/cancellation checks and independent restart/reorthogonalized-tangent verification.
+
+The legacy ExecutionOptions.maxSolutionCoordinates budget remains8M sampled
+state coordinates, de-duplicating aliases. The separate host aggregate control
+ExecutionOptions.maxRetainedSolutionCoordinates(default32M), and per-solve
+SolveOptions.maxRetainedCoordinates(default32M), count state values, slopes,
+times, sensitivities, event data and native dense coefficients. Native sampled
+states plus sensitivity directions retain their separate8M bound; dense-only
+storage also retains its8M bound. Adding auxiliary buffers does not reinterpret
+or halve the old state-only allowance. Persistence and nested results enforce
+the independent combined bound as well.
+
+Authority: language.txt L59; specs/research_v0_2.txt.
+Acceptance example: examples/advanced-odes/adjoint.p.
+Meaningful native/runtime/GUI acceptance and actual deployment/platform evidence
+are recorded in docs/VALIDATION.md. Linux remains unverified until explicitly validated;
+an unexecuted check is not a passed acceptance test.

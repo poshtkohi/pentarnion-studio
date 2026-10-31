@@ -1,0 +1,28 @@
+{
+  "source": "tests/ode/reference/generate_reference.py; original algebra research and checked numerical fixture",
+  "equations": [
+    "bracketing-compact",
+    "bracketing-A",
+    "bracketing-B",
+    "bracketing-p0",
+    "bracketing-left-matrix",
+    "bracketing-jacobian"
+  ],
+  "method": "independent SciPy DOP853, explicitly implemented coordinate matrices",
+  "scipy": "1.18.1",
+  "rtol": 2.3e-14,
+  "atol": 2e-15,
+  "initial_associator": [
+    0.5303300858899105,
+    0.875,
+    1.625,
+    -0.625,
+    -1.875
+  ],
+  "periodic_orbit_closure": 2.056311676643661e-14,
+  "files": {
+    "paper_bracketing_eta0.csv": "ac3ad35f875368a71c13f415373272eb87b918db29efd41531a0dd445b292552",
+    "paper_bracketing_eta037.csv": "38de7b9f50ec8854187546b0a1ea3f112cc520a2a3f2901a384285a1afaf3d70",
+    "paper_bracketing_eta1.csv": "3883c44c797e684d817d70d30654b935c186bc965f24a1e5bf71bfd4006395d8"
+  }
+}

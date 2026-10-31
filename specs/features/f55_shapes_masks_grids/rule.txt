@@ -1,0 +1,18 @@
+F55: Two-dimensional shapes, masks, grids and real vector norms
+Authorized extension, 26 October 2026. Language 0.2.
+
+Support reshape with preserved count/column-major order and one inferred [],
+diag construction/extraction/offsets, meshgrid and bounded 2D ndgrid. Preserve
+real/Pentarnion/logical types and explicitly document output orientation.
+logical(A), array ordered comparisons and elementwise logical operations produce
+masks distinct from numeric index lists. Full masks match numel(A); per-axis masks
+match extent. One-based column-major select/find/masked writes preserve aliases.
+find marks any nonzero original Pentarnion coefficient. Existing array equality
+remains one scalar predicate. dot is explicitly real-vector-only; norm supports
+real vector 1/2/infinity and real matrix Frobenius norms. Do not infer a whole-
+Pentarnion inner product. Considered higher-dimensional storage remains deferred.
+
+Authority: language.txt L42 and specs/foundations_v0_2.txt section 6.
+Acceptance: foundation_numerics_tests, language_tools_tests, array suites and
+examples/array-shapes/project.pprj. Verify reshape order, orientation, masked alias
+preservation, errors and bounded allocation. Actual test status: docs/VALIDATION.md.

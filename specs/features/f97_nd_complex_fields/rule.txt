@@ -1,0 +1,9 @@
+F97: Bounded N-D and explicit complex fields
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Versioned column-major real/complex/Pentarnion records with named axes, checked indexing/slicing/broadcasting, native arbitrary-length axis FFTs and cached scalar mapping. Fourier complex units and algebra i remain distinct.
+
+Authority: language.txt L85; specs/research_modules_v0_2.txt.
+Acceptance: examples/multidimensional-fields/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

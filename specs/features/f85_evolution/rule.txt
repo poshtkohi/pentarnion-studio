@@ -1,0 +1,8 @@
+F85: Genetic and evolutionary optimization
+Authorized extension,26October2026.
+
+Pinned pagmo2 jDE/iDE,CMA-ES,elitist realGA and NSGA-II use cached native objectives,strictbounds,seeds,budgets and shared worker allocation. No finite global-optimum claim; unsupported subcases remain explicit.
+
+Authority: language.txt L73; specs/evolution_v0_2.txt.
+Acceptance: examples/evolutionary-optimization/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

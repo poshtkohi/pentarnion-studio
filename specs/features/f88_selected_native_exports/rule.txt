@@ -1,0 +1,9 @@
+F88: Selected native headless PNG exports
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Explicit run/kind/axis selection, deterministic top-N ordering, resource caps and resumable export ledgers. No images are created when disabled; numerical results survive individual rendering failures.
+
+Authority: language.txt L76; specs/research_frontier_v0_2.txt.
+Acceptance: examples/native-discovery/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

@@ -1,0 +1,8 @@
+F80: Native signal analysis
+Authorized extension,26October2026.
+
+Split real/imag FFT/IFFT, stated transform/window normalizations,Welch PSD,autocorrelation and bounded peak detection. Unsupported FFT sizes/methods reject rather than silently pad.
+
+Authority: language.txt L68; specs/science_data_v0_2.txt.
+Acceptance: examples/signal-analysis/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

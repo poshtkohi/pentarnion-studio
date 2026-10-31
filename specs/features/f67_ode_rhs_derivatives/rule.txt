@@ -1,0 +1,30 @@
+F67: Direct native ODE RHS state, parameter and time partials
+Authorized extension, 26 October 2026.
+
+Derivative builtins accept OdeModel directly by compiling its original ordered
+RHS AST as a pure callback: states leading, model parameters next, original time
+name last. The point supplies exactly states; parameters are fixed named values
+and outer time(default0) is passed at runtime. Reject unknown/missing parameter
+keys and state/time values hidden in that record or point. Default columns are
+state coordinates; wrt can select state/parameter/time names or real indices.
+J/JVP/VJP/verification support real/Pent/multiple RHS values; gradient/Hessian/HVP
+require one scalar-real RHS. Preserve cache reuse and native bounds. These are
+partials of F(t,state,parameters), not integrated state(t) sensitivities; CVODES
+trajectory propagation remains future advanced-odes.
+Acceptance: derivative_model_tests, analytical/old-ODE-Jacobian parity/FD checks,
+and native-derivatives/ode_partials.p with its actual plot data.
+
+Authority: language.txt L55; specs/advanced_numerics_v0_2.txt.
+Windows staged acceptance: all37 registered suites passed. Final installed
+Release/Code::Blocks/native GUI status is recorded in docs/VALIDATION.md; Linux execution
+remains unverified. Dependencies/notices stay project-local under third-party.
+
+
+RESEARCH EXTENSION SUPERSESSION — 26 OCTOBER2026
+specs/research_v0_2.txt and language.txt L56-L63/F68-F75 supersede earlier future
+claims for native Ceres/NLopt fitting/optimization, CVODES integrated sensitivity/
+terminal adjoints, ODE events/dense output/backward time, native maps, parallel
+callback preparation and Studio run/help/interrupt/find. Instantaneous RHS partials
+remain distinct from integrated sensitivities. The existing callback subset/cache
+rules continue; arbitrary native scripts, chaos/PDE/geometry and Map Explorer are
+not added. HANDOFF records actual acceptance/deployment/platform status.

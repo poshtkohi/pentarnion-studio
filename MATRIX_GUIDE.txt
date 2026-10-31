@@ -1,0 +1,72 @@
+PENTARNION STUDIO — MATRICES, VECTORS AND RANDOM VALUES
+26 October 2026
+
+Type these commands in the Command Window, or put them in a .p script and Run:
+
+use_algebra("A_gamma",gamma=1);
+matrix A = [1,2;3,4];
+vector v = [1;2];
+matrix Av = A*v;
+matrix row = [1,2];
+matrix rowA = row*A;
+display("A*v =",Av);
+display("row*A =",rowA);
+
+matrix P = [i,j;k,ell];
+matrix Q = [1+i,1-j;ell,k];
+matrix PQ = P*Q;
+display("P*Q =",PQ);
+display("i coefficients =",coeff(PQ,1));
+P(1,2) = 1+ell;
+display("linear column-major P(2) =",P(2));
+matrix plain = P.';
+matrix conjugate = P';
+
+rng(123);
+matrix U = rand(2,3);
+matrix N = randn(2,3);
+matrix dice = randi(6,2,3);
+display("uniform samples =",U);
+display("normal samples =",N);
+display("dice =",dice);
+
+vector x = linspace(0,6.28,200);
+vector y = sin(x);
+figure(1,"Name","Array calculation");
+plot(x,y);
+title("$y=\\sin(x)$");
+
+Arrays have real or Pentarnion entries; matrix infers the element type and vector
+checks row/column shape at declaration. realmatrix/pentarnionmatrix select an
+explicit element type. A 1-by-1 array is distinct from a scalar. Rows use ; or a
+newline, columns use commas or spaces. Matrix products preserve the order of
+Pentarnion entry products; parenthesize chains when grouping matters.
+
+Use .* for entrywise multiplication, ./ for division by real entries and .^ for
+entrywise powers. + and - allow equal shapes or scalar broadcast. * is a matrix
+product between arrays, including matrix/vector products. / allows only a real
+scalar divisor. No determinant, matrix inverse or linear-system solver is added.
+Existing inv(p) still acts only on a scalar Pentarnion.
+
+Indices start at 1. A(row,column) selects one entry; A(index) counts down columns.
+An indexed write updates one entry, with bounds/type checks. No slicing or matrix
+growth is supported. transpose(A)/A.' are plain; A' also conjugates each entry.
+size(A), size(A,1), numel(A) and length(A) inspect dimensions and element count.
+
+zeros/ones/eye use (n) for a square array or (rows,columns) for a rectangle.
+rand()/randn() give scalars; add dimensions for arrays. randi(imax) gives one
+Integer; dimensions request an integer-valued real array. rng(seed) repeats the
+Studio sequence; it does not reproduce MATLAB's exact generator stream.
+clear/clc retain random state; Reset Workspace or rng("default") resets it.
+
+Supported unary math functions map over entries using their existing scalar
+definitions and domains. Pentarnion arrays support sin/cos/exp/sinh/cosh; the
+remaining real-only functions accept real arrays. coeff(P,k) returns real
+coefficient arrays. plot(x,y) and plot3(x,y,z) plot equal-length real row/column
+vectors, with the existing figure/subplot/LaTeX/export tools.
+
+Arrays are bounded and cannot be ODE states or parameters in this revision.
+See language.txt L30-L31 and specs/matrices_v0_2.txt for the exact contract.
+See docs/VALIDATION.md for the tests actually executed and remaining platform limits.
+
+L34/F43 now extends slicing, ranges, end and reductions. See LANGUAGE_TOOLS_GUIDE.txt for the current contract.

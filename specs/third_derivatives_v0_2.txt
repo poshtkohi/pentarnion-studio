@@ -1,0 +1,119 @@
+PENTARNION LANGUAGE0.2 — BOUNDED ANALYTIC THIRD DIRECTIONAL DERIVATIVES
+Canonical additive contract for thirdderivative.
+
+1. CALL AND COORDINATE SEMANTICS
+  record d=thirdderivative(@function,point,u,v,w[,options(parameters=options(...))]);
+
+The callback uses the existing checked pure typed native-function subset:
+numeric parameters/locals, assignments, if/else, numeric return(s) and supported
+expressions. The original real/Pentarnion scalar/tuple contract is extended by
+native_algebras_v0_2.txt, native_arrays_v0_2.txt and typed_tensors_v0_2.txt for
+complex/generic elements, fixed2D arrays and rank1..8 fixed-shape Tensors.
+Every entry contributes all its real coefficients; each legacy Pentarnion has
+five in (1,i,j,k,ell) order. Results flatten in declaration order with complete
+descriptor-aware output_widths; equal width does not replace shape/algebra checks.
+An ordinary function accepted by this subset is compiled just as a native one.
+There is no interpreted per-evaluation fallback or second source language.
+
+point binds a complete leading group of declared arguments. It may be a real
+or Pentarnion scalar, a complete typed element/array/Tensor, a flat real row/column
+vector, or a typed numeric tuple as in jacobian/hessian. options.parameters supplies named
+trailing fixed arguments, or their declared defaults are used. Fixed argument
+directions are zero. Unknown/nontrailing parameter names are rejected.
+
+u,v,w are real row/column vectors of the active point's flattened width. For
+exactly one active Pentarnion point, a Pentarnion direction is accepted directly,
+and one real scalar direction is promoted to its scalar coefficient with four
+zero pure coefficients. A partial coefficient block is never inferred for
+mixed/multiple arguments. A sole typed generic/complex/array/Tensor direction must
+match the point's complete entry/shape/hash descriptor; a deliberately flat real
+vector supplies exact active real coordinates. All values are finite binary64.
+The immutable A_gamma_v1 context has gamma in[0,1], retained in the report.
+
+The returned third is D3f(point)[u,v,w], with one real row per output coordinate.
+It is a trilinear product, symmetric in its three real-coordinate directions
+on a smooth branch. Repeated directions are permitted and no factorial is
+applied. This real-coordinate symmetry does not grant Pentarnion associativity:
+(a*b)*c and a*(b*c) remain distinct expression trees and ordered products.
+
+2. REPORT
+  values,third: output_coordinates-by-1 real matrices.
+  u,v,w: input_coordinates-by-1 real matrices in the exact active order.
+  active_coordinates: one-based selected leading real coordinates.
+  output_widths: complete real coordinate width per declared callback result.
+  input_coordinates,total_input_coordinates,output_coordinates: integer counts.
+  native_evaluations=1,threads_used=1: one serial native scalar evaluation.
+  cache_hit,cache_key: versioned structural module-cache information.
+  method="analytic_hyperdual3"; algebra: descriptive context string (legacy
+    A_gamma_v1, or generic name:hash/array tags where applicable); gamma retains
+    the legacy compatibility context and is not a generic-algebra property.
+
+3. GENERATED CALCULUS AND DOMAINS
+The existing typed AST/native emitter is instantiated over three commuting
+square-zero infinitesimals. Eight coefficients carry value, the three first
+directions, their three pairwise mixed derivatives, and the third mixed
+derivative. Product subset convolution and exact unary chain rules propagate
+all coefficients; no finite-difference approximation is used in production.
+Scalar extensions preserve each explicitly grouped binary Pentarnion product.
+
+Supported real intrinsics follow the existing native scalar subset: sin,cos,
+exp,expm1,log,log1p,log10,log2,sqrt,sinh,cosh,tanh,tan,asin,acos,atan,asinh,
+acosh,atanh,abs,floor,ceil,round,erf,erfc,hypot,atan2 and literal integer powers.
+Pentarnion construction/coefficient extraction, scalar/pure/conj/norm2,
+commutator/associator and the existing one-element inverse/powers retain their
+existing explicit semantics. Whole-Pentarnion sin,cos,exp,sinh,cosh use the
+published one-element radial calculus. Near zero pure-part length the scalar
+radial functions and all first/second/third derivatives use convergent even
+power series in squared length, avoiding an artificial sqrt singularity.
+
+Branch/comparison boundaries depending on active coordinates, abs/hypot at
+zero, floor/ceil at integers, round at half-integers, inverse-trigonometric or
+sqrt singular endpoints, atan2's origin/negative-real branch cut and invalid
+domains fail conservatively. Away from discontinuities, floor/ceil/round are
+locally constant. No global smoothness certificate or branch-crossing derivative
+is claimed. Zero directions do not bypass active-input domain certification.
+Intermediate/result overflow fails; finite long-double intermediate algebra is
+converted to finite binary64 outputs only after the whole result succeeds.
+
+4. LIMITS, CACHE, CPU BUDGET AND ERRORS
+Bounds:1..64 declared parameters,1..128 total real input coordinates,1..16
+declared results with at most128 real output coordinates, at most256 local
+declarations,4096 emitted AST/statement nodes, and expression depth128.
+Interpreted callbacks, dynamic-shape native arrays, native range slices, records,
+loops and unsupported captures/calls reject under the native subset contracts.
+Fixed-array/Tensor operations and their separate temporary/work bounds follow
+the current topical specs. No full third-derivative tensor is allocated.
+At most128 AD3 models remain resident at once. Only unreferenced least-recently-
+used models may be unloaded; active callback/evaluation handles pin their code.
+All128 genuinely live models still prevent admission of another distinct model.
+Validated generated-source/manifest/DLL/SO disk artifacts are never deleted by
+resident eviction and may be reused without compilation.
+
+AD3 uses a separate structural version key and optional penta_callback_third_
+query_v1 capability (ABI65536). Existing AD1/AD2 generated bytes, cache identity
+and required exports are unchanged. Signature/body or emitted support changes
+invalidate AD3; point/directions/runtime parameters/gamma do not. Static native
+compilation planning may prepare explicit handles in parallel through Studio's
+existing compiler pool; a preparation never executes a callback.
+
+Construction/compilation occurs before the scalar kernel reserves Studio's
+shared CPU slot. The tiny native evaluation is serial and nested callers reuse
+the outer reservation. Native node work is charged conservatively (32 times
+the emitted node count plus statement checks). Cancellation is checked through
+the host quota boundary. Existing execution allowances/cancellation errors apply.
+The optional raw native ABI and public C++ wrapper stage outputs so failure
+does not publish a partial output vector. There is no process-global seed state.
+
+N2301 reports invalid requests/bodyless prototypes/directions/context. N2302
+reports missing/incompatible native capability or session-module budget.
+N2305 reports generated domain/evaluation failure. N2306 reports native
+cancellation; Studio converts active execution cancellation to R1006. Existing
+native-subset/compiler errors retain their source spans and codes. Host quota
+exceptions propagate intact. Timing uses Studio's existing compilation exclusion.
+
+5. SCOPE
+This is a bounded third-directional-derivative interface over the checked native
+scalar/tuple/fixed-array/Tensor subset. It does not implement derivatives beyond
+order3, dynamic-shape native specialization, compressed sparse AD coloring or
+general higher-order geometry/Hopf criticality analysis. The current Tensor
+language and array-state generation have their own explicit specs and limits.

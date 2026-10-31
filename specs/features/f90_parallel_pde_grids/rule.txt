@@ -1,0 +1,9 @@
+F90: Parallel and implicit grid PDEs
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Native shared-budget FD/P1-FE work, consistent FE mass, first-order implicit-diffusion IMEX and regular2D real/Pentarnion fields. Report actual workers; preserve all five coefficients and existing RK4 formulas.
+
+Authority: language.txt L78; specs/research_modules_v0_2.txt.
+Acceptance: examples/parallel-pdes/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

@@ -1,0 +1,73 @@
+#include "ide/research_explorer.hpp"
+#include "ode/native_ode.hpp"
+#include <QComboBox>
+#include <algorithm>
+#include <QCryptographicHash>
+#include <QFile>
+#include <QFileInfo>
+#include <QLabel>
+#include <QPushButton>
+#include <QSignalSpy>
+#include <QSlider>
+#include <QTableWidget>
+#include <QTemporaryDir>
+#include <QtTest>
+
+namespace {
+void diagnostics(const penta::runtime::ExecutionResult& result){for(const auto& d:result.analysis.diagnostics)if(d.severity==penta::language::Severity::Error)qWarning()<<QString::fromStdString(d.code+": "+d.message);for(const auto& d:result.runtimeDiagnostics)qWarning()<<QString::fromStdString(d.code+": "+d.message);}
+QByteArray read(const QString& path){QFile file(path);if(!file.open(QIODevice::ReadOnly))return {};return file.readAll();}
+penta::runtime::ExecutionOptions execution(const QTemporaryDir& directory){penta::runtime::ExecutionOptions options;options.dataDirectory=directory.path().toStdWString();options.odeCacheDirectory=options.dataDirectory/".penta-cache"/"odes";options.maxOperations=20000000;return options;}
+}
+class ResearchExplorerTests:public QObject {
+    Q_OBJECT
+private slots:
+    void nativeAlgebrasAndFixedArraysRetainEveryCoordinate(){
+        QTemporaryDir directory;const auto options=execution(directory);
+        for(const auto& preset:{std::string("quaternion"),std::string("sedenion")}){
+            penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(penta::research::Mode::Ode);c.algebras={{"H",preset}};c.states={{"element<H>","state",preset=="quaternion"?"1.0+H.i":"1.0+H.e1","-rate*state"}};c.parameters={{"real","rate","2.0"}};c.t1=.1;c.sampleStep=.05;panel.setConfiguration(c);QSignalSpy run(&panel,&penta::ResearchExplorer::runRequested);QString error;const auto source=panel.generatedScript(&error);QVERIFY2(!source.isEmpty(),qPrintable(error));QCOMPARE(run.count(),0);QVERIFY(source.contains("builtin_algebra"));
+            penta::runtime::InterpreterSession session;const auto result=session.submit(source.toStdString(),{},options);if(!result.ok())diagnostics(result);QVERIFY(result.ok());const auto width=preset=="sedenion"?16u:4u;std::size_t plots=0;for(const auto& action:result.figureActions)if(action.kind==penta::runtime::FigureActionKind::Plot)++plots;QCOMPARE(plots,std::size_t(width+1));
+            // Accept the exact submitted snapshot to exercise full-coordinate export.
+            panel.findChild<QPushButton*>("researchRun")->click();panel.acceptResult(result);QVERIFY(panel.resultFresh());const auto command=panel.exportCommand(directory.filePath(QString::fromStdString(preset)+".csv"),&error);QVERIFY2(!command.isEmpty(),qPrintable(error));QVERIFY(command.contains(QString(",%1)").arg(width-1)));QVERIFY(session.submit(command.toStdString(),{},options).ok());
+        }
+        auto c=penta::research::defaultConfiguration(penta::research::Mode::Ode);c.states={{"matrix<2,1>","state","[1.0;2.0]","-rate*state"}};c.parameters={{"real","rate","1.0"}};c.t1=.1;c.sampleStep=.05;const auto source=penta::research::generateScript(c);QVERIFY(source.find("statecoord(research_solution.state,1)")!=std::string::npos);const auto result=penta::runtime::execute(source+"assert(abs(statecoord(research_solution.state,1)(end)-2*exp(-0.1))<1e-7);",{},options);if(!result.ok())diagnostics(result);QVERIFY(result.ok());
+    }
+    void openingEditingAndGeneratingNeverExecute(){
+        penta::ResearchExplorer panel;QSignalSpy run(&panel,&penta::ResearchExplorer::runRequested);QSignalSpy auxiliary(&panel,&penta::ResearchExplorer::exportRequested);QCOMPARE(run.count(),0);for(auto mode:{penta::research::Mode::Ode,penta::research::Mode::Chaos,penta::research::Mode::Fitting,penta::research::Mode::Discovery}){panel.setConfiguration(penta::research::defaultConfiguration(mode));QString error;const auto source=panel.generatedScript(&error);QVERIFY2(!source.isEmpty(),qPrintable(error));QVERIFY(penta::language::analyse(source.toStdString()).ok());QVERIFY(source.trimmed().endsWith(';'));panel.findChild<QPushButton*>("researchGenerate")->click();}panel.findChild<QSlider*>("researchParameterSlider")->setValue(500);QCOMPARE(run.count(),0);QCOMPARE(auxiliary.count(),0);
+    }
+    void simultaneousSweepsAndImportedSnapshots(){
+        QTemporaryDir directory;QVERIFY(directory.isValid());penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(penta::research::Mode::Discovery);c.states={{"real","x","1.0","-rate*x+offset"}};c.parameters={{"real","rate","1.0"},{"real","offset","0.0"}};c.initialRows="[1]";c.t1=.2;c.sampleStep=.1;c.transient=.01;c.sweeps={{"rate",1,2,2},{"offset",0,1,3}};panel.setConfiguration(c);QString error;const auto source=panel.generatedScript(&error);QVERIFY2(!source.isEmpty(),qPrintable(error));QVERIFY(source.contains("research_domain2"));const auto result=penta::runtime::execute(source.toStdString(),{},execution(directory));if(!result.ok())diagnostics(result);QVERIFY(result.ok());QVERIFY(source.contains("offset=research_domain2"));
+        c.sweeps.push_back(c.sweeps.front());panel.setConfiguration(c);QVERIFY(panel.generatedScript(&error).isEmpty());
+        const auto path=directory.filePath("observations.csv");QFile file(path);QVERIFY(file.open(QIODevice::WriteOnly));file.write("0,1,2\n1,3,4\n");file.close();panel.setConfiguration(penta::research::defaultConfiguration(penta::research::Mode::Fitting));QSignalSpy submitted(&panel,&penta::ResearchExplorer::runRequested);QVERIFY2(panel.importDataFile(path,&error),qPrintable(error));QCOMPARE(panel.configuration().xData,std::string("[0;1]"));QCOMPARE(panel.configuration().yData,std::string("[1,2;3,4]"));QCOMPARE(submitted.size(),0);QVERIFY(file.open(QIODevice::WriteOnly));file.write("0,1\n1,missing\n");file.close();const auto previous=panel.configuration().yData;QVERIFY(!panel.importDataFile(path,&error));QCOMPARE(panel.configuration().yData,previous);
+    }
+    void nativeLiveDisplayKeepsNumericalResults(){
+        QTemporaryDir directory;auto options=execution(directory);std::vector<penta::runtime::FigureAction> progress;options.figureProgress=[&](const auto& actions){progress.insert(progress.end(),actions.begin(),actions.end());};const auto result=penta::runtime::execute("ode decay(t,real x){x'=-x;}solution s=odesolve(decay,x=1,t0=0,t1=0.1,sample_step=0.01,live_plot=options(figure=62,max_points=16));assert(abs(s.x(end)-exp(-0.1))<1e-7);",{},options);if(!result.ok())diagnostics(result);QVERIFY(result.ok());QVERIFY(!progress.empty());for(const auto& action:progress)if(action.kind==penta::runtime::FigureActionKind::Plot){QCOMPARE(action.figure,62);QVERIFY(action.curves[0].points.size()<=16);}
+    }
+    void injectedControlsAreRejected(){
+        penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(penta::research::Mode::Ode);QString error;c.states[0].initial="1.0;display(999)";panel.setConfiguration(c);QVERIFY(panel.generatedScript(&error).isEmpty());QVERIFY(!error.isEmpty());c=penta::research::defaultConfiguration(penta::research::Mode::Ode);c.states[0].rhs="v;}display(999);ode other(t,real z){z'=0";panel.setConfiguration(c);QVERIFY(panel.generatedScript(&error).isEmpty());c=penta::research::defaultConfiguration(penta::research::Mode::Fitting);c.xData="readmatrix(\"unrequested.csv\")";panel.setConfiguration(c);QVERIFY(panel.generatedScript(&error).isEmpty());c=penta::research::defaultConfiguration(penta::research::Mode::Ode);c.parameters[0].name="t";panel.setConfiguration(c);QVERIFY(panel.generatedScript(&error).isEmpty());QSignalSpy run(&panel,&penta::ResearchExplorer::runRequested);panel.findChild<QPushButton*>("researchRun")->click();QCOMPARE(run.count(),0);
+    }
+    void sourceSaveIsExplicitAndPreservesChangedFiles(){
+        QTemporaryDir directory;QVERIFY(directory.isValid());penta::ResearchExplorer panel;const auto path=directory.filePath("checked.p");QString error;QVERIFY(panel.saveScript(path,&error));const auto original=read(path);QVERIFY(!original.isEmpty());QVERIFY(!panel.saveScript(path,&error));QCOMPARE(read(path),original);const auto baseline=QCryptographicHash::hash(original,QCryptographicHash::Sha256);QFile changed(path);QVERIFY(changed.open(QIODevice::WriteOnly));changed.write("% external change\n");changed.close();QVERIFY(!panel.saveScript(path,&error,true,baseline));QCOMPARE(read(path),QByteArray("% external change\n"));const auto current=QCryptographicHash::hash(read(path),QCryptographicHash::Sha256);QVERIFY(panel.saveScript(path,&error,true,current));QCOMPARE(read(path),original);
+    }
+    void generatedNativeProgramsAndHashMatchCliExecution(){
+        QTemporaryDir directory;QVERIFY(directory.isValid());const auto options=execution(directory);
+        for(auto mode:{penta::research::Mode::Ode,penta::research::Mode::Chaos,penta::research::Mode::Fitting,penta::research::Mode::Discovery}){
+            penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(mode);c.t1=1;c.sampleStep=.05;c.transient=.1;c.qrStep=.1;c.sweepSamples=2;c.initialRows="[1,0]";c.maximumRuns=8;panel.setConfiguration(c);QSignalSpy submitted(&panel,&penta::ResearchExplorer::runRequested);panel.findChild<QPushButton*>("researchRun")->click();QCOMPARE(submitted.count(),1);const auto source=submitted.takeFirst()[0].toString();const auto result=penta::runtime::execute(source.toStdString(),{},options);if(!result.ok())diagnostics(result);QVERIFY(result.ok());QCOMPARE(QString::fromStdString(result.sourceHash),QString::fromLatin1(QCryptographicHash::hash(source.toUtf8(),QCryptographicHash::Sha256).toHex()));panel.acceptResult(result);QVERIFY(panel.resultFresh());QCOMPARE(panel.completedScript(),source);QString error;const auto output=directory.filePath(QStringLiteral("data-%1.csv").arg(static_cast<int>(mode)));QVERIFY2(!panel.exportCommand(output,&error).isEmpty(),qPrintable(error));
+        }
+    }
+    void changedSettingsDoNotMasqueradeAsFreshResults(){
+        QTemporaryDir directory;penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(penta::research::Mode::Ode);c.t1=.25;c.sampleStep=.05;panel.setConfiguration(c);QSignalSpy submitted(&panel,&penta::ResearchExplorer::runRequested);panel.findChild<QPushButton*>("researchRun")->click();const auto source=submitted.takeFirst()[0].toString();c.parameters[0].value="2.0";panel.setConfiguration(c);const auto result=penta::runtime::execute(source.toStdString(),{},execution(directory));QVERIFY(result.ok());panel.acceptResult(result);QVERIFY(!panel.resultFresh());QCOMPARE(panel.completedScript(),source);QString error;QVERIFY(panel.exportCommand(directory.filePath("stale.csv"),&error).isEmpty());QVERIFY(!QFileInfo::exists(directory.filePath("stale.csv")));
+    }
+    void pentarnionControlsPreserveOrderedProductsAndAllCoordinates(){
+        QTemporaryDir directory;penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(penta::research::Mode::Ode);c.states={{"pentarnion","p","(1-i-j+k-ell)/2","A*p+(1-eta)*(B*(p*p))+eta*((B*p)*p)"}};c.parameters={{"pentarnion","A","-1.0/2-2*i+j/2-k-ell/2"},{"pentarnion","B","1+2*j-ell/2"},{"real","eta","0.0"}};c.t1=.1;c.sampleStep=.02;c.method="bdf";panel.setConfiguration(c);QString error;const auto source=panel.generatedScript(&error);QVERIFY2(!source.isEmpty(),qPrintable(error));QVERIFY(source.contains("B*(p*p)"));QVERIFY(source.contains("(B*p)*p"));const auto result=penta::runtime::execute(source.toStdString(),{},execution(directory));if(!result.ok())diagnostics(result);QVERIFY(result.ok());std::size_t plots=0;for(const auto& action:result.figureActions)if(action.kind==penta::runtime::FigureActionKind::Plot)++plots;QCOMPARE(plots,std::size_t(6));
+    }
+    void sessionContextAndNativeCacheAreReusedCorrectly(){
+        QTemporaryDir directory;const auto options=execution(directory);penta::runtime::InterpreterSession session;QVERIFY(session.submit("pentarnion previous=1+i;",{},options).ok());penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(penta::research::Mode::Ode);c.gamma=.5;c.t1=.25;c.sampleStep=.05;panel.setConfiguration(c);QSignalSpy submitted(&panel,&penta::ResearchExplorer::runRequested);panel.findChild<QPushButton*>("researchRun")->click();const auto source=submitted.takeFirst()[0].toString();const auto first=session.submit(source.toStdString(),{},options);if(!first.ok())diagnostics(first);QVERIFY(first.ok());panel.acceptResult(first);QVERIFY(panel.resultFresh());QString error;const auto command=panel.exportCommand(directory.filePath("ode.csv"),&error);QVERIFY2(!command.isEmpty(),qPrintable(error));const auto exported=session.submit(command.toStdString(),{},options);if(!exported.ok())diagnostics(exported);QVERIFY(exported.ok());QVERIFY(QFileInfo::exists(directory.filePath("ode.csv")));
+        c.parameters[0].value="2.0";panel.setConfiguration(c);const auto secondSource=panel.generatedScript(&error);const auto second=session.submit(secondSource.toStdString(),{},options);QVERIFY(second.ok());QVERIFY(second.nativeCompilation.compilerAttempts==0);QVERIFY(second.sourceHash!=first.sourceHash);
+        const auto unrelated=session.submit("real unrelated=1;",{},options);panel.acceptResult(unrelated);QVERIFY(!panel.resultFresh());
+    }
+    void discoveryReplayAndFilterUseCompletedSnapshot(){
+        QTemporaryDir directory;const auto options=execution(directory);penta::runtime::InterpreterSession session;penta::ResearchExplorer panel;auto c=penta::research::defaultConfiguration(penta::research::Mode::Discovery);c.t1=1;c.sampleStep=.05;c.transient=.1;c.sweepSamples=2;c.initialRows="[1,0]";panel.setConfiguration(c);QSignalSpy submitted(&panel,&penta::ResearchExplorer::runRequested);QSignalSpy auxiliary(&panel,&penta::ResearchExplorer::exportRequested);panel.findChild<QPushButton*>("researchRun")->click();const auto source=submitted.takeFirst()[0].toString();const auto result=session.submit(source.toStdString(),{},options);QVERIFY(result.ok());panel.acceptResult(result);QVERIFY(panel.resultFresh());panel.findChild<QPushButton*>("researchReplay")->click();QCOMPARE(auxiliary.count(),1);const auto replay=auxiliary.takeFirst()[0].toString();const auto played=session.submit(replay.toStdString(),{},options);if(!played.ok())diagnostics(played);QVERIFY(played.ok());panel.acceptResult(played);QVERIFY(panel.resultFresh());panel.findChild<QPushButton*>("researchFilterResults")->click();QCOMPARE(auxiliary.count(),1);const auto filtered=session.submit(auxiliary.takeFirst()[0].toString().toStdString(),{},options);if(!filtered.ok())diagnostics(filtered);QVERIFY(filtered.ok());
+    }
+};
+QTEST_MAIN(ResearchExplorerTests)
+#include "research_explorer_tests.moc"

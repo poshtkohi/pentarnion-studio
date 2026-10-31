@@ -1,0 +1,9 @@
+F94: Exact basis-aware Pentarnion polynomials
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Declared central real variables, exact rational gamma/radicals, ordered basis expansion, coordinate differentiation/substitution and inspectable checked native source. Preserve source groups and enforce numeric algebra-context compatibility.
+
+Authority: language.txt L82; specs/research_modules_v0_2.txt.
+Acceptance: examples/exact-pentarnion-symbolics/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.

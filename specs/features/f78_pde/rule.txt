@@ -1,0 +1,8 @@
+F78: Real and Pentarnion one-dimensional PDEs
+Authorized extension,26October2026.
+
+Native cached local reactions, uniform centered FD and P1 consistent-mass FE with nodal reaction interpolation, periodic/constant-Dirichlet/zero-flux boundaries and bounded explicit RK4. Real analytic-mode/refinement and report examples required.
+
+Authority: language.txt L66; specs/pde_geometry_v0_2.txt.
+Acceptance: examples/pdes-and-geometry/project.pprj; independent kernel/runtime/GUI tests.
+Actual checked platforms and release evidence are recorded in docs/VALIDATION.md; nativeLinux remains unverified.

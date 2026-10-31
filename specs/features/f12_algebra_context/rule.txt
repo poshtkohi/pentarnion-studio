@@ -1,0 +1,29 @@
+FEATURE F12: Paper-grounded immutable algebra contexts
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S5
+Dependencies: source contract
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F12-R1: Implement A_gamma_v1 using specs/algebras/A_gamma_v1.txt, not a remembered
+         or integer-scaled table. Store 25 ordered products as 5 coefficients each.
+F12-R2: Validate gamma finite and in [0,1]; default gamma=1; immutable context.
+F12-R3: Basis ordering (1,i,j,k,ell) never changes implicitly. No ell coefficient
+         pre-scaling by gamma. Context mismatch is an explicit operation error.
+F12-R4: Core has no Qt, no files, no paper parsing and no process-global context.
+F12-R5: Record provenance hashes; review any future paper edit before updating
+         tests. Do not change a table to satisfy a previously incorrect example.
+F12-R6: gamma=0 quaternion tests only claim associativity in span(1,i,j,k).
+         Do not apply that assertion to the full five-dimensional algebra.
+
+ACCEPTANCE
+F12-T1: Every basis-pair output matches independent fixtures at gamma=0,.5,1.
+F12-T2: Invalid gamma and context mixing fail without mutating existing values.
+F12-T3: Concurrent reads in distinct contexts produce no cross-contamination.
+F12-T4: Unit element and coefficient ordering roundtrip tests pass.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

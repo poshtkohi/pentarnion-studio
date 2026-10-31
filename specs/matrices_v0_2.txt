@@ -1,0 +1,163 @@
+PENTARNION STUDIO DENSE ARRAY AND RANDOM-VALUE CONTRACT
+26 October 2026
+
+L30. REAL AND PENTARNION MATRICES AND VECTORS
+This additive language 0.2 extension provides dense two-dimensional arrays.
+Scalars and arrays remain distinct types, even for a 1-by-1 matrix. A Pentarnion
+scalar is still one algebra element with five coefficients; a vector declaration
+below means a row or column array of real or Pentarnion elements.
+
+matrix A = [1,2;3,4];          % infer realmatrix from scalar entries
+vector v = [1;2];             % row/column shape checked at runtime
+matrix y = A*v;               % matrix by column vector
+matrix P = [i,j;k,ell];       % infer pentarnionmatrix
+realmatrix R = zeros(2,3);    % explicit real element type
+pentarnionmatrix Q = [1,i];   % real entries embed into Pentarnion scalars
+
+matrix/vector declarations infer the array element type from the initializer.
+realmatrix and pentarnionmatrix are explicit aliases. Assignment preserves that
+declared element type; real arrays may widen when assigned to a Pentarnion array. A scalar
+initializer cannot silently become a 1-by-1 matrix; write [value] explicitly.
+vector validates row/column orientation when declared; it uses the same matrix
+value type and operations thereafter. A vector-valued result of * remains an
+array, including a 1-by-1 result from a row-vector/column-vector product.
+
+Literal columns are separated by commas or whitespace, and rows by semicolons
+or newlines. All rows must have the same length and entries must be numeric
+scalars. Nested array concatenation, range expansion, string/object entries and
+implicit multiplication are unsupported. [] is the 0-by-0 real matrix. In a
+literal, [1 -2] has two entries; [1 - 2] has one subtraction expression. Group
+expressions when spacing could be ambiguous. Existing pent([a,b,c,d,e]) remains
+the five-coefficient scalar constructor, not a matrix constructor.
+
+A(row,column) and A(index) use positive Integer indices starting at 1. Linear
+indexing is column-major: for A=[1,2;3,4], A(2) is 3. Bounds are checked at runtime.
+A(1,2)=value; assigns one compatible scalar element without changing the shape.
+Indexed writes preserve aliases as immutable prior values. Colon/slice/logical
+indexing, end, array resizing/deletion and multiple-index arrays are deferred.
+
+Operators:
+  A+B, A-B: equal-size arrays, or a scalar broadcast over every array entry.
+  A*B: matrix product when both operands are arrays; columns(A)==rows(B).
+       Compatible matrix/vector, row/column and outer products use this same rule.
+       If one operand is scalar, * applies it on that same side of each entry.
+  A.*B: elementwise ordered products; equal array shapes or one scalar broadcast.
+  A./B: elementwise division; divisor entries must be real, with nonzero values.
+  A/realScalar: real scaling. Matrix right/left division and equation solves are deferred.
+  A.^B: elementwise powers; real scalar/matrix exponents. Pentarnion bases need
+        integer exponents (Integer scalar, or checked integer-valued real entries),
+        within this array extension's bound -100,000..100,000.
+        Matrix ^ is not supported. The existing scalar ^ rule remains unchanged.
+  +A, -A: entrywise signs.
+
+Binary matrix products use sum_k A(row,k)*B(k,column), preserving operand order.
+No associativity is assumed for Pentarnion matrices. Parenthesize chains with
+three or more Pentarnion operands, e.g. (P*Q)*R or P*(Q*R), as for scalar products.
+No determinant, matrix inverse, dot/linear solve or spectral operation is added;
+inv(p) keeps its existing scalar Pentarnion meaning.
+
+transpose(A) and A.' transpose without conjugation. A' transposes and conjugates
+each Pentarnion entry. Real conjugation leaves values unchanged. conj(A),
+scalar(A), pure(A), norm2(A) and coeff(P,k) operate entrywise; coefficient k is
+still 0..4 and coeff returns a real matrix with the same shape. The five whole
+Pentarnion functions sin/cos/exp/sinh/cosh also apply entrywise to arrays. The
+remaining one-argument real functions (sqrt, tan, asin, acos, atan, tanh, asinh,
+acosh, atanh, log, log10, log2, abs, floor, ceil, round) accept real arrays only.
+Their existing domain/finite checks apply to every entry. atan2 arrays are deferred.
+
+plot(x,y) and plot3(x,y,z) accept real row/column vectors or sampled real series.
+Coordinate arguments must have equal element counts; full 2D matrices are not
+flattened into curves. Existing plot2/plot3 with literal canonical axis names
+still projects individual Pentarnion scalars or sampled Pentarnion trajectories.
+General matrix-based Pentarnion projection plotting is deferred.
+
+Matrices/random constructors cannot occur in native ODE bodies or as ODE
+states/parameters. Existing real/Pentarnion native models remain unchanged.
+Default bounds: 100,000 entries per dense array, dimensions in 0..100,000,
+1,000,000 unique retained real coordinates across matrix variables, with five
+coordinates counted per Pentarnion entry. Aliases count once. Runtime operation,
+cancellation, source/AST and finite-result bounds also apply to matrix operations.
+display/workspace snapshots print all entries for arrays up to 1,024 entries;
+larger arrays show their dimensions and a bounded 6-by-6 preview, retaining every
+numerical entry for computation.
+
+L31. ARRAY CONSTRUCTORS AND REPRODUCIBLE RANDOM VALUES
+zeros(n), ones(n), eye(n) create n-by-n real matrices. Two arguments specify
+rows and columns: zeros(rows,columns), ones(rows,columns), eye(rows,columns).
+eye uses ones on the main diagonal and zeros elsewhere, including rectangular
+shapes. Dimension expressions have Integer type and may be zero, within L30's
+allocation bounds. Constructors with dimensions return arrays even when 1-by-1.
+
+linspace(start,stop[,count]) returns a real row vector, default count=100.
+Endpoints are real scalars, count is a nonnegative Integer. count=0 returns a
+1-by-0 array; count=1 returns stop. Both endpoints are included when count>=2.
+Use linspace for evenly spaced vectors; a:b range expansion is not introduced.
+
+rand() returns one uniform real sample in [0,1); randn() returns one standard
+normal real sample. rand(n)/randn(n) create n-by-n arrays; rand(rows,columns)
+and randn(rows,columns) use the specified shape. randi(imax) returns an Integer
+uniformly in 1..imax; randi(imax,n) and randi(imax,rows,columns) return real arrays
+whose entries are integer-valued. imax is an Integer in 1..2^53-1.
+
+rng(seed); resets the Studio stream to a nonnegative signed 64-bit Integer seed.
+rng("default"); resets the default seed, 5489. These are Void calls, not values.
+The stream uses mt19937_64, a 53-bit uniform conversion, Box-Muller normal samples
+and unbiased bounded integer sampling. The same seed and sequence of Studio
+calls reproduce the same stream within the same build/platform. Normal samples
+may differ in their last bits across math libraries. This is not a promise of
+MATLAB-identical random values. A session shares its stream across console commands and script runs;
+clear/clc do not reset it. Reset Workspace restores the default stream. Checking
+does not draw samples, and cancellation restores the pre-request RNG state.
+
+size(A) returns the real row vector [rows,columns]. size(A,dimension) returns an
+Integer; dimensions above 2 return 1. numel(A) returns the total entry count.
+length(A) returns the largest dimension, or 0 for an empty array. Numeric scalars
+are treated as 1-by-1 by these size queries. No higher-dimensional arrays exist.
+
+New declaration/function names are protected in language 0.2. Existing 0.1 files
+may retain variables with these names; they are not silently reinterpreted.
+
+L32. COPY SOURCE WITH SYNTAX FORMATTING
+This editor feature adds no .p syntax and never checks or executes source.
+Normal Copy/Ctrl+C and Cut/Ctrl+X provide both Qt's original plain-text selection
+and a portable HTML representation. Rich-text destinations such as Word and
+browser editors can retain the source colors; plain-text destinations still
+receive the same ordinary text. Destination paste preferences can discard style.
+
+HTML uses a preformatted monospace block and escaped colored spans derived from
+the source editor's current QTextLayout highlighter ranges. Foreground colors,
+font weights and italics are retained, with normal editor colors for unstyled
+identifiers and spaces. It preserves selected Unicode, tabs, spaces, blank lines
+and partial tokens across blocks. HTML metacharacters are escaped as source
+text, never executable markup. Line-number gutters, cursor/selection backgrounds
+and diagnostics are not copied into the code fragment.
+
+The normal Qt clipboard MIME adapter supplies platform rich-text formats,
+including Windows CF_HTML; no Word dependency or external clipboard tool is used.
+Only the selected source is copied. Copy leaves the buffer, revision, undo stack,
+encoding/newline metadata and safe-save behavior unchanged. Cut retains standard
+Qt removal/undo behavior and adds the same rich clipboard data.
+
+To bound memory, selections above 4,194,304 UTF-16 characters or HTML output above
+8 MiB fall back to ordinary plain text. The plain-text selection is not truncated.
+Copy may refresh lexical highlighting before reading ranges; it never runs the
+static checker, interpreter, native compiler or an ODE solve.
+
+CURRENT FOUNDATION CLARIFICATION (F50-F58)
+The current extensions in specs/foundations_v0_2.txt and language.txt L39-L46
+supersede earlier exclusions for imports/callbacks/records/native scalar functions,
+logical masks and sampled/numerical calculus. Array ordered comparisons and &,|
+yield logical masks; ==/!=/~= retain one scalar shape/data predicate. Storage
+remains bounded 2D. Full native scripts, parallel GEMM and PDE solves are deferred.
+
+CURRENT ADVANCED NUMERICAL EXTENSION — 26 OCTOBER 2026
+specs/advanced_numerics_v0_2.txt, language.txt L47-L55 and F59-F67 supersede earlier
+deferred claims only for current categories5-8 and revised per-call threading:
+parallel matrices/OpenBLAS, real dense/sparse linear algebra, explicit Pentarnion
+left/right operators, cached native derivatives/Hessians/products, roots and direct
+ODE RHS partials. Historical rules above remain unchanged. Whole-Pentarnion matrix
+determinants/inverses are not inferred from real operator quantities; complex
+eigendata uses split real/imaginary arrays. Native ODE trajectory sensitivities,
+complex dense arrays, general native scripts, fitting, chaos/PDE/geometry packages
+and Map Explorer(plan20) remain future. All37 staged Windows suites passed; final
+installed/Code::Blocks/native GUI evidence is in HANDOFF; Linux is unverified.

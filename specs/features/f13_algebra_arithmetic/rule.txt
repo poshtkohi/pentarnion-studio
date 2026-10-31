@@ -1,0 +1,29 @@
+FEATURE F13: Base arithmetic, norm and product diagnostics
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S5
+Dependencies: F12
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F13-R1: Real-linear addition/subtraction/scaling and complete bilinear product.
+F13-R2: Preserve scalar and all four pure components; no 'pure input' projection.
+F13-R3: Implement conj, scalar, pure, coeff, norm2, commutator and associator
+         according to the algebra contract. norm2 is sum-of-squares, not sqrt.
+F13-R4: Left/right multiplication matrices follow the documented column
+         convention and match direct basis products.
+F13-R5: No assumption of general associativity, flexibility, alternativity or
+         norm multiplicativity. No fast-math build path by default.
+F13-R6: Invalid/nonfinite inputs/results yield explicit errors. Never silently
+         normalise a result or change a coefficient sign to stabilise it.
+
+ACCEPTANCE
+F13-T1: Unit/distributivity/scalar-bilinearity/conjugation/quadratic-identity tests.
+F13-T2: gamma=1 i*(j*j)=-i but (i*j)*j=(k-ell)/2.
+F13-T3: A full mixed five-component input is retained by all operations.
+F13-T4: Matrices L_p/R_p agree with independent direct products on basis vectors.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

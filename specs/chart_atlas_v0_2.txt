@@ -1,0 +1,36 @@
+F126 / L116: EXPLICIT CHART ATLASES
+
+chartatlas(charts,transitions[,options(dimension=2)]) retains1..32 named charts
+and0..128 explicit directed native transition maps in an IntrinsicAtlas-v1
+record. charts=options(name=options(metric=native_metric,parameters=record,
+lower=vector,upper=vector),...). Bound fields are optional coordinate-domain
+constraints and match the common intrinsic dimension1..6.
+transitions=options(edge=options(from="chart",to="chart",map=native_map,
+parameters=record),...). Duplicate directed chart pairs and unknown names fail.
+Inverse maps are explicit: an unprovided inverse is not invented numerically.
+
+atlasgeometry(atlas,chart_name,point[,options]) evaluates that chart's stored
+native metric through intrinsicgeometry. Its parameter record belongs to the
+chart; extra connection/frame/tolerance/work options may be supplied per call.
+
+atlastransition(atlas,from,to,point[,options]) finds a deterministic shortest
+directed path and composes native coordinate maps. Compiler-generated first
+and second derivatives are composed by the exact multivariate chain rule.
+Source and each intermediate/target point are checked against supplied domains.
+Optional sampled source metric,connection,vector,covector use the composed
+Jacobian/Hessian to transport to the final chart with correct variance and the
+inhomogeneous connection term. Every local Jacobian is checked nonsingular.
+Identity transitions return the unchanged coordinates and identity derivative.
+Runtime parameters and point changes reuse unchanged compiled native map bodies.
+
+Result adds from,to,path,cache_keys,cache_hit,native_work to charttransition's
+coordinate/jet/transformed tensor diagnostics. Atlas records retain the actual
+typed metric/map function definitions and support normal workspace persistence.
+Work, coordinate, chart and edge bounds prevent unbounded graph/map expansion.
+
+This interface represents explicitly supplied local domains and transitions.
+It does not prove global manifold coverage, overlap compatibility, cocycle
+identities or topological properties merely because maps were registered.
+Automatic path integration across chart boundaries needs an explicit switching
+policy and is a separate capability; source checking does not pretend that a
+local point transition is already such an integrator.

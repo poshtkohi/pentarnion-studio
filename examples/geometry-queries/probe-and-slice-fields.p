@@ -1,0 +1,12 @@
+record mesh=meshplane([0,1],[0,1],options(nx=9,ny=9));
+matrix vertices=mesh.vertices;
+matrix field=vertices(:,1)+2*vertices(:,2);
+record nearest=meshclosest(mesh,[.2,.3,1;2,0,0]);
+record sampled=meshprobe(mesh,[.2,.3,1],field);
+display("Closest points / distances: ",nearest.points,nearest.distances);
+display("Projected affine field value, expected0.8: ",sampled.values);
+record slice=meshslice(mesh,[1,0,0],.5,options(values=field));
+display("Slice points / topological segments / full fields: ",slice.points,slice.segments,slice.values);
+figure(1,"Name","Probed field along a mesh slice","NumberTitle","off");
+plot(slice.points(:,2),slice.values);xlabel("y");ylabel("interpolated value");
+title("Exact affine interpolation on the piecewise planar mesh");

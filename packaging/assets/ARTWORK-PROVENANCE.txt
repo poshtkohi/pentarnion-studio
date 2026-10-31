@@ -1,0 +1,5 @@
+Wizard artwork is composed locally from the established Pentarnion Studio logo.
+The source SVG and transparent PNG are retained. Alpha compositing preserves
+transparency and all placements preserve the original aspect ratio. No GTG or
+university branding is used. Segoe UI is used only when rasterising the artwork;
+no system font is installed or redistributed by this script.

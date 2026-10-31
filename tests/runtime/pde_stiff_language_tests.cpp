@@ -1,0 +1,29 @@
+#include "runtime/interpreter.hpp"
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <string>
+
+namespace {
+int checks=0,failures=0;void expect(bool yes,const char* message){++checks;if(!yes){++failures;std::cerr<<"FAIL: "<<message<<'\n';}}
+void errors(const penta::runtime::ExecutionResult& result){if(result.ok())return;for(const auto& error:result.analysis.diagnostics)std::cerr<<error.code<<" @"<<error.span.offset<<": "<<error.message<<'\n';for(const auto& error:result.runtimeDiagnostics)std::cerr<<error.code<<" @"<<error.span.offset<<": "<<error.message<<'\n';}
+}
+int main(){
+    using namespace penta;const auto directory=std::filesystem::temp_directory_path()/("penta-stiff-language-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    try{
+        std::filesystem::create_directories(directory);runtime::ExecutionOptions execution;execution.dataDirectory=directory;execution.odeCacheDirectory=directory/"cache/odes";
+        const auto run=[&](const std::string& source){const auto result=runtime::execute(source,{},execution);errors(result);expect(result.ok(),"Implicit PDE language execution succeeds.");return result;};
+        run("native function real stiff(real u,real t,real x,real rate){return -rate*u*u*u;}matrix x=linspace(0,1,17);record a=pdeimplicit(stiff,x,1.0,options(parameters=options(rate=1000.0),diffusion=0.0,t1=.02,time_step=.02,sample_step=.01,rtol=.002));matrix U=pdeimplicitcoeff(a,0);assert(abs(U(end,1)-1/sqrt(41))<.004);assert(a.jacobian_evaluations>0);assert(a.maximum_nonzeros<100);assert(a.rejected_steps>0);record b=pdeimplicit(stiff,x,1.0,options(parameters=options(rate=500.0),diffusion=0.0,t1=.02,time_step=.01,sample_step=.01,rtol=.002));assert(a.cache_keys==b.cache_keys);assert(b.cache_hit);matrix B=pdeimplicitslice(b,3);assert(size(B,2)==17);");
+        run("native function real source(real u,real t,real x){return 1.0;}native function real left(real t,real tag,real x,real normal){return t+x;}native function real right(real t,real tag,real x,real normal){return .2*normal+2*(t+x);}matrix x=linspace(0,1,17);record field=pdeimplicit(source,x,x,options(diffusion=.2,t1=.02,time_step=.01,sample_step=.01,adaptive=0,boundaries=options(left=options(type=\"dirichlet\",value=left),right=options(type=\"robin\",value=right,alpha=2.0))));matrix U=pdeimplicitcoeff(field,0);assert(norm(U(end,:)-x-.02,\"fro\")<1e-7);");
+        run("algebra H=builtin_algebra(\"quaternion\");native function element<H> reaction(element<H> u,real t,real x){return 0*u;}native function element<H> diffusion(real t,real x,real scale){return scale*(1+.5*H.i);}matrix x=linspace(0,1,9);matrix initial=zeros(9,4);real pi=3.14159265358979323846;for(row=1:9) {initial(row,3)=cos(pi*x(row));}record a=pdeimplicit(reaction,x,initial,options(diffusion=diffusion,diffusion_parameters=options(scale=.1),diffusion_side=\"left\",t1=.02,time_step=.01,sample_step=.01,adaptive=0));record b=pdeimplicit(reaction,x,initial,options(diffusion=diffusion,diffusion_parameters=options(scale=.1),diffusion_side=\"right\",t1=.02,time_step=.01,sample_step=.01,adaptive=0));matrix A=pdeimplicitcoeff(a,3);matrix B=pdeimplicitcoeff(b,3);assert(norm(A(end,:)-B(end,:),\"fro\")>1e-4);assert(a.components==4);assert(a.cache_keys==b.cache_keys);assert(b.cache_hit);");
+        run("native function pentarnion reaction(pentarnion u,real t,real x,real y,real z){return -.5*u;}record mesh=meshplane([0,1],[0,1],options(nx=5,ny=5));record field=pdeimplicit(reaction,mesh,1+i,options(diffusion=.1,t1=.02,time_step=.01,sample_step=.01,adaptive=0,threads=2));matrix scalar_history=pdeimplicitcoeff(field,0);matrix i_history=pdeimplicitcoeff(field,1);assert(field.components==5);assert(norm(scalar_history(end,:)-1/(1+.005)^2,\"fro\")<1e-7);assert(norm(scalar_history-i_history,\"fro\")<1e-10);");
+        run("native function real heat(real u,real t,real x){return 0.0;}native function real initial(real t,real x){real pi=3.14159265358979323846;return cos(pi*x);}record report=pdeconverge(heat,linspace(0,1,9),initial,options(diffusion=.1,t1=.02,time_step=.002,sample_step=.01,adaptive=0,spatial_levels=3,spatial_rtol=.01,spatial_atol=1e-6));assert(report.levels>=2);assert(report.field.nodes>=17);assert(size(report.history,2)==7);assert(report.history(2,5)==1);assert(report.field.cache_hit);matrix U=pdeimplicitcoeff(report.field,0);assert(abs(U(end,1)-exp(-.1*3.14159265358979323846*3.14159265358979323846*.02))<.001);");
+        run("native function real constant(real u,real t,real x,real y,real z){return 0.0;}record mesh=meshplane([0,1],[0,1],options(nx=3,ny=3));record report=pdeconverge(constant,mesh,3.0,options(t1=.02,time_step=.01,sample_step=.01,adaptive=0,spatial_levels=3));assert(report.converged);assert(report.levels==2);assert(report.field.nodes==25);assert(report.scaled_difference<1e-8);assert(report.indicator_domain.embedding_dimension==3);");
+        const auto invalid=language::analyse("real result=pdeimplicit(1,[0,1,2],0);");expect(!invalid.ok(),"Non-callable implicit PDE reactions fail during source checking.");
+#ifdef PENTA_SOURCE_DIR
+        for(const auto* name:{"adaptive-stiff-reaction.p","ordered-quaternion-diffusion.p","mixed-time-dependent-boundaries.p","implicit-pentarnion-surface.p","spatial-convergence-and-refinement.p"}){std::ifstream file(std::filesystem::path(PENTA_SOURCE_DIR)/"examples/implicit-pdes"/name,std::ios::binary);const std::string source((std::istreambuf_iterator<char>(file)),{});expect(!source.empty(),"Implicit PDE example exists.");if(!source.empty())run(source);}
+#endif
+    }catch(const std::exception& error){++failures;std::cerr<<"Unexpected exception: "<<error.what()<<'\n';}
+    std::error_code ignored;std::filesystem::remove_all(directory,ignored);std::cout<<checks<<" implicit PDE language checks, "<<failures<<" failures\n";return failures?1:0;
+}

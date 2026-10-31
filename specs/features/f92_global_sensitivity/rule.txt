@@ -1,0 +1,11 @@
+F92: Native Morris and Sobol workflows
+Authorized second-roadmap extension, 26 October 2026.
+Status: candidate implementation; executed acceptance is recorded in docs/VALIDATION.md.
+
+Deterministic independent-uniform native model experiments, matched Saltelli/Jansen estimates and optional matched-row bootstrap. Estimator/noise/distribution assumptions remain explicit; unsupported solver-summary adapters are not implied.
+
+Authority: language.txt L80; specs/research_modules_v0_2.txt.
+Acceptance: examples/global-sensitivity/project.pprj and independent native/runtime/GUI tests.
+Do not infer unfinished broad roadmap stages or native Linux execution from this rule.
+
+Native solver-summary adapters: modelsensitivity; specs/solver_sensitivity_v0_2.txt. Preserve parameter layout, failures, shared workers and sampling assumptions.

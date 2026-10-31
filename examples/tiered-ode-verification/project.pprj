@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "Tiered native ODE verification and finite-time evidence",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "main.p",
+    "lorenz-finite-time-evidence.p",
+    "weak-and-neutral-growth.p",
+    "exclude-independent-work.p",
+    "checkpointed-verification-tiers.p"
+  ]
+}

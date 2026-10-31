@@ -1,0 +1,2431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CodeBlocks_project_file>
+<CodeBlocks_project_file>
+  <FileVersion major="1" minor="6" />
+  <Project>
+    <Option title="Pentarnion Studio - Linux" />
+    <Option makefile="CMakeLists.txt" />
+    <Option makefile_is_custom="1" />
+    <Option compiler="gcc" />
+    <Build>
+      <Target title="Release">
+        <Option output="build/linux-release/bin/pentarnion-studio" prefix_auto="0" extension_auto="0" />
+        <Option working_dir="build/linux-release/bin" />
+        <Option object_output="build/linux-release" />
+        <Option type="0" />
+        <Option compiler="gcc" />
+        <MakeCommands>
+          <Build command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Release Build" />
+          <CompileFile command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Release Build" />
+          <Clean command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Release Clean" />
+          <DistClean command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Release Clean" />
+          <SilentBuild command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Release Build" />
+          <AskRebuildNeeded command="/bin/false" />
+        </MakeCommands>
+      </Target>
+      <Target title="Debug">
+        <Option output="build/linux-debug/bin/pentarnion-studio" prefix_auto="0" extension_auto="0" />
+        <Option working_dir="build/linux-debug/bin" />
+        <Option object_output="build/linux-debug" />
+        <Option type="0" />
+        <Option compiler="gcc" />
+        <MakeCommands>
+          <Build command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Debug Build" />
+          <CompileFile command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Debug Build" />
+          <Clean command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Debug Clean" />
+          <DistClean command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Debug Clean" />
+          <SilentBuild command="sh &quot;$(PROJECT_DIR)tools/build.sh&quot; Debug Build" />
+          <AskRebuildNeeded command="/bin/false" />
+        </MakeCommands>
+      </Target>
+    </Build>
+    <Compiler>
+      <Add option="-std=c++20" />
+      <Add directory="src" />
+      <Add directory="src/ide" />
+    </Compiler>
+    <Unit filename="apps/benchmark/main.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="apps/check/main.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="apps/cli_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="apps/run/main.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="apps/workbench/main.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/algebra_context.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/algebra_context.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/elementary.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/elementary.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/pentarnion.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/pentarnion.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/universal.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/universal.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/universal_builtins.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/universal_elementary.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/universal_hash.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/universal_import.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/algebra/universal_internal.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/arrays/nd_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/arrays/nd_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/arrays/typed_tensor.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/arrays/typed_tensor.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/chaos/chaos_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/chaos/chaos_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/dae/dae_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/dae/dae_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/dae/linear_dae.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/dae/linear_dae.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/dae/structural_dae.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/dae/structural_dae.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/discovery/basin_candidates.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/discovery/discovery_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/discovery/discovery_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/discovery/failure_reason.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/discovery/verification.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/discovery/verification.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/discovery/verification_checkpoint.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/evolution/evolution_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/evolution/evolution_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/evolution/evolution_session.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/evolution/evolution_session.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/cli_main.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/code_export.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/code_export.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_advanced_ode.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_dual.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_geometry.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_graph.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_hybrid.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_mechanics.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_optimize.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_pde.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_reverse.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_runtime.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/matlab_scientific.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_advanced_ode.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_geometry.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_graph.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_hybrid.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_mechanics.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_optimize.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_pde.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_reverse.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_runtime.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/export/python_scientific.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/fem/fem_mixed_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/fem/fem_solver.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/fem/fem_solver.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/fem/fem_system_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/fem/fem_time_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/fitting/fit_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/fitting/fit_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/extra_geometry.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/extra_geometry.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/form_pullback_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/geometry_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/geometry_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/intrinsic_geometry_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/mesh_intersection_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/geometry/mesh_query_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/graph/graph_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/graph/graph_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/graph/graph_tools.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/graph/graph_tools.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/graph/network_solver.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/graph/network_solver.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/assistant_controller.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/assistant_controller.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/cloud_copilot_client.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/cloud_copilot_client.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_chat_context.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_chat_context.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_knowledge.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_knowledge.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_panel.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_panel.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_settings.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/copilot_settings.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/help_article_browser.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/help_article_browser.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/help_search.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/help_search.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/offline_help.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/offline_help.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/source_review.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/assistant/source_review.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/code_export_dialog.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/code_export_dialog.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/command_window.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/command_window.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/about_dialog.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/about_dialog.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/collapsible_dock.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/collapsible_dock.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/desktop_shell.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/desktop_shell.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/figure_docking.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/figure_docking.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/figure_group_host.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/figure_group_host.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/pane_hover.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/pane_hover.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/parallel_pool_indicator.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/parallel_pool_indicator.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/project_file_icons.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/snapshot_controller.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/snapshot_controller.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/studio_icons.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/studio_workspace_layout.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/studio_workspace_layout.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/toolstrip.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/toolstrip.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/worker_activity.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/desktop/worker_activity.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/document.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/document.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/editor_widget.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/editor_widget.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/execution_coordinator.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/execution_coordinator.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/feature_browser.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/feature_browser.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/figure_groups.inc.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/figure_manager.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/figure_manager.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/find_replace_bar.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/find_replace_bar.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/find_replace_dialog.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/find_replace_dialog.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/main_window.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/main_window.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/map_explorer.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/map_explorer.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/math_text_renderer.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/math_text_renderer.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/project_service.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/project_service.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/raster_depth_painter.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/raster_depth_painter.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/raster_plot_canvas.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/raster_plot_canvas.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/raster_scene.inc.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/recovery_store.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/recovery_store.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/research_explorer.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/research_explorer.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/research_spatial_controls.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/research_spatial_controls.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/source_assistance.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/source_assistance.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/source_print_dialog.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/source_print_dialog.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/source_printing.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/source_printing.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/studio_branding.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/studio_branding.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/studio_shell.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/syntax_highlighter.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/syntax_highlighter.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/tile_layout_widgets.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/tile_layout_widgets.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/workbook/workbook_data.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/workbook/workbook_data.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/workbook/workbook_document.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ide/workbook/workbook_document.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/inference_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/inference_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/noise_models.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/solver_model.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/solver_model.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/structural_identifiability.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/uncertainty.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/inference/uncertainty.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/advanced_ode_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/animation_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/bifurcation_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/cas_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/chaos_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/chart_geometry_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/constrained_mechanics_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/dae_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/dependency_pattern_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/derivative_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/derivative_model_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/developer_tools_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/discovery_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/discovery_workflow_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/evolution_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/experiment_bundle_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/extension_names.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/extra_geometry_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/fem_adaptive_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/fem_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/fem_mesh_refinement_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/fem_mixed_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/fem_system_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/fem_time_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/field_query_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/fitting_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/form_pullback_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/foundation_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/frontend.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/frontend.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/geometry_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/graph_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/graph_tools_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/graph_view_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/histogram_plot_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/hybrid_ode_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/inference_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/intrinsic_atlas_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/intrinsic_geometry_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/iteration_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/language_version.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/language_version.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/lexer.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/lexer.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/linalg_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/linear_dae_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/maps_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/mechanics_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/mesh_intersection_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/mesh_query_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/model_sensitivity_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/nd_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/network_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/optimization_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/orbits_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/pde_ensemble_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/pde_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/pde_spatial_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/pde_stiff_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/pent_symbolic_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/petsc_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/provenance_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/publication_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/quantity_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/research_archive_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/roots_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/science_data_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/science_extended_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/sensitivity_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/solver_inference_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/structural_dae_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/tensor_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/third_derivative_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/uncertainty_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/universal_array_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/universal_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/universal_import_data.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/universal_import_data.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/vector_threading_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/verification_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/language/video_frontend.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/maps/ensemble.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/maps/ensemble.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/maps/map_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/maps/map_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/mechanics/constrained_mechanics.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/mechanics/constrained_mechanics.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/mechanics/mechanics_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/mechanics/mechanics_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/bifurcation_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/bifurcation_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/blas_coordinator.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/blas_coordinator_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/blas_coordinator_scope.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/calculus_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/calculus_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/cas_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/cas_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/chaos_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/chaos_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/chart_geometry_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/dae_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/dae_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/discovery_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/discovery_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/evolution_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/evolution_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/evolution_session.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/evolution_session_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/evolution_state_json.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_mean_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_mixed_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_mixed_linear.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_mixed_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_parallel_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_parallel_kernel.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_shared_state.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_system_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fem_system_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fit_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/fit_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/form_pullback_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/form_pullback_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_extra.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_extra_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_extra_common.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_forms.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_mesh.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_mesh_data.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/geometry_surface.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/graph_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/graph_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/graph_tools_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/graph_tools_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/inference_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/inference_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/intrinsic_geometry_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/intrinsic_geometry_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/iteration_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_dense.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_internal.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_lapack.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_products.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_sparse.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linalg_spectral.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linear_dae_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/linear_dae_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/manifold_forms_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/manifold_forms_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/maps_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/maps_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mechanics_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mechanics_constraint.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mechanics_constraint_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mechanics_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mesh_intersection_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mesh_intersection_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mesh_query_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/mesh_query_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/nd_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/nd_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/network_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/network_bdf.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/network_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/network_operator_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/numeric_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/numeric_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/opt_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/opt_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/orbits_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/orbits_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_evolution.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_evolution.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_experiment_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_experiment_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_grid_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_grid_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_imex_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_kernel_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_stiff_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_stiff_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pde_time_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/pent_symbolic_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/petsc_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/petsc_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/roots_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/roots_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_bootstrap.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_distributions.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_extended.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_extended_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_extended_common.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_numeric.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_pentarnion.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_signal.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/science_symbolic.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/sensitivity_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/sensitivity_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/structural_dae_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/structural_dae_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/units_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/units_extended.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/units_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/vector_outlines.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/vector_plot_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/modules/vector_plot_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/build_plan.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/build_plan.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/callback_generator.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/callback_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/dependency_pattern.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/dependency_pattern.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/native_array_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/native_callback.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/native_callback.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/native_function.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/native_function.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/native_tensor_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/resident_cache.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/tensor_codegen.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/third_callback.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/third_callback.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/third_callback_api.h">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/third_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/universal_codegen.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/universal_native.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/native_functions/universal_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/advanced_ode_native.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/ark_adjoint.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/code_generator.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/hybrid_ode.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/hybrid_ode.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/native_cache.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/native_internal.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/native_ode.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/native_ode.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/native_support.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/ode/sha256.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/optimization/opt_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/optimization/opt_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/orbits/bifurcation.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/orbits/bifurcation.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/orbits/continuation_refinement.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/orbits/continuation_refinement.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/orbits/orbits_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/orbits/orbits_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/pde/pde_experiment_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/pde/pde_experiment_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/pde/pde_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/pde/pde_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/pde/pde_stiff_wrapper.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/petsc/petsc_solver.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/petsc/petsc_solver.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/field_animation.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/field_animation.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/field_video.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/field_video.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/graph_view.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/graph_view.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/native_export.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/native_export.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/plot_template.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/plot_template.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/vector_export.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/plotting/vector_export.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/algebra_configuration.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/experiment_bundle.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/experiment_bundle.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/research_archive.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/research_archive.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/script_builder.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/script_builder.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/spatial_configuration.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/spatial_extensions.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/research/spatial_script_builder.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/roots/root_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/roots/root_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/advanced_ode_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/animation_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/bifurcation_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/cas_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/chaos_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/chart_geometry_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/constrained_mechanics_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/continuation_refinement_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/coordinate_values.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/coverage_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/curve_fitting_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/dae_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/data_io.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/data_io.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/dependency_pattern_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/derivative_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/derivative_model_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/developer_tools_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/discovery_export_extensions.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/discovery_export_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/discovery_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/discovery_workflow_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/equation_units_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/evolution_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/evolution_session_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/experiment_bundle_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/extended_quantity_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/extra_form_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/extra_geometry_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/extra_mesh_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/extra_surface_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/fem_adaptive_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/fem_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/fem_mesh_refinement_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/fem_mixed_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/fem_system_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/fem_time_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/field_query_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/fitting_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/form_pullback_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/foundation_runtime.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/foundation_value.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/geometry_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/graph_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/graph_plot.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/graph_tools_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/graph_view_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/help_catalog.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/histogram_plot_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/hybrid_ode_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/inference_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/inference_noise_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/interpreter.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/interpreter.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/intrinsic_atlas_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/intrinsic_geometry_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/iteration_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/lazy_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/linalg_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/linalg_module_loader.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/linalg_module_loader.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/linear_dae_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/maps_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/mass_dae_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/matrix_operations.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/matrix_value.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/mechanics_dae_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/mechanics_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/mesh_intersection_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/mesh_query_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/model_dae_summary_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/model_sensitivity_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/module_inventory.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/module_inventory.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/nd_callbacks.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/nd_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/nd_linalg_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/network_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/network_operators.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/numeric_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/numeric_module_loader.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/numeric_module_loader.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/ode_fitting_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/optimization_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/orbits_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/parallel_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/pde_ensemble_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/pde_grid_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/pde_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/pde_spatial_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/pde_stiff_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/pent_symbolic_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/petsc_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/plot_style.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/provenance_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/publication_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/quantity_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/research_archive_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/research_capture.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/research_capture_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/roots_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/science_data_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/science_extended_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/scientific_live_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/sensitivity_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/solver_inference_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/structural_dae_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/tensor_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/third_derivative_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/thread_budget.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/thread_budget.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/uncertainty_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/universal_array_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/universal_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/vector_threading_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/verification_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/video_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/workspace_callback_helpers.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/runtime/workspace_operations.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/science/extended_science.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/science/extended_science.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/science/science_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/science/science_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/sensitivity/sensitivity_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/sensitivity/sensitivity_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/sensitivity/solver_summary.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/sensitivity/solver_summary.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/sensitivity/solver_summary_dae.inc">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/symbolic/cas_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/symbolic/cas_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/symbolic/pent_symbolic.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/symbolic/pent_symbolic.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/units/quantity_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="src/units/quantity_module.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/algebra/algebra_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/algebra/basis_fixtures.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/algebra/elementary_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/algebra/universal_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/core/core_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/document/document_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/export/export_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/drawn_tile_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/field_animation_widget_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/field_render_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/figure_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/graph_view_widget_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/interaction_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/math_text_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/publication_plot_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/figures/tile_layout_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/assistant_ui_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/busy_execution_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/command_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/desktop_refinement_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/desktop_shell_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/figure_docking_workflow_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/find_replace_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/gui_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/help_desktop_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/inline_rename_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/iteration_progress_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/map_explorer_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/offscreen_test_bootstrap.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/project_data_navigation_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/raster_depth_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/raster_presentation_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/source_assistance_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/studio_workspace_layout_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/window_stability_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/workbook_editor_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/gui/worker_activity_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/ide/research_explorer_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/ide/research_spatial_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/language/frontend_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/language/lexer_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/ode/advanced_ode_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/ode/native_ode_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/ode/paper_reference_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/ode/prepared_model_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/printing/printing_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/project/project_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/advanced_linalg_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/advanced_ode_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/array_tools_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/bifurcation_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/blas_coordinator_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/blas_cross_module_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/blas_worker_scope_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/build_plan_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/calculus_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/callback_snapshot_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/cas_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/cas_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/chaos_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/chart_geometry_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/constrained_mechanics_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/continuation_refinement_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/dae_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/data_io_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/dependency_pattern_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/derivative_model_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/derivative_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/discovery_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/discovery_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/discovery_workflow_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/evolution_budget_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/evolution_session_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/evolution_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/evolution_workflow_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/experiment_bundle_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fake_numeric_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fake_roots_module.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_adaptive_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_mean_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_mixed_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_mixed_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_system_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_system_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_time_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fem_time_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/field_animation_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/field_query_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/fitting_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/form_pullback_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/form_pullback_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/foundation_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/foundation_numerics_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/foundation_parallel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/frontier_examples_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/geometry_extra_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/geometry_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/graph_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/graph_tools_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/graph_view_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/histogram_plot_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/hybrid_ode_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/inference_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/inference_uncertainty_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/intrinsic_geometry_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/intrinsic_geometry_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/iteration_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/iteration_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/language_tools_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/linalg_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/linear_dae_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/linear_dae_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/manifold_forms_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/manifold_forms_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/map_ensemble_checkpoint_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/map_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/matrix_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/mechanics_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/mesh_intersection_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/mesh_intersection_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/mesh_query_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/mesh_query_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/model_sensitivity_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_array_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_cache_lifetime_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_derivative_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_function_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_png_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_values_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_vector_export_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/native_video_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/nd_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/network_operator_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/network_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/optimization_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/orbits_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/paper_spin_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pde_cancel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pde_ensemble_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pde_grid_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pde_parallel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pde_stiff_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pde_stiff_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pde_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/pent_symbolic_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/persistence_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/petsc_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/petsc_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/plot_template_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/publication_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/quantity_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/research_archive_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/research_archive_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/resident_cache_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/review_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/roadmap2_examples_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/root_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/runtime_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/science_data_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/science_extended_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/science_extended_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/sensitivity_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/solver_refit_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/solver_refit_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/source_frame_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/structural_dae_kernel_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/structural_dae_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/tensor_solver_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/third_derivative_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/third_reference.hpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/typed_tensor_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/typed_tensor_storage_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/universal_language_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/universal_native_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/universal_persistence_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/universal_projection_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/universal_solver_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/vector_threading_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/verification_checkpoint_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Unit filename="tests/runtime/verification_tests.cpp">
+      <Option compile="0" link="0" />
+    </Unit>
+    <Extensions />
+  </Project>
+</CodeBlocks_project_file>

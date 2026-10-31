@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "Saved PDE field playback and bounded native frame export",
+  "language_version": "0.2",
+  "algebra": {
+    "id": "A_gamma_v1",
+    "gamma": 1
+  },
+  "sources": [
+    "heat_field_playback.p",
+    "pentarnion_field_playback.p",
+    "export_selected_frames.p",
+    "export_native_video.p"
+  ]
+}

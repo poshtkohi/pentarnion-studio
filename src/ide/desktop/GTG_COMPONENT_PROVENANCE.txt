@@ -1,0 +1,49 @@
+GTG CELL STUDIO COMPONENT ADAPTATION
+31 October2026
+
+Source: GTG Cell Studio/code/src/ide in the user-owned Desktop framework.
+These reusable Qt-only components were adapted for Pentarnion Studio at the
+user's explicit request. Original GTG sources were not changed.
+
+Adaptations: penta::desktop namespace and include paths, application-neutral
+property names, Pentarnion source/project/file icons and command classification.
+No GTG scientific model, solver, credentials or user settings are imported.
+
+Original source SHA-256 values:
+toolstrip.hpp  f1a1536b2086e710933aaf00421ac05da2329f68c43095159565638f76e5f983
+toolstrip.cpp  ca50ff51030a000308b1b0599d53cd20c7b5ac117a65b083bc3e51e1b8168426
+studio_icons.hpp  5800d3b20219183937f7c9b0cad29c167faa84630f29894cccc5dd1320fca180
+pane_hover.hpp  944dba27919dc04d6135ee88f370660183d381f9171cfa9879baa54b8f4c9bde
+pane_hover.cpp  59dfee8ea08ad9a9ac326ed1c4b8878f9a975e2be72911c8b2a79a1dd560f71c
+collapsible_dock.hpp  939ddde92939d54c4eccd5c59c59782fbbc387fe09b3c8e18968fc4e9cc2e64d
+collapsible_dock.cpp  6c4f102f14815c0f4e290b102ed5e7fe0ebfcec20c37f4652168a801e585a51d
+project_file_icons.hpp  f968c13c159e126c592170f537c81ae410b19bbada0ec086d74a013122b102f4
+
+Retain this provenance alongside the adapted source. The copyright holders
+have confirmed authority to release these included GTG-derived components under
+the repository's Apache License, Version 2.0; see LICENSE and NOTICE. Original
+dependency licences and authorship notices remain applicable. This grant does
+not relicense separately maintained GTG material outside this repository.
+
+Additional retained docking components (original SHA-256):
+figure_docking.hpp  dbf9cb0fdcc1aa77fde686665e08588996e44a823f8c8ba9b4676bee9df1eda1
+figure_docking.cpp  294e83d37bb0c68505f7520e0ecfec9492f0c0ce645ccf4e82e634930c08f018
+
+GUI refinement components (original SHA-256):
+snapshot_controller.hpp  38aad777e1aa75090b00f739cdd56b2173f5b5cc39bfb421f47d113ab72506cc
+snapshot_controller.cpp  bfc094374cee86256b7a024146594ff6058bbe5de46cfeb9aa2024b5fc1dbe1d
+parallel_pool_indicator.hpp  ed0aede224fda1592a327a08e7b234ee234a5022aaf478a703a00fad8d76fa19
+parallel_pool_indicator.cpp  e56cb5cc51a74c88d48a107257e17d6d1497dad7428157e0bee88ea90ac35af4
+figure_book.cpp  3f1c1248c339d5e20e11337c8607cfa2a2dd390c7f4556c64fa05f4781ad1a98
+
+Snapshot and the worker node symbol retain GTG's presentation patterns. The
+worker-count adapter observes Pentarnion's existing CPU pool and optional BLAS
+coordinator; it does not import GTG's numerical execution system. Figure drag
+previews follow figure_book.cpp, with Pentarnion's existing scientific views
+retained inside their docking groups. The original GTG files remain read-only.
+
+Persistent figure/subplot selection follows these GTG view-chrome sources:
+figure_widget.cpp  74e169d7991edfec56722c83f9b70cbc668f2e820b1c7f68afcf1d88fb240afa
+plot_canvas.cpp  89cae61a958b9994857c4a8082d48a0f9a6f5fa55b8ba18605e8efeb10ef0ca0
+The #0072bd two-pixel figure and one-pixel subplot perimeters remain separate
+from numerical scene data and the temporary teal pane-hover treatment.

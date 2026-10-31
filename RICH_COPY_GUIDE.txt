@@ -1,0 +1,26 @@
+PENTARNION STUDIO — COPY CODE WITH SYNTAX COLORS
+26 October 2026
+
+Select source in the editor and use normal Copy or Ctrl+C. Paste into Word or a
+browser rich-text editor to retain syntax colors, bold/italic styling and the
+monospace layout. If the destination asks, choose Keep Source Formatting. Pasting
+as plain text deliberately removes the colors.
+
+The clipboard contains both the original plain-text selection and portable HTML.
+Plain-text applications receive ordinary source. Ctrl+X/Cut also supplies both
+formats and keeps the editor's normal cut/undo behavior. Source metacharacters
+such as <, > and & are escaped, and Unicode, tabs, partial tokens, blank lines
+and multiline selections are preserved. Line numbers and selection backgrounds
+are excluded.
+
+Copy uses the same lexical colors already shown in the source editor. It does
+not check, execute, compile or modify the source. File encoding/newlines, safe
+saves and source recovery remain unchanged. No Word installation or plug-in is
+required; Qt handles rich clipboard interoperability, including Windows CF_HTML.
+
+Large copies above 4,194,304 selected UTF-16 characters, or rich HTML above 8 MiB,
+fall back to complete plain text. The clipboard text is never truncated to fit a
+rich-format budget. Destination applications control their own paste formatting.
+
+The exact editor contract is language.txt L32 and feature F40. See docs/VALIDATION.md
+for checks actually run; no claim is made that Word itself was automated/tested.

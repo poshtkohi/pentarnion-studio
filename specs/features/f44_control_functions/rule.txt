@@ -1,0 +1,80 @@
+F44: Control flow and typed user functions
+Authorized extension, 26 October 2026
+
+CORE LANGUAGE ADDITIONS
+
+Braces delimit control blocks, following the existing ODE body convention:
+  integer total=0;
+  for(n=1:5){total=total+n;}
+  while(total<20){total=total+1;if(total==18){break;}}
+  if(total==18){display("done");}else{display("other");}
+  if(...) {...} else if(...) {...} else {...} is supported.
+
+for(iterator=values) accepts a finite integer/real range or a real row/column
+vector. Integer-range iterators have Integer type; other iterator values are
+Real. The iterator is local to the loop; any existing same-named variable is
+restored afterwards. break exits the nearest loop; continue starts its next
+iteration. while rechecks its real scalar condition each time. Declarations in
+if/for/while blocks are local to that block; assignment to existing outer
+variables persists. Clear is reserved for top-level workspace management.
+
+Comparison operators: ==, !=, ~=, <, <=, >, >=. Results are Integer 0/1.
+true/false are Integer constants. ! and ~ perform logical not; && and ||
+short-circuit and accept real scalar conditions. Ordered comparisons require
+real scalars. Pentarnion equality compares the five coefficients exactly;
+matrix equality compares shape and every coefficient, yielding one scalar.
+String equality is supported. No ordering or truth conversion for Pentarnions
+or arrays is assumed. Use real predicates such as norm2(p)<tolerance.
+
+function real square(real x){return x*x;}
+function integer factorial(integer n){
+  if(n<=1){return 1;}return n*factorial(n-1);
+}
+Function results/parameters may be integer, real, pentarnion, string,
+matrix/realmatrix or pentarnionmatrix; void is a result type only. matrix
+parameters/results have real entries; use pentarnionmatrix explicitly for
+Pentarnion arrays. Define functions before calling them; self-recursion is
+supported. Each call has its own parameter/local variable scope and can call
+earlier declared functions. There are no implicit global captures. return
+matches the declared result type; reaching the end of a non-void function is
+a runtime error. void functions use return; or reach the end. Nested function
+definitions are rejected. Functions persist between console submissions and
+are removed by clear like other workspace bindings.
+
+string name="Susanne"; declares an immutable value with ordinary typed
+assignment support. Strings can be compared for equality and passed to
+display, user functions, diagnostics and data IO. String concatenation and
+arrays of strings are not introduced.
+
+assert(condition[,"message"]); errors on a false real scalar condition.
+error("message"); stops execution. warning("message"); writes a warning to
+the unified Command Window and continues. help; / help(); provides an
+overview; help("topic"); provides builtin/control syntax or a user-function
+signature. Unknown help topics report their absence without failing a run.
+who; / who(); lists workspace names in name order. whos; / whos(); also
+shows each type and shape, including ODE sample-series lengths. Functions
+and other scalar objects appear as 1x1.
+
+Language 0.1 identifiers that coincide with newly introduced keywords or
+builtins keep their original identifier meaning. Execution requires language
+0.2 as before. The shared lexer highlights new keywords/builtins immediately.
+
+Execution is bounded by the existing source/token/node/nesting/operation,
+output, cancellation and workspace budgets. Function call depth defaults to
+32 and has a hard ceiling of 32; callers can choose a lower value. Retained
+matrix-coordinate budgeting includes suspended caller scopes and de-duplicates
+shared immutable arrays. Infinite loops exhaust the operation budget. Cancelled
+requests restore previous session variables, functions, random stream and timer.
+Ordinary runtime failures keep completed top-level statements, as before.
+Native ODE kernels retain their restricted expression subset; general functions,
+control flow and arrays are not silently compiled into those kernels.
+
+
+Acceptance: build CMake/Code::Blocks; run registered regression suites and native Windows GUI checks. Linux behavior must be identified as unverified until run. Preserve previous valid programs and numerical algebra/ODE results.
+
+CURRENT FOUNDATION CLARIFICATION (F50-F58)
+The current extensions in specs/foundations_v0_2.txt and language.txt L39-L46
+supersede earlier exclusions for imports/callbacks/records/native scalar functions,
+logical masks and sampled/numerical calculus. Array ordered comparisons and &,|
+yield logical masks; ==/!=/~= retain one scalar shape/data predicate. Storage
+remains bounded 2D. Full native scripts, parallel GEMM and PDE solves are deferred.

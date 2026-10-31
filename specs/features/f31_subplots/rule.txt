@@ -1,0 +1,12 @@
+FEATURE F31: MATLAB-style subplot grids
+Version: current profile0.2 extension
+Authority: language.txt L23-L26; specs/ode_v0_2.txt
+Status: implemented; actual verification recorded in docs/VALIDATION.md
+
+F31-R1: subplot(rows,columns,index) selects a1-based row-major panel in the current figure.
+F31-R2: Preserve independent data/camera/math annotations; plot/text commands target active panel.
+F31-R3: Validate before mutation; reject destructive grid shrink; clf resets all panels.
+F31-R4: Figure naming/docking/tiling stays global; figure export includes all
+panels. The per-subplot Save icon exports only that panel; see F36.
+Acceptance: figure_lifecycle including native cameras/exports, nativePaperOdeSubplotsWhenRequested.
+Spanning indices, compact numeric shorthand, handles and hold deferred.

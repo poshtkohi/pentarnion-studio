@@ -1,0 +1,10 @@
+F119: Native batched real/complex LU, solve and inverse
+ndsolve/ndinv/ndlu extend versioned ND records through additive existing-ABI
+operation codes. Reuse one scaled FullPivLU per page for rank/conditioning/solve;
+check independent long-double residuals and P*A*Q=L*U reconstruction. Do not run
+a preliminary SVD or claim an unreliable singular solution. Preserve physical
+and batch-axis metadata, shared CPU/scratch/work bounds and cancellation.
+Nonassociative algebra equations keep their separate ordered-operator semantics.
+Authority: language.txt L107; specs/nd_complex_linalg_v0_2.txt.
+Acceptance: independent complex batch/scale/singularity/factorization tests in
+tests/runtime/nd_tests.cpp; examples/batched-complex-linear-algebra/project.pprj.

@@ -1,0 +1,13 @@
+F131: Checkpointed stochastic map ensembles and native progress observers
+Authorized inventory-group1 extension,27 October2026.
+Status: implemented bounded adapter; platform acceptance is recorded in docs/VALIDATION.md.
+
+Existing ensemble calls support atomic completed-run ledgers, safe resume/retry,
+independent seed/task stochastic streams and owner-thread batch progress. Native
+maps receive an explicit named random parameter. Uniform/normal realization streams
+remain invariant to worker scheduling and interrupted-run restart. ProgressFcn is
+a pure native completed/total observer, not an optimizer-iteration surrogate.
+
+Authority: language.txt L121; specs/chaos_v0_2.txt.
+Acceptance: checkpointed-independent-noise-streams.p;
+tests/runtime/map_ensemble_checkpoint_tests.cpp.

@@ -1,0 +1,60 @@
+F125 / L115: INTRINSIC METRICS, CONNECTIONS, TENSORS AND CHART TRANSITIONS
+
+intrinsicgeometry(metric,coordinates[,options]) evaluates an intrinsic chart of
+dimension1..6. The native metric function returns every n*n coefficient in
+row-major order (usually native function matrix<n,n>); it consumes the complete
+coordinate vector as leading real arguments or a fixed native real array.
+Trailing runtime parameters are bound through options(parameters=options(...)).
+The compiler emits analytic first/second metric derivatives in a cached DLL/SO.
+Changing coordinates/parameters reuses an unchanged typed callback body.
+
+The lazy geometry DLL computes the inverse positive-definite Riemannian metric,
+Levi-Civita connection, its first derivatives, full Riemann/Ricci tensors,
+scalar curvature and volume density. This supports intrinsic dimensions beyond
+the existing two-dimensional embedded chartgeometry interface. Symmetry,
+positive definiteness, conditioning and finite arithmetic are checked. A
+pseudo-Riemannian/degenerate metric is currently rejected explicitly.
+
+Convention: nabla_(partial_j)partial_k=Gamma^i_jk partial_i;
+R^i_jkl partial_i=R(partial_k,partial_l)partial_j.
+connection rows are i and columns are the row-major(j,k) pair. Curvature is
+displayed as n*n by n*n with flat ordering(i,j,k,l). No index is silently raised.
+
+An optional native connection=callback,connection_parameters=record returns
+n*n*n Gamma coefficients and uses compiler-generated first derivatives. Its
+curvature, torsion and nonmetricity are retained without assuming it is
+Levi-Civita. torsion_norm and metric_covariant_norm are coordinate Frobenius
+diagnostics, not invariant tensor norms.
+
+tensorcovariant(tensor,metric,coordinates[,options]) differentiates real tensors
+of rank0..4. variance=[+1,-1,...] declares contravariant/covariant slots; the
+default[+1] describes a vector. variance=[] describes a scalar. A rank-r field
+returns n^r row-major coefficients, subject also to native compiler bounds.
+The tensor callback binds parameters, the metric binds metric_parameters;
+optional connection/frame options use their separate parameter records.
+tensor_covariant rows enumerate original tensor indices; columns enumerate the
+added derivative coordinate. Every slot receives its correctly ordered
+connection action. No algebra-associative tensor product assumption is made.
+
+Optional frame=callback,frame_parameters=record describes an invertible moving
+frame as an n*n matrix whose columns are frame vectors. The compiler supplies
+its first derivatives. frame_metric,frame_connection and frame_bracket retain
+the anholonomy contribution; a noncoordinate frame does not acquire a false
+zero Lie bracket merely because the coordinate connection is torsion free.
+
+charttransition(map,coordinates[,options]) computes a native coordinate map's
+Jacobian/Hessian and checked inverse Jacobian. Optional sampled source metric,
+connection,vector,covector transform with their proper index variance. The
+connection transformation includes the map Hessian (inhomogeneous term).
+Dimension must be preserved and the Jacobian nonsingular. Returned coordinates
+are the map values; transformed arrays are expressed in the target chart.
+This is a local transition operation; global chart coverage and automatic
+atlas switching are separate extensions and are not inferred from one map.
+
+Common tolerance=1e-12,max_work=(execution allowance). Cancellation/native work
+are bounded. Callbacks remain native; the user writes neither metric jets nor
+connection derivatives. Reports retain typed callback cache identity/hits and
+analytic derivative provenance. All real tensor coordinates are retained.
+Full nonlinear surface PDEs/Robin conditions are available through pdeimplicit;
+intrinsic manifold differential forms and general atlas coverage need their
+own explicit coordinate-domain/transition data.

@@ -1,0 +1,167 @@
+PENTARNION STUDIO — FITTING, OPTIMIZATION, ADVANCED ODEs AND MAPS
+26 October2026 | User guide for bounded research categories9-12
+
+START WITH THE EXAMPLES
+Open a project.pprj using File > Open Project. Select its .p source and Run File/F5
+or right-click Run. Named dirty source saves before execution; conflicts prevent
+the run. Examples live in:
+examples/
+
+least-squares/project.pprj:
+  main.p — Ceres LM/Dogleg and robust fitting. Four subplots show observations,
+           model, residuals and cost. Expected line intercept1.04,slope1.98.
+  ode_fit.p — fit rate0.7 and initial state2 using exact nonuniform observations
+              and native CVODES trajectory sensitivities supplied to Ceres.
+  pentarnion_fit.p — fit five coefficients with ordered native a*p-target.
+optimization/project.pprj:
+  main.p — native Rosenbrock minimization, constrained quadratic and seeded
+           finite global search, with objective/constraint histories.
+advanced-odes/project.pprj:
+  main.p — localized half-height event, parameter/initial sensitivities, native
+           dense output, transient window and backward solve; four subplots.
+  adjoint.p — terminal energy and checkpointed parameter/initial gradients.
+  mass_and_times.p — constant mass, nonuniform outputs and step/order controls.
+                     Expected final y=2*exp(-0.7).
+discrete-maps/project.pprj:
+  main.p — logistic orbit, sampled return map, independent parameter orbit
+           diagram and Pentarnion map trajectory; four subplots with full data.
+
+Each category README states expected values and limits. Run scripts independently.
+Figure examples run in Studio; penta-run deliberately disables graphics. Data-only
+examples can run through penta-run in a system terminal. Exact contracts:
+language.txt L56-L63 and specs/research_v0_2.txt. HANDOFF records actual final tested/
+deployed status; native Linux execution remains unverified until recorded there.
+
+RUN AND GET HELP IN THE SAME COMMAND WINDOW
+  >> run main.p
+  >> run "folder/my script.p"
+  >> run("main.p")
+  >> help topics
+  >> help plot
+  >> help if
+  >> help("odefit")
+  >> lookfor "sensitivity"
+
+Relative paths use the project/current source location. Quoted strings use normal
+language escapes; forward slashes are convenient in Windows absolute paths.
+File runs replace file scope; results remain available to direct commands.
+clc clears displayed output; clear removes workspace bindings. Normal output is
+black; warnings/source errors red. Click errors to navigate to file/line/column.
+An ordinary display("Warning: text") string remains ordinary black output.
+
+Without selected console text, Ctrl+C abandons input and starts a fresh prompt.
+During work it requests cooperative cancellation. With selected text it copies.
+Native libraries retain documented cancellation units; no extra console opens.
+
+FIND AND REPLACE IN SOURCE
+Ctrl+F opens one persistent bar inside the editor. Source stays editable. Choose
+case, Unicode whole-word or regex mode. Enter/F3 finds next; Shift+Enter/Shift+F3
+previous, wrapping at the ends. Current/all matches have distinct backgrounds;
+foreground syntax colors remain. Escape hides it. Tabs retarget the same query.
+Replace All is one Undo. Regex replacements support \1..\99 captured groups and
+escaped backslash. Invalid patterns never edit source. Above10000 matches, Replace
+All disables and requests a narrower query. Read-only files remain searchable.
+Rich colored copy/printing keep source colors; search neither executes nor saves.
+
+NATIVE MODELS AND CACHE REUSE
+For a real objective use existing typed syntax:
+  native function real objective(real x){return (x-2)*(x-2);}
+  record r=minimize(objective,0.0,options(algorithm="lbfgs"));
+  display(r.x,r.converged,r.status);
+
+Every numerical residual/objective/constraint, event, terminal objective and map
+executes a cached native DLL/SO. A plain typed function supplied to a native solver
+also compiles. Runtime values use explicit trailing parameters. The native subset
+supports real/Pentarnion scalar expressions, locals, assignments, branches and
+returns; unsupported arrays/helper calls/IO/captures diagnose. There is no silent
+interpreted solver callback fallback.
+Changing data/parameters/initials/bounds/tolerances/plots reuses an unchanged body;
+body/signature/toolchain/ABI changes rebuild its entry. Independent discoverable
+units prepare using hidden bounded GCC processes. Host ExecutionOptions.nativeCompileJobs
+0 selects up to4 jobs; explicit1..64 is capped at8 and available jobs. threads(n)
+controls numerical workers separately and does not force compiler jobs.
+
+Append display(compile_info()) after numerical calls in the SAME script/request.
+It reports actual attempts, prepared cache hits and compiler overlap. A new console
+submission has its own report. peak_compiler_jobs measures actual overlap;
+peak_preparations can include cache work. tic/toc excludes the union of compiler
+wall intervals on cold and cached runs.
+
+FITTING AND OPTIMIZATION
+lsqfit(residual,initial[,options]) and lsqnonlin alias fit weighted native residual
+coordinates with Ceres. curvefit(model,initial,xdata,ydata[,options]) supplies a
+trailing real independent variable per datum. odefit explicitly supplies CVODES
+trajectory sensitivities; optimizer AD does not differentiate an opaque ODE solve.
+Each Pentarnion unknown/observation uses five real coordinates. Weights/bounds/
+scales follow that order, preserving original algebra products/grouping.
+LM/Dogleg, none/huber/cauchy/soft_l1 losses and bounded multistart are available.
+Robust losses apply per coefficient residual, not an invented whole-algebra norm.
+
+minimize returns an NLopt result. Algorithms: lbfgs,bobyqa,nelder_mead,slsqp,cobyla,
+direct,crs2,isres. SLSQP/COBYLA/ISRES accept native g<=0 and h=0 constraints;
+other choices reject nonlinear constraints. Global algorithms need finite bounds;
+BOBYQA needs at least two coordinates. NLopt kernels are currently serial.
+population is an optional CRS2/ISRES setting. initial_step applies to BOBYQA,
+Nelder-Mead and COBYLA; unsupported algorithm options diagnose.
+Analytic gradients are default. Explicit native finite differences respect bounds;
+the mathematical model must still be defined at its probing points.
+
+Inspect converged,status,message,residual/cost or constraint_violation, counts and
+histories. Budget exhaustion returns a finite candidate with converged0; native
+domain errors/cancellation diagnose. Finite global search does not prove a global
+minimum, and successful fitting does not prove parameter uniqueness.
+Covariance is opt-in, qualified by local linear/Gaussian independent-error
+assumptions, noise variance, full rank, inactive bounds and linear loss. Unavailable
+covariance is empty with valid0. Actual native body evaluations differ from complete
+callback requests. Histories are bounded; history_limit0 disables retention.
+
+NUMERICAL THREADS
+threads(0) selects a session default;1..64 sets a maximum. Supported per-call
+options(threads=n) preserves that default. One CPU reservation coordinates native
+modules; nested workers receive one inner slot. For Ceres, backend_threads is a
+configured limit and threads_used counts observed residual workers, not simultaneous
+callback bodies. Modest automatic fits may choose one worker. NLopt/maps currently
+report one. parallel_info exposes nonloading fitting/optimization/maps module flags.
+No universal speed or memory saving is implied by a configured thread maximum.
+
+ADVANCED ODEs
+Keep named odesolve syntax. Native events accept(real time,declared states...,
+declared parameters...) and return real crossing values. event_direction uses
+increasing physical time; event_terminal selects stopping. odeevents returns
+localized time/state/index/direction data. Backward time uses t1<t0 and positive
+sample_step. deval evaluates stored solver-step polynomials independently of output
+spacing. DP5 ERK retains quartic Hermite polynomials, ESDIRK4 cubic Hermite,
+and CVODES its native variable-order Taylor polynomials. Legacy/dense_output0
+data keep the sample-based cubic Hermite path. odewindow selects
+stored samples/events/sensitivities in an absolute interval to exclude transients.
+
+sensitivities="parameters"/"initial"/"all" enables actual CVODES BDF/Adams propagation.
+odesens returns sample rows, n state coordinates per direction. sensitivity_initial
+is n-by-ns. Native J_x/J_theta integrate S'=J_x*S+J_theta. Instantaneous
+jacobian(model,...) alone is not a trajectory sensitivity. ERK/ESDIRK sensitivity
+requests reject explicitly. odeadjoint supports a native fixed-terminal-time real
+objective and checkpointed parameter/initial gradients, including direct parameter
+terms. Running/event-time/jump adjoints remain future. Constant nonsingular real
+masses are supported; DAEs/hybrid reset handlers are not inferred. Persistence
+retains dense/sensitivity/event/backward data under combined coordinate bounds.
+The existing8M workspace state-coordinate budget remains STATES ONLY and counts
+aliases once. Separate host controls ExecutionOptions.maxRetainedSolutionCoordinates
+and SolveOptions.maxRetainedCoordinates default to32M combined values, slopes,
+times, sensitivities, event buffers and dense coefficients. Native state/sensitivity
+sampling and dense-only storage retain their separate8M bounds. These host controls
+are not additional language options; normal scripts use the bounded defaults.
+
+DISCRETE MAPS
+mapiterate computes a native orbit with transient/stride/escape limits. mapdiagram
+samples a trailing real parameter, resetting initials per scan and reusing the
+native body; it is an orbit diagram, not continuation. returnmap pairs retained
+samples at a chosen lag and does not locate ODE Poincare events. Finite samples/
+escape radii do not establish boundedness/chaos. Plot returned arrays with ordinary
+plot/plot2/plot3/subplot. No-scripting Map Explorer remains20, chaos metrics13 and
+mathematical geometry/PDE15 remain future implementation categories.
+
+DEPENDENCIES AND PLATFORM STATUS
+Ceres2.2/Eigen/MINIGLOG,NLopt2.11,CVODES7.9 and notices stay project-local under
+third-party; existing C:/msys64 is reused unchanged. CMake/Code::Blocks share the
+graph. Native Linux execution is not claimed. See HANDOFF for measured final
+validation/deployment and LICENSING/third-party locks for notices/archive hashes.

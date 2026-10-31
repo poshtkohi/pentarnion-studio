@@ -1,0 +1,10 @@
+{
+  "version": "4.10",
+  "tag": "v4.10",
+  "tag_object": "16b0b814a3ba15a56c7a04e02d047188800cc0bf",
+  "commit": "d964264cdb9a13e94a201b6c236c7721e0c8765f",
+  "archive_url": "https://codeload.github.com/mfem/mfem/zip/d964264cdb9a13e94a201b6c236c7721e0c8765f",
+  "archive_sha256": "cbc7a7c813b4aeaeab50d5825812c88322d8df234b473b1b982fb8b8de7f4625",
+  "license": "BSD-3-Clause",
+  "tag_signature": "unsigned (GitHub API); hash pins downloaded archive, not an external signature"
+}

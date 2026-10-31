@@ -1,0 +1,31 @@
+FEATURE F07: Declarations, promotion and grouping checks
+Version: 0.1
+Status: implemented in interpreter0.2; actual verification in docs/VALIDATION.md
+Implementation stage: S3
+Dependencies: F06
+Authority: language.txt; specs/algebras/A_gamma_v1.txt where applicable.
+
+REQUIRED BEHAVIOUR
+F07-R1: Types: Integer, Real, Pentarnion(context), IntegerRange, RealRange.
+F07-R2: Require declaration before use and initializer at declaration. Fixed
+         declared type on reassignment. No cross-file scope or implicit variables.
+F07-R3: Implement operator and promotion tables L05/L07; prohibit narrowing.
+F07-R4: Protect keywords, basis names and built-in names. A invalid declaration
+         must not create a misleading usable symbol with an invented type.
+F07-R5: Enforce L08 after operand types are known: >=3 algebra operands in an
+         ungrouped multiplicative sequence is E1301. Groups isolate inner chains.
+F07-R6: Pentarnion ^ requires integer exponent; scalar ^ returns real. Do not
+         infer exact integer values from real expressions to bypass this rule.
+F07-R7: Keep diagnostics stable when a prior error poisons a symbol; suppress
+         cascades and explain the first cause. No evaluation to infer types.
+
+ACCEPTANCE
+F07-T1: Typed arithmetic, range copy and reassignment valid fixtures pass.
+F07-T2: real x=i; integer n=1.5; B*q*q; and undeclared names fail as specified.
+F07-T3: Parenthesised two models retain different ASTs after type analysis.
+F07-T4: scalar(p) is real while pure(p) remains Pentarnion.
+
+CHANGE CONTROL
+This feature implements the normative contracts, not an alternative language.
+Update this rule and its tests when behaviour changes. Record any unresolved
+source discrepancy. Completion requires the acceptance evidence, not stubs.

@@ -1,0 +1,16 @@
+FEATURE F24: One-element and real elementary functions
+Version: current profile0.2 extension
+Authority: language.txt L17-L19 and the user's approved discussion.
+Status: implementation and regression validation recorded in docs/VALIDATION.md.
+
+REQUIRED BEHAVIOUR
+Five functions sin/cos/exp/sinh/cosh support scalars and Pentarnions via the
+original paper's one-element calculus. Additional real-only functions and domain
+rules exactly match language.txt L11/L18. Check signatures, arity, result types,
+finite results, real/complex limits, independent power series and gamma retention.
+Do not add componentwise or multivariable algebra semantics. Other Pentarnion
+overloads remain deferred; all new names are protected in profile0.2.
+
+VALIDATION
+Record actual automated/native checks, skipped contexts and platform limits in
+docs/VALIDATION.md. Unsupported OpenGL export must fail clearly, never fake an image.

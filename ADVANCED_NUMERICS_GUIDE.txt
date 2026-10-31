@@ -1,0 +1,185 @@
+PENTARNION STUDIO — PARALLEL LINEAR ALGEBRA, NATIVE DERIVATIVES AND ROOTS
+26 October 2026
+
+RUN THE EXAMPLES
+Open a project.pprj through File > Open Project, select its .p file, then Run
+File/F5 or right-click the file and Run. Scripts are saved before execution.
+Projects live under:
+  examples/
+
+  parallel-vectors: per_call_threads.p demonstrates the revised threading contract.
+  parallel-matrices: main.p demonstrates parallel products, batches and ordered algebra.
+  linear-algebra: main.p, pentarnion_operators.p and sparse_operators.p cover real
+             decompositions/solves, left/right equations and sparse operators.
+  native-derivatives: main.p, pentarnion_partials.p and ode_partials.p cover first/second
+             derivatives, Hessian-vector products and declared ODE RHS partials.
+  root-finding: main.p demonstrates roots, systems, fixed points and equilibria.
+
+Each project includes a README with expected results. Run its scripts separately;
+they do not require shared variables from another script. native-derivatives/ode_partials
+and root-finding/main include figures and should run in Studio. penta-run deliberately
+disables figures; their complete numerical/plot data are exercised in the runtime
+acceptance tests. Categories5/6 and the revised parallel-vectors script also run via CLI.
+
+THREADS: DEFAULT, REQUEST AND ACTUAL USE
+  threads(0);                         % automatic session default
+  threads(4);                         % explicit session default maximum
+  vector y=sin(x,options(threads=2));  % just this call
+  matrix C=matmul(A,B,options(threads=4));
+  display(parallel_info());
+
+Per-call options leave the session default unchanged, including on errors and
+cancellation. Operators such as A*B use the current default. A request is an upper
+limit: libraries may choose serial execution for small work. Native host callers
+can provide ParallelSettings per NumericModule/LinalgModule call. Use the shared
+host ABI/reservation services when embedding modules; do not link a second copy
+of the host worker pool into a plugin. Requests inside an existing numerical
+worker receive one CPU slot, preventing an outer parallel search from multiplying
+inner BLAS/worker pools. A single reservation precedes backend configuration locks.
+
+parallel_info requested/effective describe the session; last_requested and
+last_effective describe the latest native dispatch. threads_used/peak_active count
+actual host workers. module_loaded refers to penta_numerics; linalg_module_loaded
+and roots_module_loaded identify the other lazy modules. These queries do not
+force a load. Host-only packing operations may leave previous dispatch counters.
+Factorization records' backend_threads is a configured OpenBLAS limit, rather
+than a measured count of internal BLAS workers. Scalar AD/KINSOL remain serial.
+
+Measured Windows results show that extra threads can help GEMM while slowing
+modest factorizations. Automatic dense factorizations through dimension256 use
+one backend thread; explicit limits remain available. The validation CSV is a
+machine-specific warm-kernel benchmark, not a universal speed or RAM guarantee.
+
+REAL AND SPARSE LINEAR ALGEBRA
+  matrix A=[4.0,1.0;1.0,3.0];
+  matrix b=[1.0;2.0];
+  matrix x=linsolve(A,b,options(method="cholesky",threads=2));
+  display(x);                          % [1/11;7/11]
+  display(det(A));                     % 11
+  matrix inverse=inv(A);              % [3,-1;-1,4]/11
+  record factors=svd(A);
+  display(factors.singular_values);
+
+Dense products/packed uniform batches use native tiles; heterogeneous batches
+retain their tuple order and types. LU, pivoted QR, Cholesky, SVD, eig and Schur
+use OpenBLAS/LAPACKE. Records expose factors and rank/conditioning metadata.
+LU: P*A=L*U. QR: A*P=Q*R. Thin SVD: A=U*S*V'. Complex eigenvectors/values use
+separate real/imaginary arrays, preserving the meaning of Pentarnion basis i.
+linsolve supports lu, qr, cholesky and svd. QR/SVD provide least-squares candidates;
+solve_report returns residual/convergence information for inspection. Rank/condition
+thresholds and inverse backward-residual checks reject unsafe inverse/solve claims.
+
+  record S=sparse([1,2,3],[1,2,3],[2.0,3.0,4.0],3,3);
+  matrix z=sparsesolve(S,[2.0;6.0;12.0]); % [1;2;3]
+  record r=sparse_solve_report(S,[2.0;6.0;12.0],
+      options(method="bicgstab",preconditioner="ilut",threads=2));
+
+Sparse records store canonical one-based CSC arrays; assembly adds duplicates
+and removes exact zeros. sparsemul supports sparse/dense and sparse/sparse binary
+products. SparseLU and BiCGSTAB support multiple RHS; ILUT, diagonal and identity
+preconditioners are available. Sparse reports explicitly mark unavailable rank/
+condition estimates. Unsupported safeguards are rejected, not silently ignored.
+Each factorization is serial internally; independent RHS use bounded host lanes.
+A conservative512MiB factor-workspace estimate caps concurrent lanes. This is a
+work/fill/concurrency guard, not an allocator-enforced resident-memory promise.
+LAPACKE cancellation is checked before/after its native call; a factorization
+cannot be interrupted mid-call. Eigen sparse factorization/iterative solves also
+check before/after each RHS library call; max_iterations bounds the iterative
+unit. Tiled work checks between tiles. Existing array/coordinate/work budgets
+remain enforced.
+
+PENTARNION LEFT AND RIGHT EQUATIONS
+  pentarnion p=2.0+i;
+  pentarnion q=1.0+j;
+  matrix X=solveleft([p],[q]);          % [p]*X=[q]
+  matrix Y=solveright([p],[q]);         % Y*[p]=[q]
+  matrix L=leftop([p]);                % 5x5 real operator
+  matrix R=rightop([p]);               % 5x5 real operator
+  display(det(L),det(R));
+
+For an m-by-n A, leftop(A) maps the five-real coordinates of a column x to A*x.
+rightop(A) maps coordinates of a row x to x*A, giving a5n-by-5m real operator.
+solveleft(A,B) solves A*X=B; solveright(A,B) solves X*A=B. Original binary products
+and parentheses are preserved. Scalar inv(p) retains the algebra reciprocal.
+Direct det/inv/decompositions of Pentarnion arrays are rejected. det(leftop(A))
+and inv(leftop(A)) act on an explicitly chosen real operator; they do not define
+an associative Pentarnion matrix determinant/inverse. Neither inverse reversal
+nor multiplicative determinant identities are assumed. Sparse Pentarnion storage
+and products are supported; sparse solves require explicit real-coordinate data.
+
+NATIVE FIRST AND SECOND DERIVATIVES
+  native function real energy(real x,real y){
+      return x*x+3.0*x*y+2.0*y*y;
+  }
+  matrix g=gradient(energy,[1.0,2.0]);   % [8;11]
+  matrix H=hessian(energy,[1.0,2.0]);    % [2,3;3,4]
+  matrix Hv=hvp(energy,[1.0,2.0],[1.0,0.5]); % [3.5;5]
+  record checked=derivative_check(energy,[1.0,2.0],options(order=2));
+
+Callbacks compile to cached DLL/SO code. First and mixed second derivatives use
+native hyperdual automatic differentiation of the ordered expression tree.
+method="analytic", "ad" and "automatic" select that implementation;
+"finite_difference" is explicit and also evaluates the native callback. jvp,
+vjp and hvp provide products; analytic HVP avoids materializing the full Hessian.
+Hessians/gradients/HVP require a real scalar objective. jacobian handles scalar,
+Pentarnion and multiple-output maps through flattened real coordinates.
+Each Pentarnion occupies five coordinates in (1,i,j,k,ell) order. Select wrt by
+parameter name or one-based real-coordinate indices. Fixed trailing parameters
+use options(parameters=options(...)); they remain runtime values and do not
+recompile the structure. Snapshot captures are not native callback parameters;
+pass numerical constants explicitly. Unsupported/nonsmooth operations produce
+diagnostics; there is no silent interpreter or finite-difference substitution.
+Whole-Pentarnion sin/cos/exp/sinh/cosh retain the published one-element calculus.
+
+ODE RHS PARTIALS
+  ode decay(t,real y;real a){y'=-a*y+t*t;}
+  matrix Jy=jacobian(decay,2.0,options(parameters=options(a=3.0),time=0.5));
+  matrix Ja=jacobian(decay,2.0,options(parameters=options(a=3.0),time=0.5,wrt="a"));
+  display(Jy,Ja);                      % [-3],[-2]
+
+Declared ODEs reuse their checked RHS as native callbacks. time defaults to0.
+State, parameter and time partials are available; Hessians/HVP apply to scalar
+real RHS objectives. These are local vector-field partials. Differentiating a
+computed trajectory with respect to parameters/initial conditions still needs
+the sensitivity equations planned under item11; an RHS Jacobian is not that result.
+
+ROOTS, FIXED POINTS AND EQUILIBRIA
+  native function real residual(real x,real a){return x*x-a;}
+  record r=root(residual,[0.0,2.0],options(parameters=options(a=2.0)));
+  display(r.x,r.converged,r.residual_norm); % sqrt(2),1,near0
+
+root uses Boost.Math TOMS748 with a real bracket. rootsolve uses SUNDIALS KINSOL
+for square real-coordinate systems; Pentarnion unknowns contribute five entries.
+Callbacks and generated Jacobians are native; finite-difference Jacobians are
+explicit. Fixed parameters, guesses/brackets/tolerances do not rebuild the body.
+fixedpoint solves G(x)-x=0; equilibrium accepts autonomous declared ODE models.
+Reports distinguish convergence, stagnation and failed/nonzero-residual candidates,
+with flags, residuals/scales, iterations, evaluation counts and cache metadata.
+The detailed spec defines host callback requests, backend counts and actual native
+DLL passes separately. Check converged and residuals; a finite search does not
+find every root. tic/toc excludes native compilation time.
+
+CURRENT SCOPE AND FUTURE PLANS
+WORK_TO_DO records completed categories4(revised) and5-8. Item15 now explicitly
+plans a mathematical geometry package, including geometric operations and level
+sets. Basic map projections can be plotted through functions/loops/arrays;
+dedicated map iteration/chaos workflows remain item12. The no-script Map Explorer
+is planned as new item20, with the former later items renumbered21/22. It is not
+part of this release. Native Linux execution/graphics validation is still pending.
+
+BUILD AND REFERENCES
+CMake and Code::Blocks share the same graph. Use the maintained developer build
+at code/build/windows-release/bin/pentarnion-studio.exe, or the updated Desktop
+windows-release/bin/pentarnion-studio.exe. Keep modules/ and dependent runtimes
+beside the executable. The framework reuses C:\msys64 without modifying it.
+Pinned OpenBLAS/Boost/SUNDIALS additions live under code/third-party.
+Exact contracts: specs/advanced_numerics_v0_2.txt, language.txt L47 onward, F59-F67.
+Validation evidence is supplied with this guide. The first-paper script's live
+local sample_step=0.01 edit is retained; baseline/current hashes are recorded in
+advanced-preserved-edits.json and the full source provenance audit.
+
+Primary dependency documentation:
+  https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-openblas
+  https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-boost
+  https://sundials.readthedocs.io/en/latest/kinsol/Usage/index.html
+  https://www.boost.org/doc/libs/latest/libs/math/doc/html/math_toolkit/roots_noderiv/TOMS748.html
