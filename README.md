@@ -8,6 +8,10 @@ Project website: [pentarnion.com](https://pentarnion.com)
 
 Copyright © 2026 Alireza Poshtkohi and Susanne Pumplün.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23857836.svg)](https://doi.org/10.5281/zenodo.23857836)
+
+Cite the [version-specific archive](https://doi.org/10.5281/zenodo.23857837) when using Pentarnion Studio v0.2.0-preview.2 in research. The [project DOI](https://doi.org/10.5281/zenodo.23857836) covers all versions. Please also cite the relevant [research papers](#research-papers).
+
 This is a research preview. Features have explicit mathematical and numerical
 limits; the language specifications and examples describe the supported cases.
 An implementation of a research method is not evidence of a new scientific result.

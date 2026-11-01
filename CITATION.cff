@@ -3,6 +3,7 @@ message: "If you use this software, cite the exact source revision and report th
 type: software
 title: "Pentarnion Studio"
 version: "0.2.0-preview.2"
+doi: "10.5281/zenodo.23857837"
 date-released: 2026-11-01
 license: Apache-2.0
 authors:
