@@ -6,6 +6,8 @@ window, a script editor, native numerical modules and dockable scientific figure
 
 Project website: [pentarnion.com](https://pentarnion.com)
 
+Copyright © 2026 Alireza Poshtkohi and Susanne Pumplün.
+
 This is a research preview. Features have explicit mathematical and numerical
 limits; the language specifications and examples describe the supported cases.
 An implementation of a research method is not evidence of a new scientific result.
@@ -87,8 +89,7 @@ tools alone do not provide a publicly trusted Windows signing identity. See
 
 Pentarnion Studio's first-party code, documentation, examples and reusable
 runtime helpers are licensed under the [Apache License 2.0](LICENSE).
-Copyright 2026 Alireza Poshtkohi and Susanne Pumplün. See [NOTICE](NOTICE)
-for attribution and retained GTG component provenance.
+See [NOTICE](NOTICE) for attribution and retained GTG component provenance.
 
 Third-party code, libraries, fonts and tools retain their own licences and
 notices; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and

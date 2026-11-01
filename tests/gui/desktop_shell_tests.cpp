@@ -178,7 +178,7 @@ void DesktopShellTests::compactAboutPreservesAttributionAndLocalNotices() {
     for(int i=0;i<overview->topLevelItemCount();++i)QVERIFY(overview->topLevelItem(i)->text(1).size()<100);
     auto* text=dialog.findChild<QPlainTextEdit*>(QStringLiteral("aboutLicenseText"));QVERIFY(text);QVERIFY(text->isReadOnly());
     QCOMPARE(text->toPlainText(),QStringLiteral("Retained licence fixture.\n"));
-    QCOMPARE(studioCopyrightText(2026),QString::fromUtf8("© 2026 Pentranion Team"));
+    QCOMPARE(studioCopyrightText(2026),QString::fromUtf8("© 2026 Alireza Poshtkohi and Susanne Pumplün"));
     auto* qtNotice=dialog.findChild<QLabel*>(QStringLiteral("aboutQtNotice"));QVERIFY(qtNotice);
     bool inLicences=false;for(int index=0;index<tabs->count();++index)if(tabs->tabText(index)==QStringLiteral("Licences"))inLicences=tabs->widget(index)->isAncestorOf(qtNotice);
     QVERIFY(inLicences);

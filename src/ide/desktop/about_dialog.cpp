@@ -206,7 +206,7 @@ QString studioCopyrightText(int year) {
     if(!year)year=QDate::currentDate().year();
     year=std::max(2026,year);
     const auto years=year==2026?QStringLiteral("2026"):QString::fromUtf8("2026–%1").arg(year);
-    return QString::fromUtf8("© %1 Pentranion Team").arg(years);
+    return QString::fromUtf8("© %1 Alireza Poshtkohi and Susanne Pumplün").arg(years);
 }
 AboutDialog::AboutDialog(QWidget* parent,const AboutOptions& options):QDialog(parent) {
     auto reading=QFontDatabase::systemFont(QFontDatabase::GeneralFont);const auto families=QFontDatabase::families();
@@ -251,12 +251,12 @@ AboutDialog::AboutDialog(QWidget* parent,const AboutOptions& options):QDialog(pa
     tabs->addTab(build,studioCommandIcon(QStringLiteral("View")),tr("Build"));
     auto* footer=new QHBoxLayout;
     auto* copyright=label(this,QStringLiteral("aboutCopyright"),studioCopyrightText());
-    copyright->setWordWrap(false);copyright->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);footer->addWidget(copyright);
+    copyright->setWordWrap(true);copyright->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);footer->addWidget(copyright,1);
     auto* website=new QLabel(QStringLiteral("<a href=\"https://pentarnion.com\">pentarnion.com</a>"),this);
     website->setObjectName(QStringLiteral("aboutWebsite"));website->setTextFormat(Qt::RichText);
     website->setTextInteractionFlags(Qt::TextBrowserInteraction);website->setOpenExternalLinks(true);
     website->setToolTip(tr("Open Pentarnion website"));website->setAccessibleName(tr("Pentarnion website"));
-    website->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);footer->addSpacing(10);footer->addWidget(website);footer->addStretch(1);
+    website->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);footer->addSpacing(10);footer->addWidget(website);
     auto* buttons=new QDialogButtonBox(QDialogButtonBox::Close,this);buttons->setObjectName(QStringLiteral("aboutButtons"));
     connect(buttons,&QDialogButtonBox::rejected,this,&QDialog::reject);footer->addWidget(buttons);outer->addLayout(footer);applyStudioButtonIcons(this);
     resize(720,555);if(auto* target=screen())resize(size().boundedTo(target->availableGeometry().size()-QSize(40,60)));

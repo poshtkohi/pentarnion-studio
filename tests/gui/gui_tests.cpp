@@ -816,7 +816,7 @@ void GuiTests::studioBrandingAndAuthorHelp() {
     QVERIFY(capabilities.contains(QStringLiteral("2D/3D")));QVERIFY(capabilities.contains(QStringLiteral("Copilot")));
     QVERIFY(!about->findChild<QLabel*>(QStringLiteral("aboutCapabilities")));
     QVERIFY(labelText("aboutTagline").size()<80);
-    QCOMPARE(labelText("aboutCopyright"), QString::fromUtf8("© 2026 Pentranion Team"));
+    QCOMPARE(labelText("aboutCopyright"), QString::fromUtf8("© 2026 Alireza Poshtkohi and Susanne Pumplün"));
     QVERIFY(labelText("aboutQtNotice").contains(QStringLiteral("Qt 6")));
     for (const auto* label : about->findChildren<QLabel*>())
         QVERIFY2(!label->text().contains(QStringLiteral("Workbench")), qPrintable(label->text()));

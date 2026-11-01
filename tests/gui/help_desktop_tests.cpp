@@ -109,7 +109,7 @@ void HelpDesktopTests::editorPresentationPreservesSourceModificationAndUndo(){
 }
 void HelpDesktopTests::aboutStartsWithAuthorsAndKeepsLicencesTogether(){
     desktop::AboutDialog dialog;auto* tabs=dialog.findChild<QTabWidget*>(QStringLiteral("aboutTabs"));QVERIFY(tabs);QCOMPARE(tabs->tabText(0),QStringLiteral("Authors"));
-    QCOMPARE(dialog.findChild<QLabel*>(QStringLiteral("aboutCopyright"))->text(),desktop::studioCopyrightText());QVERIFY(desktop::studioCopyrightText(2026).contains(QStringLiteral("Pentranion Team")));
+    QCOMPARE(dialog.findChild<QLabel*>(QStringLiteral("aboutCopyright"))->text(),desktop::studioCopyrightText());QCOMPARE(desktop::studioCopyrightText(2026),QString::fromUtf8("© 2026 Alireza Poshtkohi and Susanne Pumplün"));
     auto* notice=dialog.findChild<QLabel*>(QStringLiteral("aboutQtNotice"));QVERIFY(notice);bool contained=false;for(int i=0;i<tabs->count();++i)if(tabs->tabText(i)==QStringLiteral("Licences"))contained=tabs->widget(i)->isAncestorOf(notice);QVERIFY(contained);
     auto* banner=dialog.findChild<QWidget*>(QStringLiteral("aboutBanner"));QVERIFY(banner);QVERIFY(banner->height()>=160);
 }
