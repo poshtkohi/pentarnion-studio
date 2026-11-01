@@ -4,6 +4,8 @@ Pentarnion Studio is a cross-platform scientific programming environment for
 Pentarnion algebra and numerical experiments. It combines a MATLAB-style command
 window, a script editor, native numerical modules and dockable scientific figures.
 
+[![Pentarnion Studio showing its script editor, component time series, trajectory plots and optional Copilot](docs/images/pentarnion-studio-preview.png)](docs/images/pentarnion-studio-preview.png)
+
 Project website: [pentarnion.com](https://pentarnion.com)
 
 Copyright © 2026 Alireza Poshtkohi and Susanne Pumplün.
